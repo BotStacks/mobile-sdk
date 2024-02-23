@@ -4,9 +4,7 @@ import ai.botstacks.sdk.BotStacksChat
 import ai.botstacks.sdk.ui.BotStacks.colorScheme
 import ai.botstacks.sdk.ui.theme.LocalBotStacksColorScheme
 import ai.botstacks.sdk.ui.theme.LocalBotStacksDayNightColorScheme
-import ai.botstacks.sdk.ui.components.internal.SecureTextField
 import ai.botstacks.sdk.ui.components.Space
-import ai.botstacks.sdk.ui.components.internal.TextInput
 import android.Manifest
 import android.util.Log
 import androidx.activity.compose.BackHandler
@@ -27,8 +25,6 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text2.input.rememberTextFieldState
-import androidx.compose.foundation.text2.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue

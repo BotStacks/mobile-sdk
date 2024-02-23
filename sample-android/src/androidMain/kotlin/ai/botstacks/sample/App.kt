@@ -5,7 +5,6 @@
 package ai.botstacks.sample
 
 import android.app.Application
-import com.giphy.sdk.ui.Giphy
 import ai.botstacks.sdk.BotStacksChat
 
 class App : Application() {

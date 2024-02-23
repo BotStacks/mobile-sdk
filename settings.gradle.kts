@@ -36,5 +36,5 @@ plugins {
 }
 
 rootProject.name = "botstacks"
+include(":sdk:core")
 include(":sample-android")
-include(":sdk")

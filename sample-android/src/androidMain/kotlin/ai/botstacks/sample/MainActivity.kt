@@ -2,7 +2,6 @@ package ai.botstacks.sample
 
 import ai.botstacks.sdk.BotStacksChatController
 import ai.botstacks.sdk.ui.BotStacksChatContext
-import ai.botstacks.sdk.ui.theme.lightColors
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,7 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            BotStacksChatContext {
+            BotStacksChatContext(useDarkTheme = true) {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "splash") {
                     val openBotstacks = { navController.navigate("botstacks") }
