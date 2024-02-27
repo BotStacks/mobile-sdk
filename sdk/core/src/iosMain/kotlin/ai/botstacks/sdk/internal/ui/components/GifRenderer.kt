@@ -32,7 +32,7 @@ internal fun GifRenderer(
     contentScale: ContentScale,
     url: String,
     onClick: (() -> Unit)?,
-    onLongClick: () -> Unit,
+    onLongClick: (() -> Unit)?
 ) {
     val gifView = remember(url) {
         UIImageView().apply {
@@ -43,24 +43,15 @@ internal fun GifRenderer(
     }
 
     Box(
-        modifier = modifier
-            .contentDescription(contentDescription),
+        modifier = modifier.contentDescription(contentDescription),
     ) {
-        val min = BotStacks.dimens.imagePreviewSize.height.dp
-        var height by remember { mutableStateOf(min) }
         UIKitView(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(height),
+                .height(BotStacks.dimens.imagePreviewSize.height.dp),
             factory = { gifView },
             interactive = true,
             onResize = { view, size ->
-                view.frame.useContents {
-                    val h = this.size.height.dp
-                    if (h > height) {
-                        height = h
-                    }
-                }
                 view.layer.setFrame(size)
             },
             update = { it.startAnimating() }

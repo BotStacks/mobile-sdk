@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2023.
- */
-
 package ai.botstacks.sdk.ui.components
 
 import ai.botstacks.sdk.internal.actions.react
@@ -66,7 +62,7 @@ fun ChatMessage(
     showTimestamp: Boolean = true,
     onPressUser: (User) -> Unit,
     onLongPress: () -> Unit,
-    onClick: (() -> Unit)? = null
+    onClick: ((FMessage.Attachment?) -> Unit)? = null
 ) {
     if (message.user.blocked) {
         return
@@ -123,13 +119,13 @@ fun ChatMessage(
             hasError = message.failed,
             onPressUser = { onPressUser(message.user) },
             onLongPress = onLongPress,
-            onClick = onClick
+            onClick = null
         )
     }
 }
 
 @Composable
-fun ChatMessage(
+private fun ChatMessage(
     modifier: Modifier = Modifier,
     avatar: String?,
     username: String,
@@ -146,7 +142,7 @@ fun ChatMessage(
     hasError: Boolean = false,
     onPressUser: () -> Unit,
     onLongPress: () -> Unit,
-    onClick: (() -> Unit)? = null
+    onClick: ((FMessage.Attachment?) -> Unit)? = null
 ) {
     BoxWithConstraints(
         modifier = modifier.fillMaxWidth(),
@@ -179,7 +175,7 @@ fun ChatMessage(
                         username = username,
                         shape = shape,
                         showOwner = isGroup && !isCurrentUser && showTimestamp,
-                        onClick = onClick,
+                        onClick = { onClick?.invoke(attachment) },
                         onLongClick = onLongPress,
                     )
 
@@ -193,7 +189,7 @@ fun ChatMessage(
                         avatar = avatar,
                         shape = shape,
                         showOwner = isGroup && !isCurrentUser && showTimestamp,
-                        onClick = onClick,
+                        onClick = { onClick?.invoke(attachment) },
                         onLongClick = onLongPress,
                     )
                     else -> Unit
@@ -209,7 +205,7 @@ fun ChatMessage(
                         showOwner = isGroup && !isCurrentUser && showTimestamp,
                         isCurrentUser = isCurrentUser,
                         username = username,
-                        onClick = onClick,
+                        onClick = { onClick?.invoke(null) },
                         onLongClick = onLongPress,
                     )
                 }

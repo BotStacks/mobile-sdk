@@ -19,6 +19,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -73,7 +74,6 @@ internal fun MessageTextContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun MessageImageContent(
     username: String,
@@ -101,7 +101,7 @@ internal fun MessageImageContent(
             contentDescription = "shared image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .heightIn(min = dimens.imagePreviewSize.height.dp)
+                .height(dimens.imagePreviewSize.height.dp)
                 .fillMaxWidth()
                 .background(
                     color = ift(

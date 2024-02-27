@@ -4,7 +4,10 @@
 
 package ai.botstacks.sdk.ui.components
 
+import ai.botstacks.sdk.fragment.FMessage
+import ai.botstacks.sdk.internal.navigation.BackHandler
 import ai.botstacks.sdk.internal.ui.components.EmptyListView
+import ai.botstacks.sdk.internal.ui.components.ImageRenderer
 import ai.botstacks.sdk.state.Chat
 import ai.botstacks.sdk.state.Identifiable
 import ai.botstacks.sdk.state.Message
@@ -16,17 +19,30 @@ import ai.botstacks.sdk.ui.BotStacks.dimens
 import ai.botstacks.sdk.ui.BotStacks.shapes
 import ai.botstacks.sdk.internal.ui.components.PagerListIndexed
 import ai.botstacks.sdk.internal.utils.format
+import ai.botstacks.sdk.internal.utils.ift
 import ai.botstacks.sdk.internal.utils.minutesBetween
+import ai.botstacks.sdk.type.AttachmentType
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 
 
 @Composable
@@ -36,6 +52,10 @@ fun MessageList(
     onPressUser: (User) -> Unit,
     onLongPress: (Message) -> Unit
 ) {
+    var attachmentToView by remember {
+        mutableStateOf<FMessage.Attachment?>(null)
+    }
+
     val pager = chat as Pager<Identifiable>
     PagerListIndexed(
         pager = pager,
@@ -50,7 +70,10 @@ fun MessageList(
 
             if (dateBefore != dateAfter) {
                 dateBefore?.let {
-                    Box(modifier = Modifier.fillMaxWidth().padding(bottom = dimens.grid.x4), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(bottom = dimens.grid.x4),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Badge(
                             label = it,
                             backgroundColor = colorScheme.message,
@@ -93,16 +116,44 @@ fun MessageList(
                 showTimestamp = !isNextClose,
                 showAvatar = !isNextClose,
                 onPressUser = onPressUser,
+                onClick = { attachmentToView = it },
                 onLongPress = {
                     onLongPress(item)
-                }
+                },
             )
+        }
+    }
+
+    AnimatedVisibility(attachmentToView != null) {
+        attachmentToView?.let { attachment ->
+            when (attachment.type) {
+                AttachmentType.image -> {
+                    Popup(Alignment.Center, onDismissRequest = { attachmentToView = null }) {
+                        ImageRenderer(
+                            url = attachment.url,
+                            contentDescription = "shared image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize(),
+                            onClick = { attachmentToView = null }
+                        )
+                    }
+                    BackHandler(true) {
+                        attachmentToView = null
+                    }
+                }
+                AttachmentType.video -> Unit
+                else -> Unit
+            }
         }
     }
 }
 
 @Composable
-private fun shapeForMessage(isCurrentUser: Boolean, isPrevClose: Boolean, isNextClose: Boolean): CornerBasedShape {
+private fun shapeForMessage(
+    isCurrentUser: Boolean,
+    isPrevClose: Boolean,
+    isNextClose: Boolean
+): CornerBasedShape {
     return if (isCurrentUser) {
         when {
             isNextClose && isPrevClose -> shapes.medium.copy(

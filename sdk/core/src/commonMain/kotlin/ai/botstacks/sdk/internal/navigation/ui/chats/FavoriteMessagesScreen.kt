@@ -33,14 +33,13 @@ internal fun FavoritesMessagesScreen(
         PagerList(
             pager = BotStacksChatStore.current.favorites,
             scrollToTop = scrollToTop.toString()
-        ) {
+        ) { message ->
             ChatMessage(
-                message = it,
+                message = message,
                 onPressUser = openProfile,
                 onLongPress = {},
-                onClick = {
-                    openReplies(it)
-                })
+                onClick = { openReplies(message) }
+            )
         }
     }
 }

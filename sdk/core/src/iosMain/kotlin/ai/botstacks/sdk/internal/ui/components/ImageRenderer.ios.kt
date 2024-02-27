@@ -41,7 +41,7 @@ internal actual fun ImageRenderer(
     contentScale: ContentScale,
     url: String,
     onClick: (() -> Unit)?,
-    onLongClick: () -> Unit,
+    onLongClick: (() -> Unit)?,
 ) {
 
     var isAnimated by remember { mutableStateOf<Boolean?>(null) }

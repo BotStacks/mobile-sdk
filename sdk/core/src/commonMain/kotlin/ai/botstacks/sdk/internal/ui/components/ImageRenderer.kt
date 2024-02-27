@@ -11,5 +11,5 @@ internal expect fun ImageRenderer(
     contentScale: ContentScale = ContentScale.Fit,
     url: String,
     onClick: (() -> Unit)? = null,
-    onLongClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
 )

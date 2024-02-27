@@ -4,18 +4,15 @@
 
 package ai.botstacks.sdk.internal.navigation.ui.chats
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
 import ai.botstacks.sdk.internal.actions.markRead
-import ai.botstacks.sdk.state.Message
+import ai.botstacks.sdk.internal.ui.components.ChatCount
+import ai.botstacks.sdk.internal.ui.components.MediaActionSheet
+import ai.botstacks.sdk.internal.ui.components.MessageActionSheet
+import ai.botstacks.sdk.internal.ui.components.Text
+import ai.botstacks.sdk.internal.utils.IPreviews
+import ai.botstacks.sdk.internal.utils.genChat
 import ai.botstacks.sdk.state.Chat
+import ai.botstacks.sdk.state.Message
 import ai.botstacks.sdk.state.User
 import ai.botstacks.sdk.ui.BotStacks.colorScheme
 import ai.botstacks.sdk.ui.BotStacks.dimens
@@ -23,19 +20,28 @@ import ai.botstacks.sdk.ui.BotStacks.fonts
 import ai.botstacks.sdk.ui.BotStacksThemeEngine
 import ai.botstacks.sdk.ui.components.Avatar
 import ai.botstacks.sdk.ui.components.AvatarType
-import ai.botstacks.sdk.internal.ui.components.ChatCount
+import ai.botstacks.sdk.ui.components.ChatInput
 import ai.botstacks.sdk.ui.components.Header
 import ai.botstacks.sdk.ui.components.HeaderDefaults
-import ai.botstacks.sdk.internal.ui.components.MediaActionSheet
-import ai.botstacks.sdk.internal.ui.components.MessageActionSheet
-import ai.botstacks.sdk.ui.components.ChatInput
 import ai.botstacks.sdk.ui.components.MessageList
-import ai.botstacks.sdk.internal.ui.components.Text
-import ai.botstacks.sdk.internal.utils.IPreviews
-import ai.botstacks.sdk.internal.utils.genChat
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -54,9 +60,6 @@ internal fun ConversationScreen(
         mutableStateOf<Message?>(null)
     }
     val media = androidx.compose.material.rememberModalBottomSheetState(
-        ModalBottomSheetValue.Hidden, skipHalfExpanded = true
-    )
-    val menu = androidx.compose.material.rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden, skipHalfExpanded = true
     )
 
@@ -111,7 +114,7 @@ internal fun ConversationScreen(
                     chat = chat,
                     modifier = Modifier.weight(1f),
                     onPressUser = { openProfile(it) },
-                    onLongPress = { messageForAction = it }
+                    onLongPress = { messageForAction = it },
                 )
                 ChatInput(
                     modifier = Modifier.padding(dimens.grid.x4)
