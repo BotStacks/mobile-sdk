@@ -141,7 +141,5 @@ internal fun Chat.setNotifications(settings: NotificationSetting, isSync: Boolea
 
 internal fun Chat.markRead() {
     unreadCount = 0
-    opbg({
-        API.markChatRead(id)
-    })
+    opbg { API.markChatRead(id) }
 }

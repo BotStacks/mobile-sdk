@@ -38,7 +38,7 @@ internal fun op(block: suspend CoroutineScope.() -> Unit, onError: () -> Unit = 
 
 
 internal suspend fun <T> bg(block: suspend CoroutineScope.() -> T) = withContext(Dispatchers.IO, block)
-internal fun opbg(block: suspend CoroutineScope.() -> Unit, onError: () -> Unit = { }) =
+internal fun opbg(onError: () -> Unit = { }, block: suspend CoroutineScope.() -> Unit) =
     op(block, onError, Dispatchers.IO)
 
 internal fun <T : Unit> async(block: suspend CoroutineScope.() -> T) =

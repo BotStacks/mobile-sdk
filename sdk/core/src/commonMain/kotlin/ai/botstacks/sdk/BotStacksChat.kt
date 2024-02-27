@@ -69,9 +69,7 @@ abstract class BotStacksChat {
         fun registerFCMToken(token: String) {
             BotStacksChatStore.current.fcmToken = token
             if (shared.isUserLoggedIn) {
-                opbg({
-                    API.registerFcmToken(token)
-                })
+                opbg { API.registerFcmToken(token) }
             }
         }
     }

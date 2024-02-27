@@ -19,7 +19,7 @@ internal actual fun ImageRenderer(
     contentScale: ContentScale,
     url: String,
     onClick: (() -> Unit)?,
-    onLongClick: () -> Unit,
+    onLongClick: (() -> Unit)?
 ) {
     AsyncImage(
         model = ImageRequest.Builder(LocalPlatformContext.current)
