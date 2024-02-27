@@ -33,7 +33,7 @@ internal actual class PermissionsManager actual constructor(private val callback
         when (permission) {
             is PermissionType.Camera -> {
                 val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
-                LaunchedEffect(cameraPermissionState) {
+                LaunchedEffect(cameraPermissionState.status) {
                     val permissionResult = cameraPermissionState.status
                     if (!permissionResult.isGranted) {
                         if (permissionResult.shouldShowRationale) {
@@ -61,7 +61,7 @@ internal actual class PermissionsManager actual constructor(private val callback
                     )
                 )
 
-                LaunchedEffect(permissionState) {
+                LaunchedEffect(permissionState.allPermissionsGranted, permissionState.revokedPermissions) {
                     val granted = permissionState.allPermissionsGranted || permissionState.permissions.contains { it.status.isGranted }
                     if (!granted) {
                         if (permissionState.shouldShowRationale) {

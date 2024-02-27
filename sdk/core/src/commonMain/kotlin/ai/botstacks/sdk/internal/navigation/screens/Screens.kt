@@ -62,7 +62,7 @@ internal data class ChatScreen(val chatId: String) : Screen {
 internal data object CreateChannelScreen : Screen {
     override val key = uniqueScreenKey
 
-    val state = CreateChannelState()
+    private var state = CreateChannelState()
 
     @Composable
     override fun Content() {
@@ -70,8 +70,12 @@ internal data object CreateChannelScreen : Screen {
 
         CreateChannelScreen(
             state = state,
-            onBackClicked = { navigator.pop() },
+            onBackClicked = {
+                state = CreateChannelState()
+                navigator.pop()
+            },
             onChannelCreated = {
+                state = CreateChannelState()
                 navigator.replaceAll(listOf(ChatListScreen, ChatScreen(it)))
             },
             onSelectUsers = {
@@ -130,7 +134,7 @@ private data class SelectUsersScreen(
 
         val state = remember {
             if (chat != null) {
-                ChannelUserSelectionState(chat = chat,)
+                ChannelUserSelectionState(chat = chat)
             } else {
                 ChannelUserSelectionState(selections = users.toMutableStateList())
             }
