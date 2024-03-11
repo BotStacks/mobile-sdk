@@ -1,13 +1,13 @@
 //
 //  Badge.swift
-//  BotStacksSDK
+//  chat-sdk
 //
-//  Created by Brandon McAnsh on 2/23/24.
+//  Created by Brandon McAnsh on 3/7/24.
 //
 
 import Foundation
 import SwiftUI
-import botstacks_core
+import BotStacks_ChatSDK
 
 public struct Badge : UIViewControllerRepresentable {
 
@@ -18,11 +18,10 @@ public struct Badge : UIViewControllerRepresentable {
     }
 
     public func makeUIViewController(context: Context) -> UIViewController {
-        BadgeKt.Badge(count: count)
+        ComponentsKt._Badge(count: count)
     }
 
     public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         
     }
 }
-

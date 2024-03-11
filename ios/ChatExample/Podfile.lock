@@ -1,0 +1,53 @@
+PODS:
+  - BotStacks_ChatSDK (1.0.3-SNAPSHOT):
+    - Giphy (= 2.2.8)
+    - GoogleMaps (= 8.4.0)
+  - BotStacksChatSDK (1.0.3-SNAPSHOT):
+    - Giphy (= 2.2.8)
+    - GoogleMaps (= 8.4.0)
+  - Giphy (2.2.8):
+    - libwebp
+  - GoogleMaps (8.4.0):
+    - GoogleMaps/Maps (= 8.4.0)
+  - GoogleMaps/Base (8.4.0)
+  - GoogleMaps/Maps (8.4.0):
+    - GoogleMaps/Base
+  - libwebp (1.3.2):
+    - libwebp/demux (= 1.3.2)
+    - libwebp/mux (= 1.3.2)
+    - libwebp/sharpyuv (= 1.3.2)
+    - libwebp/webp (= 1.3.2)
+  - libwebp/demux (1.3.2):
+    - libwebp/webp
+  - libwebp/mux (1.3.2):
+    - libwebp/demux
+  - libwebp/sharpyuv (1.3.2)
+  - libwebp/webp (1.3.2):
+    - libwebp/sharpyuv
+
+DEPENDENCIES:
+  - BotStacks_ChatSDK (from `../../chat-sdk`)
+  - BotStacksChatSDK (from `../BotStacksChatSDK`)
+
+SPEC REPOS:
+  trunk:
+    - Giphy
+    - GoogleMaps
+    - libwebp
+
+EXTERNAL SOURCES:
+  BotStacks_ChatSDK:
+    :path: "../../chat-sdk"
+  BotStacksChatSDK:
+    :path: "../BotStacksChatSDK"
+
+SPEC CHECKSUMS:
+  BotStacks_ChatSDK: 13d8f6ff185b2a45d47f935023ef4059a2b9797f
+  BotStacksChatSDK: 6bea07e3702cb9c7643a681f6b7425b8d7e40a5e
+  Giphy: f63ab0e2dd819d6288feba07722aaafe8a5fe4b7
+  GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
+  libwebp: 1786c9f4ff8a279e4dac1e8f385004d5fc253009
+
+PODFILE CHECKSUM: 65f8fdf42aff0e97a1ed4f3bb0a7a1910b8194ac
+
+COCOAPODS: 1.14.3
