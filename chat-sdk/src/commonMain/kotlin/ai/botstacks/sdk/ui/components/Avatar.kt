@@ -203,7 +203,7 @@ fun Avatar(
 /**
  * Avatar
  *
- * Renders the display image for a user in a bordered circle at the specified size.
+ * Renders the display image in a bordered circle at the specified size.
  *
  * @param modifier the Modifier to be applied to this Avatar
  * @param backgroundColor Background color to render behind images (will show in empty state depending on what empty state is).

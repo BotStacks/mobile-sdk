@@ -170,6 +170,8 @@ class HeaderState(
     val showSearchClear: Boolean = false,
     isSearchActive: Boolean = false,
 ) {
+    constructor(showSearch: Boolean = false, showSearchClear: Boolean = false) : this(showSearch, showSearchClear, false)
+
     var searchQuery: TextFieldValue by mutableStateOf(TextFieldValue())
     var searchActive by mutableStateOf(isSearchActive)
 }

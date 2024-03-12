@@ -12,6 +12,9 @@
 		06EA28762B9E66F1000FE324 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06EA28752B9E66F1000FE324 /* Assets.xcassets */; };
 		06EA28792B9E66F1000FE324 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06EA28782B9E66F1000FE324 /* Preview Assets.xcassets */; };
 		06EA28802B9E67B6000FE324 /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA287F2B9E67B6000FE324 /* Badge.swift */; };
+		06EA28872B9F8FAF000FE324 /* MeasuredView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28862B9F8FAF000FE324 /* MeasuredView.swift */; };
+		06EA28892B9F9CDF000FE324 /* Avatar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28882B9F9CDF000FE324 /* Avatar.swift */; };
+		06EA288B2BA09B88000FE324 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA288A2BA09B88000FE324 /* Header.swift */; };
 		8836D249DCA19AC88EABBC23 /* libPods-ChatExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C1593A99B77ABA02BFEEDAF /* libPods-ChatExample.a */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +26,9 @@
 		06EA28782B9E66F1000FE324 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		06EA287F2B9E67B6000FE324 /* Badge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Badge.swift; sourceTree = "<group>"; };
 		06EA28842B9F3D49000FE324 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		06EA28862B9F8FAF000FE324 /* MeasuredView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeasuredView.swift; sourceTree = "<group>"; };
+		06EA28882B9F9CDF000FE324 /* Avatar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Avatar.swift; sourceTree = "<group>"; };
+		06EA288A2BA09B88000FE324 /* Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Header.swift; sourceTree = "<group>"; };
 		5EE6853AA6FFDA3E9730763D /* Pods-ChatExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatExample.release.xcconfig"; path = "Target Support Files/Pods-ChatExample/Pods-ChatExample.release.xcconfig"; sourceTree = "<group>"; };
 		9C1593A99B77ABA02BFEEDAF /* libPods-ChatExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ChatExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F042DF0F3CCB46C0E68E2627 /* Pods-ChatExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ChatExample.debug.xcconfig"; path = "Target Support Files/Pods-ChatExample/Pods-ChatExample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -61,12 +67,12 @@
 		06EA28702B9E66F0000FE324 /* ChatExample */ = {
 			isa = PBXGroup;
 			children = (
+				06EA28852B9F8FA0000FE324 /* SDK */,
 				06EA28842B9F3D49000FE324 /* Info.plist */,
 				06EA28712B9E66F0000FE324 /* ChatExampleApp.swift */,
 				06EA28732B9E66F0000FE324 /* ContentView.swift */,
 				06EA28752B9E66F1000FE324 /* Assets.xcassets */,
 				06EA28772B9E66F1000FE324 /* Preview Content */,
-				06EA287F2B9E67B6000FE324 /* Badge.swift */,
 			);
 			path = ChatExample;
 			sourceTree = "<group>";
@@ -77,6 +83,17 @@
 				06EA28782B9E66F1000FE324 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		06EA28852B9F8FA0000FE324 /* SDK */ = {
+			isa = PBXGroup;
+			children = (
+				06EA287F2B9E67B6000FE324 /* Badge.swift */,
+				06EA28862B9F8FAF000FE324 /* MeasuredView.swift */,
+				06EA28882B9F9CDF000FE324 /* Avatar.swift */,
+				06EA288A2BA09B88000FE324 /* Header.swift */,
+			);
+			path = SDK;
 			sourceTree = "<group>";
 		};
 		0B62E9F074EF10568B70CEC9 /* Frameworks */ = {
@@ -234,6 +251,9 @@
 			files = (
 				06EA28742B9E66F0000FE324 /* ContentView.swift in Sources */,
 				06EA28802B9E67B6000FE324 /* Badge.swift in Sources */,
+				06EA28872B9F8FAF000FE324 /* MeasuredView.swift in Sources */,
+				06EA28892B9F9CDF000FE324 /* Avatar.swift in Sources */,
+				06EA288B2BA09B88000FE324 /* Header.swift in Sources */,
 				06EA28722B9E66F0000FE324 /* ChatExampleApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

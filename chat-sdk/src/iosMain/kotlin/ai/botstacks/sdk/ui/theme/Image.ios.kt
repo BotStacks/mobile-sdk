@@ -40,7 +40,7 @@ internal actual fun ImageAssetIdentifier.toImageAsset(): ImageAsset? {
 
 
 @OptIn(ExperimentalForeignApi::class)
-private fun ImageAsset.toComposeImageBitmap() : ImageBitmap {
+fun ImageAsset.toComposeImageBitmap() : ImageBitmap {
 
     val bytes = requireNotNull(UIImagePNGRepresentation(this)) {
         "Failed to get PNG representation of image"
@@ -52,8 +52,9 @@ private fun ImageAsset.toComposeImageBitmap() : ImageBitmap {
         memcpy(it.addressOf(0), bytes.bytes, bytes.length)
     }
 
+    println("bytes=${bytes.length}")
     return Image.makeFromEncoded(byteArray)
-        .toComposeImageBitmap()
+        .toComposeImageBitmap().also { println("made image") }
 }
 
 private fun ImageBitmap.Companion.named(name: String) : ImageBitmap {
