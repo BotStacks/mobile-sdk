@@ -52,9 +52,8 @@ fun ImageAsset.toComposeImageBitmap() : ImageBitmap {
         memcpy(it.addressOf(0), bytes.bytes, bytes.length)
     }
 
-    println("bytes=${bytes.length}")
     return Image.makeFromEncoded(byteArray)
-        .toComposeImageBitmap().also { println("made image") }
+        .toComposeImageBitmap()
 }
 
 private fun ImageBitmap.Companion.named(name: String) : ImageBitmap {

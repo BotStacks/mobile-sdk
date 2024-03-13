@@ -26,21 +26,22 @@ struct ContentView: View {
 
 struct ComponentShowCase: View {
     var body: some View {
-        // Other content for your screen
-        VStack {
-            Text("Component Showcase")
-                 .font(.largeTitle)
-             
-            Avatars()
-            Divider()
-            Badges()
-            Divider()
-            Headers()
-        }.frame(
-            maxWidth: .infinity,
-            maxHeight: .infinity,
-            alignment: .top
-        )
+        ScrollView {
+            VStack {
+                Text("Component Showcase")
+                    .font(.largeTitle)
+                
+                Avatars()
+                Divider()
+                Badges()
+                Divider()
+                Headers()
+            }.frame(
+                maxWidth: .infinity,
+                maxHeight: .infinity,
+                alignment: .top
+            )
+        }
     }
 }
 
@@ -79,13 +80,34 @@ private struct Headers: View {
     
     var body: some View {
         ComponentView(title: "Headers") {
+            Text("Using title string")
+                .font(.callout)
+                .frame(alignment: .leading)
+            
             Header()
                 .title("Settings")
+            
+            Text("Using title slot")
+                .font(.callout)
+            
+            Header()
+                .title {
+                    Text("User Details")
+                        .font(.headline)
+                }
+            
+            Text("Using icon")
+                .font(.callout)
             Header()
                 .icon(UIImage.init(systemName: "globe")!)
+            
+            Text("With back navigation")
+                .font(.callout)
             Header()
                 .backClicked { print("back clicked") }
             
+            Text("With multiple actions and searchability")
+                .font(.callout)
             Header()
                 .withState(headerState)
                 .backClicked {

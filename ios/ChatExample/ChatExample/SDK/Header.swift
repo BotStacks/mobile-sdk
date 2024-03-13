@@ -14,6 +14,7 @@ private struct HeaderViewControllerRepresentable : UIViewControllerRepresentable
     
     @State public var state: HeaderState = HeaderState.init(showSearch: false, showSearchClear: false)
     @State public var title: String? = nil
+    @State public var titleSlot: (() -> UIView)? = nil
     @State public var icon: UIImage? = nil
     @State public var onSearchClick: (() -> Void)? = nil
     @State public var onAdd: (() -> Void)? = nil
@@ -28,6 +29,7 @@ private struct HeaderViewControllerRepresentable : UIViewControllerRepresentable
         ComponentsKt._Header(
             state: state,
             title: title,
+            titleSlot: titleSlot,
             icon: icon,
             onSearchClicked: onSearchClick,
             onAdd: onAdd,
@@ -64,14 +66,15 @@ public struct Header: View {
     
     private var state: HeaderState = HeaderState.init(showSearch: false, showSearchClear: false)
     private var title: String? = nil
+    private var titleSlot: UIView? = nil
     private var icon: UIImage? = nil
     private var onSearchClick: (() -> Void)? = nil
     private var onAdd: (() -> Void)? = nil
     private var onCompose: (() -> Void)? = nil
     private var onBackClicked: (() -> Void)? = nil
-    private var endAction: (AnyView)? = nil
+    private var endAction: UIView? = nil
     
-    init(state: HeaderState = HeaderState.init(showSearch: false, showSearchClear: false), title: String? = nil, icon: UIImage? = nil, onSearchClick: ( () -> Void)? = nil, onAdd: ( () -> Void)? = nil, onCompose: ( () -> Void)? = nil, onBackClicked: ( () -> Void)? = nil, endAction: AnyView? = nil) {
+    init(state: HeaderState = HeaderState.init(showSearch: false, showSearchClear: false), title: String? = nil, icon: UIImage? = nil, onSearchClick: ( () -> Void)? = nil, onAdd: ( () -> Void)? = nil, onCompose: ( () -> Void)? = nil, onBackClicked: ( () -> Void)? = nil, endAction: UIView? = nil) {
         self.state = state
         self.title = title
         self.icon = icon
@@ -86,20 +89,16 @@ public struct Header: View {
         MeasuredView(
             useFullWidth: true,
             content: { w, h in
-                
-                let uiview: UIView? = endAction != nil ? UIHostingController(rootView: endAction).view : nil
-        
-                let action = uiview != nil ? { uiview! } : nil
-                
                 HeaderViewControllerRepresentable(
                     state: state,
                     title: title,
+                    titleSlot: titleSlot != nil ? { titleSlot! } : nil,
                     icon: icon,
                     onSearchClick: onSearchClick,
                     onAdd: onAdd,
                     onCompose: onCompose,
                     onBackClicked: onBackClicked,
-                    endAction: action,
+                    endAction: endAction != nil ? { endAction! } : nil,
                     measuredWidth: w,
                     measuredHeight: h
                 )
@@ -109,6 +108,13 @@ public struct Header: View {
 }
 
 extension Header {
+    public func title(_ block: () -> any View) -> Header {
+        var snapshot = self
+        let view = convertToUIView(block())
+        snapshot.titleSlot = { view }()
+        return snapshot
+    }
+    
     public func title(_ title: String) -> Header {
         var snapshot = self
         snapshot.title = title
@@ -156,4 +162,16 @@ extension Header {
         snapshot.state = HeaderState(showSearch: showSearch, showSearchClear: showSearch)
         return snapshot
     }
+}
+
+private func removeBackground(_ view: UIView) -> UIView {
+    view.backgroundColor = .clear
+    return view
+}
+
+private func convertToUIView<V: View>(_ swiftUIView: V) -> UIView {
+    let controller = UIHostingController(rootView: swiftUIView)
+    let view = controller.view!
+    controller.view.backgroundColor = .clear
+    return view
 }
