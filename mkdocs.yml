@@ -1,0 +1,57 @@
+# Project information
+site_name: 'Chat SDK'
+site_description: 'Delightful chat for your Android and iOS apps using Compose Multiplatform'
+site_author: 'botstacks'
+site_url: 'https://botstacks.github.io/mobile-sdk'
+remote_branch: gh-pages
+
+# Repository
+repo_name: 'compose-example'
+repo_url: 'https://github.com/botstacks/compose-example'
+
+# Copyright
+copyright: 'Copyright &copy; 2023 BotStacks'
+
+# Configuration
+theme:
+  name: 'material'
+  language: 'en'
+  palette:
+    primary: 'white'
+    accent: 'white'
+  font:
+    text: 'Roboto'
+    code: 'Roboto Mono'
+
+# Navigation
+nav:
+  - 'Overview': introduction.md
+  - 'Getting Started':
+      - 'Compose Multiplatform': compose/compose-getting-started.md
+      - 'Android': android/android-getting-started.md
+  - 'Components': compose/components.md
+  - 'Views': compose/views.md
+  - 'API':
+      - 'chat-sdk': api/index.md
+
+
+# CSS
+extra_css:
+  - 'css/site.css'
+
+# Extensions
+markdown_extensions:
+  - admonition
+  - codehilite:
+      guess_lang: false
+  - footnotes
+  - toc:
+      permalink: true
+  - pymdownx.betterem
+  - pymdownx.superfences
+
+# Plugins
+plugins:
+  - search
+  - minify:
+      minify_html: true

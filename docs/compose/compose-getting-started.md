@@ -258,4 +258,8 @@ BotStacksThemeEngine(
 }
 ```
 
+# Components & Views
+
+We also support direct component usage in your existing applications. Check out or [components](components.md) and [views](views.md) documentation for integrating them.
+
 
