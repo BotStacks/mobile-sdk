@@ -20,13 +20,22 @@ private struct HeaderViewControllerRepresentable : UIViewControllerRepresentable
     @State public var onAdd: (() -> Void)? = nil
     @State public var onCompose: (() -> Void)? = nil
     @State public var onBackClicked: (() -> Void)? = nil
-    @State public var endAction: (() -> UIView)? = nil
+    @State public var endAction: EndAction? = nil
     
     @Binding var measuredWidth: CGFloat
     @Binding var measuredHeight: CGFloat
 
     public func makeUIViewController(context: Context) -> UIViewController {
-        ComponentsKt._Header(
+        
+        let action: HeaderEndAction? = switch (endAction) {
+        case .next(let onClick): HeaderEndActionNext(onClick: onClick)
+        case .create(let onClick): HeaderEndActionCreate(onClick: onClick)
+        case .save(let onClick): HeaderEndActionSave(onClick: onClick)
+        case .menu(let onClick): HeaderEndActionMenu(onClick: onClick)
+        default: nil
+        }
+        
+        return ComponentsKt._Header(
             state: state,
             title: title,
             titleSlot: titleSlot,
@@ -35,7 +44,7 @@ private struct HeaderViewControllerRepresentable : UIViewControllerRepresentable
             onAdd: onAdd,
             onCompose: onCompose,
             onBackClicked: onBackClicked,
-            endAction: endAction
+            endAction: action
         ) { w, h in
             measuredWidth = CGFloat(truncating: w)
             measuredHeight = CGFloat(truncating: h)
@@ -61,7 +70,9 @@ private struct HeaderViewControllerRepresentable : UIViewControllerRepresentable
 ///     - onCompose: callback when the compose option is clicked. Providing this callback will enable a compose action to show.
 ///     - onBackClicked: callback for when up navigation is clicked. Providing this callback will enable up navigation to show.
 ///     - endAction: optional slot for an additional action at the end.
-///     
+///
+///     + SeeAlso: ``ChatExample/EndAction``
+///
 public struct Header: View {
     
     private var state: HeaderState = HeaderState.init(showSearch: false, showSearchClear: false)
@@ -72,9 +83,9 @@ public struct Header: View {
     private var onAdd: (() -> Void)? = nil
     private var onCompose: (() -> Void)? = nil
     private var onBackClicked: (() -> Void)? = nil
-    private var endAction: UIView? = nil
+    private var endAction: EndAction? = nil
     
-    init(state: HeaderState = HeaderState.init(showSearch: false, showSearchClear: false), title: String? = nil, icon: UIImage? = nil, onSearchClick: ( () -> Void)? = nil, onAdd: ( () -> Void)? = nil, onCompose: ( () -> Void)? = nil, onBackClicked: ( () -> Void)? = nil, endAction: UIView? = nil) {
+    init(state: HeaderState = HeaderState.init(showSearch: false, showSearchClear: false), title: String? = nil, icon: UIImage? = nil, onSearchClick: ( () -> Void)? = nil, onAdd: ( () -> Void)? = nil, onCompose: ( () -> Void)? = nil, onBackClicked: ( () -> Void)? = nil, endAction: EndAction? = nil) {
         self.state = state
         self.title = title
         self.icon = icon
@@ -98,7 +109,7 @@ public struct Header: View {
                     onAdd: onAdd,
                     onCompose: onCompose,
                     onBackClicked: onBackClicked,
-                    endAction: endAction != nil ? { endAction! } : nil,
+                    endAction: endAction,
                     measuredWidth: w,
                     measuredHeight: h
                 )
@@ -154,6 +165,12 @@ extension Header {
     public func withState(_ state: HeaderState) -> Header {
         var snapshot = self
         snapshot.state = state
+        return snapshot
+    }
+    
+    public func withEndAction(_ action: EndAction) -> Header {
+        var snapshot = self
+        snapshot.endAction = action
         return snapshot
     }
     

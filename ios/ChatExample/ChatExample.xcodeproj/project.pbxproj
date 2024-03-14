@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06B42CF02BA34B4600A02CFF /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42CEF2BA34B4600A02CFF /* Router.swift */; };
+		06B42CF22BA34BAC00A02CFF /* ComponentViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42CF12BA34BAC00A02CFF /* ComponentViews.swift */; };
+		06B42CF42BA365F700A02CFF /* HeaderEndActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42CF32BA365F700A02CFF /* HeaderEndActions.swift */; };
 		06EA28722B9E66F0000FE324 /* ChatExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28712B9E66F0000FE324 /* ChatExampleApp.swift */; };
 		06EA28742B9E66F0000FE324 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28732B9E66F0000FE324 /* ContentView.swift */; };
 		06EA28762B9E66F1000FE324 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06EA28752B9E66F1000FE324 /* Assets.xcassets */; };
@@ -19,6 +22,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		06B42CEF2BA34B4600A02CFF /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		06B42CF12BA34BAC00A02CFF /* ComponentViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentViews.swift; sourceTree = "<group>"; };
+		06B42CF32BA365F700A02CFF /* HeaderEndActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderEndActions.swift; sourceTree = "<group>"; };
 		06EA286E2B9E66F0000FE324 /* ChatExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06EA28712B9E66F0000FE324 /* ChatExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatExampleApp.swift; sourceTree = "<group>"; };
 		06EA28732B9E66F0000FE324 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -73,6 +79,8 @@
 				06EA28732B9E66F0000FE324 /* ContentView.swift */,
 				06EA28752B9E66F1000FE324 /* Assets.xcassets */,
 				06EA28772B9E66F1000FE324 /* Preview Content */,
+				06B42CEF2BA34B4600A02CFF /* Router.swift */,
+				06B42CF12BA34BAC00A02CFF /* ComponentViews.swift */,
 			);
 			path = ChatExample;
 			sourceTree = "<group>";
@@ -92,6 +100,7 @@
 				06EA28862B9F8FAF000FE324 /* MeasuredView.swift */,
 				06EA28882B9F9CDF000FE324 /* Avatar.swift */,
 				06EA288A2BA09B88000FE324 /* Header.swift */,
+				06B42CF32BA365F700A02CFF /* HeaderEndActions.swift */,
 			);
 			path = SDK;
 			sourceTree = "<group>";
@@ -249,9 +258,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06B42CF22BA34BAC00A02CFF /* ComponentViews.swift in Sources */,
 				06EA28742B9E66F0000FE324 /* ContentView.swift in Sources */,
 				06EA28802B9E67B6000FE324 /* Badge.swift in Sources */,
 				06EA28872B9F8FAF000FE324 /* MeasuredView.swift in Sources */,
+				06B42CF02BA34B4600A02CFF /* Router.swift in Sources */,
+				06B42CF42BA365F700A02CFF /* HeaderEndActions.swift in Sources */,
 				06EA28892B9F9CDF000FE324 /* Avatar.swift in Sources */,
 				06EA288B2BA09B88000FE324 /* Header.swift in Sources */,
 				06EA28722B9E66F0000FE324 /* ChatExampleApp.swift in Sources */,

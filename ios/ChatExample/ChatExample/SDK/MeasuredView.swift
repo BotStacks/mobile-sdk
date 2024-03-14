@@ -12,6 +12,8 @@ internal struct MeasuredView<Content: View>: View {
     
     @State public var measuredWidth: CGFloat = 1000.0
     @State var measuredHeight: CGFloat = 1000.0
+    
+    var contentPadding: EdgeInsets = EdgeInsets()
         
     var useFullWidth: Bool = false
     var useFullHeight: Bool = false
@@ -20,16 +22,18 @@ internal struct MeasuredView<Content: View>: View {
     init(
         useFullWidth: Bool = false,
         useFullHeight: Bool = false,
+        contentPadding: EdgeInsets = EdgeInsets(),
         @ViewBuilder content: @escaping (Binding<CGFloat>, Binding<CGFloat>) -> Content
     ) {
         self.useFullWidth = useFullWidth
         self.useFullHeight = useFullHeight
+        self.contentPadding = contentPadding
         self.content = content
     }
     
     var body: some View {
-        let width = (measuredWidth / UIScreen.main.scale)
-        let height = (measuredHeight / UIScreen.main.scale) + 4 // TODO: make this only applied to avatars w/ online statuses showing
+        let width = (measuredWidth / UIScreen.main.scale) + contentPadding.leading + contentPadding.trailing
+        let height = (measuredHeight / UIScreen.main.scale) + contentPadding.top + contentPadding.bottom
         
         content($measuredWidth, $measuredHeight)
             .modifier(ConditionalFrame(useFullWidth: useFullWidth, useFullHeight: useFullHeight, measuredWidth: width, measuredHeight: height))

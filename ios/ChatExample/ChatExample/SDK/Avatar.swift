@@ -67,6 +67,7 @@ public struct Avatar: View {
     
     public var body: some View {
         MeasuredView(
+            contentPadding: EdgeInsets(top: 0, leading: 0, bottom: onlineStatus != OnlineStatus.unknown ? 4 : 0, trailing: 0),
             content: { w, h in
                 if let type = type {
                     AvatarViewControllerRepresentable(

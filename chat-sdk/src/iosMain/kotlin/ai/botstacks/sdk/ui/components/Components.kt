@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,10 +33,15 @@ import platform.UIKit.UIView
 import platform.UIKit.UIViewController
 
 
+@OptIn(ExperimentalComposeApi::class)
 private fun measuredThemedViewController(
     onMeasured: (Double, Double) -> Unit,
     content: @Composable () -> Unit,
-): UIViewController = ComposeUIViewController {
+): UIViewController = ComposeUIViewController(
+    configure = {
+        opaque = true
+    }
+) {
     with(BotStacksTheme) {
         BotStacksThemeEngine(
             useDarkTheme = useDarkMode,
@@ -67,11 +73,10 @@ private fun IntrinsicWidthUIKitView(uiView: UIView) {
         factory = { uiView },
         onResize = { view, size ->
             size.useContents contents@{
-                if (updateCount <= 1) {
+                if (updateCount < 1) {
                     width = with(density) { this@contents.size.width.toInt().toDp() }
                     updateCount++
                 }
-                println("width=${this@contents.size.width.toInt()}")
             }
             view.setFrame(size)
         },
@@ -115,6 +120,13 @@ fun _Badge(
     )
 }
 
+sealed interface HeaderEndAction {
+    data class Create(val onClick: () -> Unit): HeaderEndAction
+    data class Next(val onClick: () -> Unit): HeaderEndAction
+    data class Save(val onClick: () -> Unit): HeaderEndAction
+    data class Menu(val onClick: () -> Unit): HeaderEndAction
+}
+
 fun _Header(
     state: HeaderState = HeaderState(),
     title: String? = null,
@@ -124,7 +136,7 @@ fun _Header(
     onAdd: (() -> Unit)? = null,
     onCompose: (() -> Unit)? = null,
     onBackClicked: (() -> Unit)? = null,
-    endAction: (() -> UIView)? = null,
+    endAction: HeaderEndAction? = null,
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured = onMeasured) {
     Header(
@@ -153,8 +165,13 @@ fun _Header(
         onCompose = onCompose,
         onBackClicked = onBackClicked,
         endAction = {
-            endAction?.let { view ->
-                IntrinsicWidthUIKitView(view())
+            endAction?.let { action ->
+                when (action) {
+                    is HeaderEndAction.Next -> HeaderDefaults.NextAction(action.onClick)
+                    is HeaderEndAction.Create -> HeaderDefaults.CreateAction(action.onClick)
+                    is HeaderEndAction.Menu -> HeaderDefaults.MenuAction(action.onClick)
+                    is HeaderEndAction.Save -> HeaderDefaults.SaveAction(action.onClick)
+                }
             }
         }
     )
