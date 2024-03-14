@@ -6,13 +6,13 @@
 # BotStacks SDK
 
 > Delightful chat for your Mobile apps
-Try the demo, download [BotStacks Android](https://play.google.com/store/apps/details?id=ai.botstacks.sample)
 
 &nbsp;
 
 # 📃 Platforms
 
-- [Android](sdk/docs/android/introduction.md)
+- [Android](docs/android/android-getting-started.md)
+- [iOS](docs/compose/compose-getting-started.md)
 
 &nbsp;
 

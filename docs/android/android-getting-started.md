@@ -140,4 +140,4 @@ BotStacksThemeEngine(
 
 # Components & Views
 
-We also support direct component usage in your existing applications. Check out or [components](../common/components.md) and [views](../common/views.md) documentation for integrating them.
+We also support direct component usage in your existing applications. Check out or [components](../compose/components.md) and [views](../compose/views.md) documentation for integrating them.
