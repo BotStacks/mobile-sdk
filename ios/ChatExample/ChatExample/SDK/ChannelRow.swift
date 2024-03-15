@@ -31,7 +31,7 @@ private struct ChannelRowViewControllerRepresentable : VCRepresentable {
 
     public func makeViewController(context: Context) -> UIViewController {
         ComponentsKt._ChannelRow(
-            chat: chat!,
+            chat: chat,
             showMemberPreview: showMemberPreview,
             imageUrls: imageUrls,
             title: title,
