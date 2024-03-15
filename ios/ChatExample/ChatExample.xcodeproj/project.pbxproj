@@ -15,6 +15,7 @@
 		06B42CFE2BA4B78A00A02CFF /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42CFD2BA4B78A00A02CFF /* UserProfile.swift */; };
 		06B42D012BA5009A00A02CFF /* ChannelGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D002BA5009A00A02CFF /* ChannelGroup.swift */; };
 		06B42D032BA501D400A02CFF /* SampleData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D022BA501D400A02CFF /* SampleData.swift */; };
+		06B42D052BA509C800A02CFF /* ChatInput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D042BA509C800A02CFF /* ChatInput.swift */; };
 		06EA28722B9E66F0000FE324 /* ChatExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28712B9E66F0000FE324 /* ChatExampleApp.swift */; };
 		06EA28742B9E66F0000FE324 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28732B9E66F0000FE324 /* ContentView.swift */; };
 		06EA28762B9E66F1000FE324 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06EA28752B9E66F1000FE324 /* Assets.xcassets */; };
@@ -35,6 +36,7 @@
 		06B42CFD2BA4B78A00A02CFF /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		06B42D002BA5009A00A02CFF /* ChannelGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelGroup.swift; sourceTree = "<group>"; };
 		06B42D022BA501D400A02CFF /* SampleData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleData.swift; sourceTree = "<group>"; };
+		06B42D042BA509C800A02CFF /* ChatInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInput.swift; sourceTree = "<group>"; };
 		06EA286E2B9E66F0000FE324 /* ChatExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06EA28712B9E66F0000FE324 /* ChatExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatExampleApp.swift; sourceTree = "<group>"; };
 		06EA28732B9E66F0000FE324 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 				06B42CFB2BA4B61900A02CFF /* Spinner.swift */,
 				06B42CFD2BA4B78A00A02CFF /* UserProfile.swift */,
 				06B42D002BA5009A00A02CFF /* ChannelGroup.swift */,
+				06B42D042BA509C800A02CFF /* ChatInput.swift */,
 			);
 			path = SDK;
 			sourceTree = "<group>";
@@ -289,6 +292,7 @@
 				06EA28802B9E67B6000FE324 /* Badge.swift in Sources */,
 				06B42CFA2BA4A5D600A02CFF /* VCRepresentable.swift in Sources */,
 				06EA28872B9F8FAF000FE324 /* MeasuredView.swift in Sources */,
+				06B42D052BA509C800A02CFF /* ChatInput.swift in Sources */,
 				06B42CF02BA34B4600A02CFF /* Router.swift in Sources */,
 				06B42CFC2BA4B61900A02CFF /* Spinner.swift in Sources */,
 				06EA28892B9F9CDF000FE324 /* Avatar.swift in Sources */,

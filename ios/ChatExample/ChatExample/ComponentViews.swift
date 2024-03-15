@@ -9,7 +9,7 @@ import Foundation
 import BotStacks_ChatSDK
 import SwiftUI
 
-struct Avatars: View {
+internal struct Avatars: View {
     var body: some View {
         ComponentView(title: "Avatar") {
             HStack {
@@ -25,7 +25,7 @@ struct Avatars: View {
     }
 }
 
-struct Badges: View {
+internal struct Badges: View {
     var body: some View {
         ComponentView(title: "Badge") {
             HStack {
@@ -36,7 +36,7 @@ struct Badges: View {
     }
 }
 
-struct ChannelRows: View {
+internal struct ChannelRows: View {
     var body: some View {
         ComponentView(title: "ChannelRow") {
             ChannelRow(imageUrls: [], title: "iOS Devs", subtitle: "27 members") {
@@ -53,11 +53,11 @@ struct ChannelRows: View {
             ) {
                 print("dudes clicked")
             }
-        }
+        }.padding()
     }
 }
 
-struct ChannelGroups: View {
+internal struct ChannelGroups: View {
     
     private let channels: [Chat] = generateChannelList()
 
@@ -69,7 +69,23 @@ struct ChannelGroups: View {
     }
 }
 
-struct Headers: View {
+internal struct ChatInputExample : View {
+    
+    private let chat: Chat = generateChannel()
+    
+    var body: some View {
+        VStack {
+            Spacer()
+            ChatInput(chat: chat, onMedia: {}).padding()
+        }.frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .topLeading
+        )
+    }
+}
+
+internal struct Headers: View {
     
     @State private var headerState: HeaderState = HeaderState.init(showSearch: true, showSearchClear: true)
     
@@ -140,7 +156,7 @@ struct Headers: View {
     }
 }
 
-struct Spinners: View {
+internal struct Spinners: View {
     var body: some View {
         ComponentView(title: "Spinner") {
             Spinner()
@@ -148,7 +164,7 @@ struct Spinners: View {
     }
 }
 
-struct UserProfiles: View {
+internal struct UserProfiles: View {
     
     private var user1: User
     private var user2: User
@@ -190,21 +206,16 @@ private struct ComponentView<Content: View>: View {
     }
     
     var body: some View {
-        VStack {
+        VStack(alignment: .center) {
             Header()
                 .title(title)
                 .backClicked {
                     router.navigateBack()
                 }
-            
             ScrollView {
                 content()
             }
-        }.frame(
-            maxWidth: .infinity,
-            maxHeight: .infinity,
-            alignment: .topLeading
-        )
+        }
         .ignoresSafeArea()
         .navigationBarTitle(Text(""), displayMode: .inline) // Hide navigation bar title
         .navigationBarBackButtonHidden()

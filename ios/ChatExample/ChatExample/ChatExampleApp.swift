@@ -22,6 +22,7 @@ struct ChatExampleApp: App {
                         case .badges: Badges()
                         case .channelrow: ChannelRows()
                         case .channelgroup: ChannelGroups()
+                        case .chatinput: ChatInputExample()
                         case .headers: Headers()
                         case .spinners: Spinners()
                         case .userprofiles: UserProfiles()
