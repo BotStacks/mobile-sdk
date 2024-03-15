@@ -32,29 +32,10 @@ struct ComponentShowCase: View {
         VStack {
            List {
                Section {
-                   HStack {
-                       Text("Avatars")
-                       Spacer()
-                   }.contentShape(Rectangle())
-                    .onTapGesture {
-                        router.navigate(to: .avatars)
-                    }
-                   
-                   HStack {
-                       Text("Badges")
-                       Spacer()
-                   }.contentShape(Rectangle())
-                    .onTapGesture {
-                        router.navigate(to: .badges)
-                    }
-                   
-                   HStack {
-                       Text("Headers")
-                       Spacer()
-                   }.contentShape(Rectangle())
-                    .onTapGesture {
-                        router.navigate(to: .headers)
-                    }
+                   ListRow(title: "Avatar") { router.navigate(to: .avatars) }
+                   ListRow(title: "Badge") { router.navigate(to: .badges) }
+                   ListRow(title: "ChannelRow") { router.navigate(to: .channelrow) }
+                   ListRow(title: "Header") { router.navigate(to: .headers) }
                } header: {
                    Text("Components")
                }
@@ -65,6 +46,22 @@ struct ComponentShowCase: View {
             maxHeight: .infinity,
             alignment: .top
         )
+    }
+}
+
+private struct ListRow: View {
+    
+    public var title: String
+    public var onClick: () -> Void
+    
+    var body: some View {
+        HStack {
+            Text(title)
+            Spacer()
+        }.contentShape(Rectangle())
+         .onTapGesture {
+             onClick()
+         }
     }
 }
 

@@ -18,15 +18,29 @@ struct ChatExampleApp: App {
                     .ignoresSafeArea()
                     .navigationDestination(for: Router.Destination.self) { destination in
                         switch destination {
-                        case .avatars:
-                            Avatars()
-                        case .badges:
-                            Badges()
-                        case .headers:
-                            Headers()
+                        case .avatars: Avatars()
+                        case .badges: Badges()
+                        case .channelrow: ChannelRows()
+                        case .headers: Headers()
                         }
                     }
             }.environmentObject(router)
         }
+    }
+}
+
+extension UINavigationController: UIGestureRecognizerDelegate {
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        interactivePopGestureRecognizer?.delegate = self
+    }
+
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return viewControllers.count > 1
+    }
+
+    // To make it works also with ScrollView
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        true
     }
 }

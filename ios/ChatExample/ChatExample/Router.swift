@@ -13,6 +13,7 @@ final class Router: ObservableObject {
     public enum Destination: Codable, Hashable {
         case avatars
         case badges
+        case channelrow
         case headers
     }
     
@@ -21,7 +22,7 @@ final class Router: ObservableObject {
     func navigate(to destination: Destination) {
         navPath.append(destination)
     }
-    
+
     func navigateBack() {
         navPath.removeLast()
     }

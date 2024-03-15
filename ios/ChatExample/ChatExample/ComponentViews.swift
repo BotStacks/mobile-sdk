@@ -11,7 +11,7 @@ import SwiftUI
 
 struct Avatars: View {
     var body: some View {
-        ComponentView(title: "Avatars") {
+        ComponentView(title: "Avatar") {
             HStack {
                 Avatar(url: "https://randomuser.me/api/portraits/men/81.jpg")
                 Avatar(url: "https://randomuser.me/api/portraits/men/80.jpg")
@@ -27,10 +27,31 @@ struct Avatars: View {
 
 struct Badges: View {
     var body: some View {
-        ComponentView(title: "Badges") {
+        ComponentView(title: "Badge") {
             HStack {
                 Badge(count: 3)
                 Badge(label: "Admin")
+            }
+        }
+    }
+}
+
+struct ChannelRows: View {
+    var body: some View {
+        ComponentView(title: "ChannelRow") {
+            ChannelRow(imageUrls: [], title: "iOS Devs", subtitle: "27 members") {
+                print("iOS Devs clicked")
+            }
+            ChannelRow(
+                imageUrls: [
+                    "https://randomuser.me/api/portraits/men/81.jpg",
+                    "https://randomuser.me/api/portraits/men/84.jpg"
+                ],
+                title: "Dudes",
+                titleColor: Color.green,
+                subtitle: "John, Dan"
+            ) {
+                print("dudes clicked")
             }
         }
     }
@@ -41,7 +62,7 @@ struct Headers: View {
     @State private var headerState: HeaderState = HeaderState.init(showSearch: true, showSearchClear: true)
     
     var body: some View {
-        ComponentView(title: "Headers") {
+        ComponentView(title: "Header") {
             Spacer(minLength: 50)
             Text("Using title string")
                 .font(.callout)
@@ -121,6 +142,7 @@ private struct ComponentView<Content: View>: View {
             maxHeight: .infinity,
             alignment: .topLeading
         )
+        .ignoresSafeArea()
         .navigationBarTitle(Text(""), displayMode: .inline) // Hide navigation bar title
         .navigationBarBackButtonHidden()
     }
