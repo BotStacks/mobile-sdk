@@ -60,6 +60,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		06B42CFF2BA4BA5B00A02CFF /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				06EA28862B9F8FAF000FE324 /* MeasuredView.swift */,
+				06B42CF92BA4A5D600A02CFF /* VCRepresentable.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		06EA28652B9E66F0000FE324 = {
 			isa = PBXGroup;
 			children = (
@@ -104,13 +113,12 @@
 		06EA28852B9F8FA0000FE324 /* SDK */ = {
 			isa = PBXGroup;
 			children = (
+				06B42CFF2BA4BA5B00A02CFF /* Utilities */,
 				06EA287F2B9E67B6000FE324 /* Badge.swift */,
-				06EA28862B9F8FAF000FE324 /* MeasuredView.swift */,
 				06EA28882B9F9CDF000FE324 /* Avatar.swift */,
 				06EA288A2BA09B88000FE324 /* Header.swift */,
 				06B42CF32BA365F700A02CFF /* HeaderEndActions.swift */,
 				06B42CF52BA3878400A02CFF /* ChannelRow.swift */,
-				06B42CF92BA4A5D600A02CFF /* VCRepresentable.swift */,
 				06B42CFB2BA4B61900A02CFF /* Spinner.swift */,
 				06B42CFD2BA4B78A00A02CFF /* UserProfile.swift */,
 			);
