@@ -10,38 +10,32 @@ import BotStacks_ChatSDK
 import SwiftUI
 
 /// The VC representable that abstracts away our KMP Compose Badge component for counts.
-private struct BadgeCountViewControllerRepresentable : UIViewControllerRepresentable {
+private struct BadgeCountViewControllerRepresentable : VCRepresentable {
     
     @State public var count: Int32
     @Binding var measuredWidth: CGFloat
     @Binding var measuredHeight: CGFloat
 
-    public func makeUIViewController(context: Context) -> UIViewController {
+    public func makeViewController(context: Context) -> UIViewController {
         ComponentsKt._Badge(count: count) { w, h in
             measuredWidth = CGFloat(truncating: w)
             measuredHeight = CGFloat(truncating: h)
         }
     }
-
-    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-    }
 }
 
 /// The VC representable that abstracts away our KMP Compose Badge component for labels.
-private struct BadgeLabelViewControllerRepresentable : UIViewControllerRepresentable {
+private struct BadgeLabelViewControllerRepresentable : VCRepresentable {
     
     @State public var label: String
     @Binding var measuredWidth: CGFloat
     @Binding var measuredHeight: CGFloat
 
-    public func makeUIViewController(context: Context) -> UIViewController {
+    public func makeViewController(context: Context) -> UIViewController {
         ComponentsKt._Badge(label: label) { w, h in
             measuredWidth = CGFloat(truncating: w)
             measuredHeight = CGFloat(truncating: h)
         }
-    }
-
-    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
     }
 }
 

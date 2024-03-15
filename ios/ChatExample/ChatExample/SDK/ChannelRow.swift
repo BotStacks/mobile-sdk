@@ -10,7 +10,7 @@ import SwiftUI
 import BotStacks_ChatSDK
 
 /// The VC representable that abstracts away our KMP Compose ChannelRow component.
-private struct ChannelRowViewControllerRepresentable : UIViewControllerRepresentable {
+private struct ChannelRowViewControllerRepresentable : VCRepresentable {
     
     @State public var chat: Chat? = nil
     @State public var showMemberPreview: Bool = false
@@ -29,40 +29,22 @@ private struct ChannelRowViewControllerRepresentable : UIViewControllerRepresent
     @Binding var measuredWidth: CGFloat
     @Binding var measuredHeight: CGFloat
 
-    public func makeUIViewController(context: Context) -> UIViewController {
-        if chat != nil {
-            ComponentsKt._ChannelRow(
-                chat: chat!,
-                showMemberPreview: showMemberPreview,
-                titleFontStyle: titleFontStyle,
-                titleColor: titleColor,
-                subtitle: subtitle,
-                subtitleFontStyle: subtitleFontStyle,
-                subtitleColor: subtitleColor,
-                onClick: onClick
-            ) { w, h in
-                measuredWidth = CGFloat(truncating: w)
-                measuredHeight = CGFloat(truncating: h)
-            }
-        } else {
-            ComponentsKt._ChannelRow(
-                imageUrls: imageUrls,
-                title: title,
-                titleFontStyle: titleFontStyle,
-                titleColor: titleColor,
-                subtitle: subtitle,
-                subtitleFontStyle: subtitleFontStyle,
-                subtitleColor: subtitleColor,
-                onClick: onClick
-            ) { w, h in
-                measuredWidth = CGFloat(truncating: w)
-                measuredHeight = CGFloat(truncating: h)
-            }
+    public func makeViewController(context: Context) -> UIViewController {
+        ComponentsKt._ChannelRow(
+            chat: chat!,
+            showMemberPreview: showMemberPreview,
+            imageUrls: imageUrls,
+            title: title,
+            titleFontStyle: titleFontStyle,
+            titleColor: titleColor,
+            subtitle: subtitle,
+            subtitleFontStyle: subtitleFontStyle,
+            subtitleColor: subtitleColor,
+            onClick: onClick
+        ) { w, h in
+            measuredWidth = CGFloat(truncating: w)
+            measuredHeight = CGFloat(truncating: h)
         }
-    }
-
-
-    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
     }
 }
 

@@ -49,33 +49,8 @@ fun _Badge(
 }
 
 fun _ChannelRow(
-    chat: Chat,
+    chat: Chat?,
     showMemberPreview: Boolean = false,
-    titleFontStyle: FontStyle? = null,
-    titleColor: UIColor? = null,
-    subtitleFontStyle: FontStyle? = null,
-    subtitleColor: UIColor? = null,
-    onClick: () -> Unit,
-    onMeasured: (Double, Double) -> Unit,
-): UIViewController = measuredThemedViewController(onMeasured) {
-
-    val titleTextStyle = titleFontStyle ?: BotStacks.fonts.body1
-    val titleTextColor = titleColor?.composeColor ?: BotStacks.colorScheme.onBackground
-    val subtitleTextStyle = subtitleFontStyle ?: BotStacks.fonts.body1
-    val subtitleTextColor = subtitleColor?.composeColor ?: BotStacks.colorScheme.caption
-
-    ChannelRow(
-        chat = chat,
-        showMemberPreview = showMemberPreview,
-        titleFontStyle = titleTextStyle,
-        titleColor = titleTextColor,
-        subtitleFontStyle = subtitleTextStyle,
-        subtitleColor = subtitleTextColor,
-        onClick = onClick
-    )
-}
-
-fun _ChannelRow(
     imageUrls: List<String>,
     title: String,
     titleFontStyle: FontStyle? = null,
@@ -92,15 +67,45 @@ fun _ChannelRow(
     val subtitleTextStyle = subtitleFontStyle ?: BotStacks.fonts.body1
     val subtitleTextColor = subtitleColor?.composeColor ?: BotStacks.colorScheme.caption
 
-    ChannelRow(
-        imageUrls = imageUrls,
-        title = title,
-        titleColor = titleTextColor,
-        titleFontStyle = titleTextStyle,
-        subtitle = subtitle,
-        subtitleColor = subtitleTextColor,
-        subtitleFontStyle = subtitleTextStyle,
-        onClick = onClick
+    if (chat != null) {
+        ChannelRow(
+            chat = chat,
+            showMemberPreview = showMemberPreview,
+            titleColor = titleTextColor,
+            titleFontStyle = titleTextStyle,
+            subtitleColor = subtitleTextColor,
+            subtitleFontStyle = subtitleTextStyle,
+            onClick = onClick
+        )
+    } else {
+        ChannelRow(
+            imageUrls = imageUrls,
+            title = title,
+            titleColor = titleTextColor,
+            titleFontStyle = titleTextStyle,
+            subtitle = subtitle,
+            subtitleColor = subtitleTextColor,
+            subtitleFontStyle = subtitleTextStyle,
+            onClick = onClick
+        )
+    }
+}
+
+fun _ChannelGroup(
+    channels: List<Chat>,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured) {
+    ChannelGroup(channels = channels)
+}
+
+fun _ChatInput(
+    chat: Chat,
+    onMedia: () -> Unit,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured) {
+    ChatInput(
+        chat = chat,
+        onMedia = onMedia,
     )
 }
 
@@ -114,13 +119,14 @@ fun _Header(
     onCompose: (() -> Unit)? = null,
     onBackClicked: (() -> Unit)? = null,
     endAction: HeaderEndAction? = null,
+    menu: (() -> UIView)? = null,
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured = onMeasured) {
     Header(
         state = state,
         title = {
             if (titleSlot != null) {
-                IntrinsicWidthUIKitView(titleSlot())
+                IntrinsicWidthUIKitView(uiView = titleSlot())
             } else {
                 title?.let { HeaderDefaults.Title(title) }
             }
@@ -142,6 +148,14 @@ fun _Header(
         onCompose = onCompose,
         onBackClicked = onBackClicked,
         endAction = {
+            if (menu != null) {
+                println("menu from SwiftUI")
+                IntrinsicWidthUIKitView(
+                    uiView = menu()
+                )
+                return@Header
+            }
+
             endAction?.let { action ->
                 when (action) {
                     is HeaderEndAction.Next -> HeaderDefaults.NextAction(action.onClick)
@@ -152,4 +166,10 @@ fun _Header(
             }
         }
     )
+}
+
+fun _Spinner(
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured) {
+    Spinner()
 }

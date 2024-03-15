@@ -10,7 +10,7 @@ import SwiftUI
 import BotStacks_ChatSDK
 
 /// The VC representable that abstracts away our KMP Compose Avatar component.
-private struct AvatarViewControllerRepresentable : UIViewControllerRepresentable {
+private struct AvatarViewControllerRepresentable : VCRepresentable {
     
     @State public var size: AvatarSize
     @State public var type: AvatarType
@@ -20,14 +20,11 @@ private struct AvatarViewControllerRepresentable : UIViewControllerRepresentable
     @Binding var measuredWidth: CGFloat
     @Binding var measuredHeight: CGFloat
 
-    public func makeUIViewController(context: Context) -> UIViewController {
+    public func makeViewController(context: Context) -> UIViewController {
         ComponentsKt._Avatar(size: size, type: type, isSelected: isSelected, isRemovable: isRemovable) { w, h in
             measuredWidth = CGFloat(truncating: w)
             measuredHeight = CGFloat(truncating: h)
         }
-    }
-
-    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
     }
 }
 

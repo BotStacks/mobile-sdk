@@ -15,6 +15,7 @@ final class Router: ObservableObject {
         case badges
         case channelrow
         case headers
+        case spinners
     }
     
     @Published var navPath = NavigationPath()

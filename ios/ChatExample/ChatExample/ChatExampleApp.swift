@@ -22,6 +22,7 @@ struct ChatExampleApp: App {
                         case .badges: Badges()
                         case .channelrow: ChannelRows()
                         case .headers: Headers()
+                        case .spinners: Spinners()
                         }
                     }
             }.environmentObject(router)

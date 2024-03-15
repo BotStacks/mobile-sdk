@@ -10,7 +10,7 @@ import SwiftUI
 import BotStacks_ChatSDK
 
 /// The VC representable that abstracts away our KMP Compose Header component.
-private struct HeaderViewControllerRepresentable : UIViewControllerRepresentable {
+private struct HeaderViewControllerRepresentable : VCRepresentable {
     
     @State public var state: HeaderState = HeaderState.init(showSearch: false, showSearchClear: false)
     @State public var title: String? = nil
@@ -21,11 +21,12 @@ private struct HeaderViewControllerRepresentable : UIViewControllerRepresentable
     @State public var onCompose: (() -> Void)? = nil
     @State public var onBackClicked: (() -> Void)? = nil
     @State public var endAction: EndAction? = nil
+    @State public var menu: (() -> UIView)? = nil
     
     @Binding var measuredWidth: CGFloat
     @Binding var measuredHeight: CGFloat
 
-    public func makeUIViewController(context: Context) -> UIViewController {
+    public func makeViewController(context: Context) -> UIViewController {
         
         let action: HeaderEndAction? = switch (endAction) {
         case .next(let onClick): HeaderEndActionNext(onClick: onClick)
@@ -44,15 +45,12 @@ private struct HeaderViewControllerRepresentable : UIViewControllerRepresentable
             onAdd: onAdd,
             onCompose: onCompose,
             onBackClicked: onBackClicked,
-            endAction: action
+            endAction: action,
+            menu: menu
         ) { w, h in
             measuredWidth = CGFloat(truncating: w)
             measuredHeight = CGFloat(truncating: h)
         }
-    }
-
-
-    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
     }
 }
 
@@ -84,6 +82,7 @@ public struct Header: View {
     private var onCompose: (() -> Void)? = nil
     private var onBackClicked: (() -> Void)? = nil
     private var endAction: EndAction? = nil
+    private var menu: UIView? = nil
     
     init(state: HeaderState = HeaderState.init(showSearch: false, showSearchClear: false), title: String? = nil, icon: UIImage? = nil, onSearchClick: ( () -> Void)? = nil, onAdd: ( () -> Void)? = nil, onCompose: ( () -> Void)? = nil, onBackClicked: ( () -> Void)? = nil, endAction: EndAction? = nil) {
         self.state = state
@@ -110,6 +109,7 @@ public struct Header: View {
                     onCompose: onCompose,
                     onBackClicked: onBackClicked,
                     endAction: endAction,
+                    menu: menu != nil ? { menu! } : nil,
                     measuredWidth: w,
                     measuredHeight: h
                 )
@@ -174,6 +174,12 @@ extension Header {
         return snapshot
     }
     
+    public func menu(_ block: () -> any View) -> Header {
+        var snapshot = self
+        let view = convertToUIView(block())
+        snapshot.menu = { view }()
+        return snapshot
+    }
     public func withSearchVisible(_ showSearch: Bool, _ showClear: Bool = false) -> Header {
         var snapshot = self
         snapshot.state = HeaderState(showSearch: showSearch, showSearchClear: showSearch)
@@ -186,7 +192,7 @@ private func removeBackground(_ view: UIView) -> UIView {
     return view
 }
 
-private func convertToUIView<V: View>(_ swiftUIView: V) -> UIView {
+internal func convertToUIView<V: View>(_ swiftUIView: V) -> UIView {
     let controller = UIHostingController(rootView: swiftUIView)
     let view = controller.view!
     controller.view.backgroundColor = .clear

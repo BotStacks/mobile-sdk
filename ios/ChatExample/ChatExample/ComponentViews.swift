@@ -85,6 +85,19 @@ struct Headers: View {
             Header()
                 .icon(UIImage.init(systemName: "globe")!)
             
+            Text("With menu")
+                .font(.callout)
+            Header()
+                .title("Home")
+                .menu {
+                    Menu {
+                        Button("BotStacks is 🔥", action: { })
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .tint(Color.black)
+                    }
+                }
+            
             Text("With back navigation")
                 .font(.callout)
             Header()
@@ -114,6 +127,15 @@ struct Headers: View {
         }
     }
 }
+
+struct Spinners: View {
+    var body: some View {
+        ComponentView(title: "Spinners") {
+            Spinner()
+        }
+    }
+}
+
 private struct ComponentView<Content: View>: View {
     
     @EnvironmentObject var router: Router
