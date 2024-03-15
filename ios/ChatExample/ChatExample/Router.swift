@@ -14,6 +14,7 @@ final class Router: ObservableObject {
         case avatars
         case badges
         case channelrow
+        case channelgroup
         case headers
         case spinners
         case userprofiles

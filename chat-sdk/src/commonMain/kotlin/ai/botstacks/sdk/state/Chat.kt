@@ -23,9 +23,7 @@ import ai.botstacks.sdk.internal.utils.op
 class Chat(id: String, val kind: ChatType) : Pager<Message>(id), Identifiable {
 
     var name by mutableStateOf<String?>(null)
-        internal set
     var image by mutableStateOf<String?>(null)
-        internal set
     var description by mutableStateOf<String?>(null)
         internal set
     val members = mutableStateListOf<Participant>()

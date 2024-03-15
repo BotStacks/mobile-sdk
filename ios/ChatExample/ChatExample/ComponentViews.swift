@@ -57,6 +57,18 @@ struct ChannelRows: View {
     }
 }
 
+struct ChannelGroups: View {
+    
+    private let channels: [Chat] = generateChannelList()
+
+    
+    var body: some View {
+        ComponentView(title: "ChannelGroup") {
+            ChannelGroup(channels: channels)
+        }
+    }
+}
+
 struct Headers: View {
     
     @State private var headerState: HeaderState = HeaderState.init(showSearch: true, showSearchClear: true)

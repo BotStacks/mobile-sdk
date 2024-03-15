@@ -34,6 +34,7 @@ struct ComponentShowCase: View {
                Section {
                    ListRow(title: "Avatar") { router.navigate(to: .avatars) }
                    ListRow(title: "Badge") { router.navigate(to: .badges) }
+                   ListRow(title: "ChannelGroup") { router.navigate(to: .channelgroup) }
                    ListRow(title: "ChannelRow") { router.navigate(to: .channelrow) }
                    ListRow(title: "Header") { router.navigate(to: .headers) }
                    ListRow(title: "Spinner") { router.navigate(to: .spinners) }
