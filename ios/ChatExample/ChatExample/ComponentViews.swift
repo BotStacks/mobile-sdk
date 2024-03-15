@@ -130,8 +130,37 @@ struct Headers: View {
 
 struct Spinners: View {
     var body: some View {
-        ComponentView(title: "Spinners") {
+        ComponentView(title: "Spinner") {
             Spinner()
+        }
+    }
+}
+
+struct UserProfiles: View {
+    
+    private var user1: User
+    private var user2: User
+    
+    init() {
+        self.user1 = User(id: UUID().uuidString)
+        self.user1.username = "jon_doe"
+        self.user1.displayName = "Jon Doe"
+        self.user1.avatar = "https://randomuser.me/api/portraits/men/81.jpg"
+        
+        self.user2 = User(id: UUID().uuidString)
+        self.user2.username = "jane_doe"
+        self.user2.displayName = "Jane Doe"
+        self.user2.avatar = "https://randomuser.me/api/portraits/women/21.jpg"
+    }
+    
+    var body: some View {
+        ComponentView(title: "UserProfile") {
+            VStack {
+                HStack {
+                    UserProfile(user: user1)
+                    UserProfile(user: user2)
+                }
+            }
         }
     }
 }

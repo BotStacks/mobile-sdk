@@ -2,6 +2,7 @@ package ai.botstacks.sdk.ui.components
 
 import ai.botstacks.sdk.internal.utils.ui.composeColor
 import ai.botstacks.sdk.state.Chat
+import ai.botstacks.sdk.state.User
 import ai.botstacks.sdk.ui.BotStacks
 import ai.botstacks.sdk.ui.theme.FontStyle
 import ai.botstacks.sdk.ui.theme.painterImageAsset
@@ -172,4 +173,11 @@ fun _Spinner(
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured) {
     Spinner()
+}
+
+fun _UserProfile(
+    user: User,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured) {
+    UserProfile(user = user)
 }

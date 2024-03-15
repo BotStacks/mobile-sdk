@@ -9,6 +9,7 @@ import Foundation
 import BotStacks_ChatSDK
 import SwiftUI
 
+/// The VC representable that abstracts away our KMP Compose Spinner component.
 private struct SpinnerViewControllerRepresentable : VCRepresentable {
     
     @Binding var measuredWidth: CGFloat
@@ -22,6 +23,10 @@ private struct SpinnerViewControllerRepresentable : VCRepresentable {
     }
 }
 
+///
+/// Spinner
+///
+/// Themed spinner, colored with ``BotStacksChatSDK.Colors.primary``.
 public struct Spinner: View {
     public var body: some View {
         MeasuredView(content: { w, h in

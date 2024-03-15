@@ -37,6 +37,7 @@ struct ComponentShowCase: View {
                    ListRow(title: "ChannelRow") { router.navigate(to: .channelrow) }
                    ListRow(title: "Header") { router.navigate(to: .headers) }
                    ListRow(title: "Spinner") { router.navigate(to: .spinners) }
+                   ListRow(title: "UserProfile") { router.navigate(to: .userprofiles) }
                } header: {
                    Text("Components")
                }
