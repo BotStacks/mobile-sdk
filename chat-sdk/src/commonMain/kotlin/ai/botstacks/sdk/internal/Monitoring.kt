@@ -6,7 +6,7 @@ package ai.botstacks.sdk.internal
 
 import ai.botstacks.sdk.BotStacksChat
 import ai.botstacks.sdk.LogLevel
-import ai.botstacks.sdk.SdkConfigg
+import ai.botstacks.sdk.SdkConfig
 
 internal val Monitor
     get() = BotStacksChat.monitoring

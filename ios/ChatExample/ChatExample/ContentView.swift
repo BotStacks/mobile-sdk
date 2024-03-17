@@ -32,6 +32,10 @@ struct ComponentShowCase: View {
         VStack {
            List {
                Section {
+                   ListRow(title: "Chat Controller Example") { router.navigate(to: .login) }
+               }
+               
+               Section {
                    ListRow(title: "Avatar") { router.navigate(to: .avatars) }
                    ListRow(title: "Badge") { router.navigate(to: .badges) }
                    ListRow(title: "ChannelGroup") { router.navigate(to: .channelgroup) }

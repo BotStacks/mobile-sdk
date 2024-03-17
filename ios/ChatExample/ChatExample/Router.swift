@@ -11,6 +11,7 @@ import SwiftUI
 final class Router: ObservableObject {
     
     public enum Destination: Codable, Hashable {
+        // MARK: components
         case avatars
         case badges
         case channelrow
@@ -19,6 +20,11 @@ final class Router: ObservableObject {
         case headers
         case spinners
         case userprofiles
+        
+        // MARK: E2E Controller nodes
+        case login
+        case controller
+    
     }
     
     @Published var navPath = NavigationPath()

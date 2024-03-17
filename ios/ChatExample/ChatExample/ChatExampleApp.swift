@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import BotStacks_ChatSDK
 
 @main
 struct ChatExampleApp: App {
     @ObservedObject var router = Router()
     
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.navPath) {
@@ -26,10 +29,34 @@ struct ChatExampleApp: App {
                         case .headers: Headers()
                         case .spinners: Spinners()
                         case .userprofiles: UserProfiles()
+                            
+                        case .login: LoginView()
+                        case .controller: ChatControllerExample()
+
                         }
                     }
             }.environmentObject(router)
         }
+    }
+}
+
+
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
+        BotStacksChat.shared.setupLogging(level: .error, log: { log in print(log) })
+        guard let apiKey = readPlist(list: "AppSecrets", key: "BOTSTACKS_API_KEY") else {
+            return true
+        }
+        
+        print(apiKey)
+        
+        BotStacksChat.shared.setup(apiKey: apiKey)
+        
+        return true
     }
 }
 
@@ -48,3 +75,32 @@ extension UINavigationController: UIGestureRecognizerDelegate {
         true
     }
 }
+                                   
+private func readPlist(list: String, key: String) -> String? {
+    guard let plistPath = Bundle.main.path(forResource: list, ofType: "plist"),
+          let plistData = FileManager.default.contents(atPath: plistPath) else {
+        print("Error: Unable to locate or read plist file")
+        return nil
+    }
+
+    do {
+        // Deserialize plist data into a Swift object (Array, Dictionary, etc.)
+        let plistObject = try PropertyListSerialization.propertyList(from: plistData, format: nil)
+        
+        // Handle the deserialized plist object
+        if let plistDictionary = plistObject as? [String: Any] {
+            // Access data from the plist dictionary
+            if let value = plistDictionary[key] as? String {
+                return value
+            }
+        } else {
+            print("Error: Unable to parse plist data")
+        }
+    } catch {
+        print("Error reading plist file: \(error)")
+    }
+    
+    return nil
+}
+            
+            
