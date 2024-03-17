@@ -1,6 +1,6 @@
 package ai.botstacks.sdk.internal.ui.components.permissions
 
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import kotlinx.coroutines.CoroutineScope
@@ -61,7 +61,7 @@ internal actual class PermissionsManager actual constructor(private val callback
 
             PermissionType.Location -> {
                 val authStatus = locationManager.authorizationStatus()
-                Monitoring.log("location auth status=$authStatus")
+                Monitor.debug("location auth status=$authStatus")
                 authStatus == kCLAuthorizationStatusAuthorizedWhenInUse || authStatus == kCLAuthorizationStatusAuthorizedAlways
             }
         }

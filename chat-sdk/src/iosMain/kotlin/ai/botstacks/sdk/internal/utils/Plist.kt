@@ -1,6 +1,6 @@
 package ai.botstacks.sdk.internal.utils
 
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import platform.Foundation.NSBundle
 import platform.Foundation.NSDictionary
 import platform.Foundation.create
@@ -8,7 +8,7 @@ import platform.Foundation.create
 internal fun <T> readPlist(name: String, key: String): T? {
     val bundle = NSBundle.mainBundle.pathForResource(name, "plist")
     if (bundle == null) {
-        Monitoring.log("Unable to read $name.plist")
+        Monitor.error("Unable to read $name.plist")
         return null
     }
 
@@ -23,7 +23,7 @@ internal fun <T> readPlist(plist: NSDictionary?, key: String): T? {
 internal fun hasKeysInPlist(name: String, vararg key: String): Boolean {
     val bundle = NSBundle.mainBundle.pathForResource(name, "plist")
     if (bundle == null) {
-        Monitoring.log("Unable to read $name.plist")
+        Monitor.error("Unable to read $name.plist")
         return false
     }
 

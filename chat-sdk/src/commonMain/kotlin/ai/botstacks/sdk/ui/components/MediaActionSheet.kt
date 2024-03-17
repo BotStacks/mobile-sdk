@@ -6,7 +6,7 @@
 
 package ai.botstacks.sdk.ui.components
 
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.actions.send
 import ai.botstacks.sdk.internal.navigation.BackHandler
 import ai.botstacks.sdk.state.Chat
@@ -220,7 +220,7 @@ fun MediaActionSheet(
                     )
                 }
 
-                else -> Monitoring.log("empty media")
+                else -> Monitor.error("empty media")
             }
         }
 
@@ -249,7 +249,7 @@ private fun AssetPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () -
         selectionMode = FilePickerSelectionMode.Single,
         onResult = { files ->
             val file = files.firstOrNull()
-            Monitoring.log("selected $file")
+            Monitor.debug("selected $file")
             file?.let(onUri) ?: onCancel()
         }
     )
@@ -294,7 +294,7 @@ private fun CameraPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () 
                     if (status == PermissionStatus.GRANTED) {
                         cameraManager.launch()
                     } else {
-                        Monitoring.log("camera permission not granted")
+                        Monitor.error("camera permission not granted")
                         onCancel()
                     }
                 }
@@ -329,7 +329,7 @@ private fun LocationPicker(
                     if (status == PermissionStatus.GRANTED) {
                         fetchLocation()
                     } else {
-                        Monitoring.log("location permission not granted")
+                        Monitor.error("location permission not granted")
                         onCancel()
                     }
                 }

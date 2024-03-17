@@ -6,7 +6,7 @@ import ai.botstacks.sdk.fragment.FChat
 import ai.botstacks.sdk.fragment.FMember
 import ai.botstacks.sdk.fragment.FMessage
 import ai.botstacks.sdk.fragment.FUser
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.state.Chat
 import ai.botstacks.sdk.state.Participant
 import ai.botstacks.sdk.state.Message
@@ -35,7 +35,7 @@ internal fun BotStacksChatStore.onCreateChat(it: FChat) {
 }
 
 internal fun BotStacksChatStore.onCoreEvent(event: CoreSubscription.Core) {
-    Monitoring.log("Got Core Event $event")
+    Monitor.debug("Got Core Event $event")
     event.onDeleteEvent?.fDelete?.let {
         when (it.kind) {
             DeleteEntity.Message -> {
@@ -93,9 +93,9 @@ internal fun BotStacksChatStore.onCoreEvent(event: CoreSubscription.Core) {
             }
         }
         it.entity.onMessage?.fMessage?.let {
-            Monitoring.log("On new Message")
+            Monitor.debug("On new Message")
             Chat.get(it.chat_id)?.let { chat ->
-                Monitoring.log("Have chat for message")
+                Monitor.debug("Have chat for message")
                 val message = Message.get(it)
                 if (chat.addMessage(message)) {
                     if (Chat.currentlyViewed != message.chatID) {
@@ -111,7 +111,7 @@ internal fun BotStacksChatStore.onCoreEvent(event: CoreSubscription.Core) {
 }
 
 internal fun BotStacksChatStore.onMeEvent(event: MeSubscription.Me) {
-    Monitoring.log("Got Me Event $event")
+    Monitor.debug("Got Me Event $event")
     event.onInviteEvent?.let {
         val chat = Chat.get(it.fInvite.to.fChat)
         val user = User.get(it.fInvite.by.fUser)

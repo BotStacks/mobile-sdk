@@ -1,7 +1,7 @@
 package ai.botstacks.sdk
 
 import ai.botstacks.sdk.internal.API
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.state.BotStacksChatStore
 import ai.botstacks.sdk.internal.utils.bg
 import ai.botstacks.sdk.internal.utils.op
@@ -124,7 +124,7 @@ actual class BotStacksChatPlatform : BotStacksChat() {
             isUserLoggedIn = BotStacksChatStore.current.currentUserID != null
             loggingIn = false
         }.onFailure { err ->
-            Monitoring.error(err)
+            Monitor.error(err)
             loggingIn = false
         }
     }
@@ -138,7 +138,7 @@ actual class BotStacksChatPlatform : BotStacksChat() {
      * NOTE: An [apiKey] must be provided during [setup] prior to calling this.
      */
     actual suspend fun load() {
-        Monitoring.log("Start load")
+        Monitor.debug("Start load")
         if (apiKey.isEmpty()) {
             throw Error("You must initialize BotStacksChat with BotStacksChat.init before calling load")
         }

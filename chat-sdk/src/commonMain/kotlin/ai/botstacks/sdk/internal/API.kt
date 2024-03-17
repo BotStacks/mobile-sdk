@@ -146,7 +146,7 @@ internal object API {
                 )
             }
         })
-        .addHttpInterceptor(LoggingInterceptor(log = { Monitoring.log(it) }))
+        .addHttpInterceptor(LoggingInterceptor(log = { Monitor.network(it) }))
         .addInterceptor(object : ApolloInterceptor {
             override fun <D : Operation.Data> intercept(
                 request: ApolloRequest<D>,
@@ -155,7 +155,7 @@ internal object API {
                 return chain.proceed(request).onEach { response ->
                     response.errors?.let {
                         for (err in it) {
-                            Monitoring.log("Got error " + err.message)
+                            Monitor.error("Got error " + err.message)
                             if (err.message == "login required") {
                                 withContext(Dispatchers.Main) {
                                     onLogout()
@@ -364,7 +364,7 @@ internal object API {
             BotStacksChatStore.current.loadAsync()
             subscribe()
         } catch (err: Error) {
-            Monitoring.error(err)
+            Monitor.error(err)
         }
     }
 
@@ -374,12 +374,12 @@ internal object API {
         subscriptionScope.launch {
             client.subscription(CoreSubscription()).toFlow().collectLatest {
                 it.data?.let {
-                    Monitoring.log("Got subscription event $it")
+                    Monitor.debug("Got subscription event $it")
                     BotStacksChat.shared.scope.launch {
                         BotStacksChatStore.current.onCoreEvent(it.core)
                     }
                 } ?: it.errors?.forEach {
-                    Monitoring.error(it.message)
+                    Monitor.error(it.message)
                 }
             }
 
@@ -390,7 +390,7 @@ internal object API {
                         BotStacksChatStore.current.onMeEvent(it.me)
                     }
                 } ?: it.errors?.forEach {
-                    Monitoring.error(it.message)
+                    Monitor.error(it.message)
                 }
             }
         }

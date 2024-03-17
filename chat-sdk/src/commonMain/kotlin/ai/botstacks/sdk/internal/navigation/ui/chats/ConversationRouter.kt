@@ -5,7 +5,7 @@
 package ai.botstacks.sdk.internal.navigation.ui.chats
 
 import ai.botstacks.sdk.internal.API
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,14 +40,14 @@ internal fun ConversationRouter(
     }
     LaunchedEffect(gid) {
         if (gid != null && chat == null) {
-            Monitoring.log("gid trigger")
+            Monitor.debug("gid trigger")
             try {
                 chat = API.getChat(gid)
             } catch (err: Exception) {
-                Monitoring.error(err)
+                Monitor.error(err)
                 notFound = true
             } catch (err: Error) {
-                Monitoring.error(err)
+                Monitor.error(err)
                 notFound = true
             }
         }
@@ -55,14 +55,14 @@ internal fun ConversationRouter(
 
     LaunchedEffect(uid) {
         if (uid != null && chat == null) {
-            Monitoring.log("uid trigger")
+            Monitor.debug("uid trigger")
             try {
                 chat = API.dm(uid)
             } catch (err: Exception) {
-                Monitoring.error(err)
+                Monitor.error(err)
                 notFound = true
             } catch (err: Error) {
-                Monitoring.error(err)
+                Monitor.error(err)
                 notFound = true
             }
         }
@@ -70,17 +70,17 @@ internal fun ConversationRouter(
 
     LaunchedEffect(mid) {
         if (mid != null && chat == null) {
-            Monitoring.log("mid trigger")
+            Monitor.debug("mid trigger")
             try {
                 val m = Message.get(mid) ?: API.getMessage(mid)
                 m?.let {
                     chat = Chat.get(it.chatID) ?: API.getChat(it.chatID)
                 }
             } catch (err: Exception) {
-                Monitoring.error(err)
+                Monitor.error(err)
                 notFound = true
             } catch (err: Error) {
-                Monitoring.error(err)
+                Monitor.error(err)
                 notFound = true
             }
         }

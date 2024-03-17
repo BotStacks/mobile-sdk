@@ -1,6 +1,6 @@
 package com.mohamedrejeb.calf.picker
 
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -120,7 +120,7 @@ private fun rememberImagePickerLauncher(
         object : NSObject(), PHPickerViewControllerDelegateProtocol {
             override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
                 picker.dismissViewControllerAnimated(true, null)
-                Monitoring.log("didFinishPicking: $didFinishPicking")
+                Monitor.debug("didFinishPicking: $didFinishPicking")
 
                 coroutineScope.launch {
                     val results = didFinishPicking.mapNotNull {
@@ -159,10 +159,10 @@ private suspend fun NSItemProvider.loadFileRepresentationForTypeIdentifier(): NS
             typeIdentifier = UTTypeImage.identifier,
         ) { url, error ->
             if (error != null) {
-                Monitoring.error("Error: $error")
+                Monitor.error("Error: $error")
                 cont.resume(null)
             } else {
-                Monitoring.log("url=$url, ext=${url?.pathExtension}")
+                Monitor.debug("url=$url, ext=${url?.pathExtension}")
                 val tmpUrl = url?.let { TemporaryImageURL(it) }
                 val contentUrl = runCatching { tmpUrl?.contentURL }.getOrNull()
                 cont.resume(contentUrl)

@@ -3,7 +3,6 @@
 package ai.botstacks.sdk.ui.views
 
 import ai.botstacks.sdk.internal.API
-import ai.botstacks.sdk.internal.Monitoring
 import ai.botstacks.sdk.state.Chat
 import ai.botstacks.sdk.internal.state.Upload
 import ai.botstacks.sdk.state.User
@@ -51,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.TextFieldValue
 import ai.botstacks.`chat-sdk`.generated.resources.Res
+import ai.botstacks.sdk.internal.Monitor
 import com.mohamedrejeb.calf.io.KmpFile
 import com.mohamedrejeb.calf.picker.FilePickerFileType
 import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
@@ -116,7 +116,7 @@ class ChannelSettingsState(private val chat: Chat) {
                     val invites = participants.filterNot { existingUsers.contains(it) }
                         .map { it.id }
 
-                    Monitoring.log("inviting ${invites.count()} users to channel")
+                    Monitor.debug("inviting ${invites.count()} users to channel")
                     if (invites.isNotEmpty()) {
                         val inviteResult = runCatching { API.inviteUsers(chat.id, invites) }
                         inviteResult.exceptionOrNull()?.let { throw it }
@@ -130,7 +130,7 @@ class ChannelSettingsState(private val chat: Chat) {
                     image = imageUrl,
                 )
             }.onFailure {
-                Monitoring.error(it)
+                Monitor.error(it)
                 saving = false
             }.onSuccess {
                 saving = false

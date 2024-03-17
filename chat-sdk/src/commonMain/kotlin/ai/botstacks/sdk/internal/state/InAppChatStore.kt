@@ -6,7 +6,7 @@ package ai.botstacks.sdk.internal.state
 
 import ai.botstacks.sdk.internal.API
 import ai.botstacks.sdk.BotStacksChat
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.utils.uuid
 import ai.botstacks.sdk.state.ChannelsPager
 import ai.botstacks.sdk.state.Chat
@@ -61,7 +61,6 @@ internal data class BotStacksChatStore(val id: String = uuid()) {
     var user by mutableStateOf<User?>(null)
 
     fun init() {
-        Monitoring.setup()
         API.init()
         settings.init()
     }
@@ -69,7 +68,7 @@ internal data class BotStacksChatStore(val id: String = uuid()) {
     suspend fun loadAsync() {
         currentUserID ?: return
         val user = API.me()
-        Monitoring.log("user id ${user.id}")
+        Monitor.debug("user id ${user.id}")
         User.current = user
         val fcmToken = this.fcmToken
         if (fcmToken != null) {
@@ -108,13 +107,13 @@ internal data class BotStacksChatStore(val id: String = uuid()) {
         when (list) {
             ChatList.dms -> {
                 val it = dms.sumOf { it.unreadCount }
-                Monitoring.log("Dms unread count $it")
+                Monitor.debug("Dms unread count $it")
                 it
             }
 
             ChatList.groups -> {
                 val it = groups.sumOf { it.unreadCount }
-                Monitoring.log("groups unread count $it")
+                Monitor.debug("groups unread count $it")
                 it
             }
         }

@@ -1,5 +1,6 @@
 package ai.botstacks.sdk.ui.components
 
+import ai.botstacks.sdk.internal.ui.components.EmptyListView
 import ai.botstacks.sdk.internal.utils.ui.composeColor
 import ai.botstacks.sdk.state.Chat
 import ai.botstacks.sdk.state.User
@@ -107,6 +108,31 @@ fun _ChatInput(
     ChatInput(
         chat = chat,
         onMedia = onMedia,
+    )
+}
+
+fun _ChatList(
+    header: UIView? = null,
+    emptyState: UIView? = null,
+    filter: (Chat) -> Boolean = { true },
+    onChatClicked: (Chat) -> Unit,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured) {
+    ChatList(
+        header = {
+            if (header != null) {
+                IntrinsicWidthUIKitView(uiView = header)
+            }
+        },
+        emptyState = {
+            if (emptyState != null) {
+                IntrinsicWidthUIKitView(uiView = emptyState)
+            } else {
+                EmptyListView(config = BotStacks.assets.emptyChats)
+            }
+        },
+        filter = filter,
+        onChatClicked = onChatClicked
     )
 }
 
