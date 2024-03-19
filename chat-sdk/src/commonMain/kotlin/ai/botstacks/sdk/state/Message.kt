@@ -34,7 +34,9 @@ data class Message(
     internal val reactions: Reactions = mutableStateListOf()
 ) : Identifiable {
     var text by mutableStateOf("")
+        internal set
     var markdown by mutableStateOf("")
+        internal set
     var replyCount by mutableStateOf(0)
     var favorite by mutableStateOf(false)
     var currentReaction by mutableStateOf<String?>(null)
@@ -44,9 +46,9 @@ data class Message(
 
     val replies by lazy { RepliesPager(this) }
     val user: User
-        get() = User.get(userID)!!
+        get() = User.get(userID) ?: throw IllegalStateException()
     val chat: Chat
-        get() = Chat.get(chatID)!!
+        get() = Chat.get(chatID)  ?: throw IllegalStateException()
     val path: String get() = "message/$id"
 
     internal constructor(msg: FMessage) : this(

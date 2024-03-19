@@ -12,14 +12,18 @@ final class Router: ObservableObject {
     
     public enum Destination: Codable, Hashable {
         // MARK: components
-        case avatars
+        case avatar
         case badges
         case channelrow
         case channelgroup
         case chatinput
-        case headers
-        case spinners
-        case userprofiles
+        case chatlist
+        case chatmessage
+        case chatmessagepreview
+        case header
+        case spinner
+        case userprofile
+        case userselect
         
         // MARK: E2E Controller nodes
         case login

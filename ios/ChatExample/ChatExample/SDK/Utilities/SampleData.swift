@@ -25,14 +25,18 @@ func generateUser() -> User {
         user.avatar = "https://randomuser.me/api/portraits/women/\(randomNumber).jpg"
     default: break
     }
-    
+        
     return user
 }
 
-func generateChannel() -> Chat {
-    let users = (0..<20).map { _ in generateUser() }
+func generateChannel(with users: [User] =  [], kind: ChatType = .group) -> Chat {
+    let users = if users.isEmpty {
+        (0..<20).map { _ in generateUser() }
+    } else {
+        users
+    }
     
-    let channel = Chat(id: UUID().uuidString, kind: ChatType.group)
+    let channel = Chat(id: UUID().uuidString, kind: kind)
     channel.members.addObjects(from: users.map({ user in
         Participant(
             user_id: user.id,
@@ -45,7 +49,7 @@ func generateChannel() -> Chat {
     channel.name = faker.lorem.sentence(wordsAmount: 4)
     let randomNumber = Int.random(in: 0...99)
     channel.image = "https://source.unsplash.com/random/?\(randomNumber)"
-    
+        
     return channel
 }
 
@@ -54,3 +58,20 @@ func generateChannelList() -> [Chat] {
     
     return channels
 }
+
+func generateMessage(from user: User, in chat: Chat) -> Message {
+    let message = Message(
+        id: UUID().uuidString,
+        createdAt: NSDateKt.toInstant(faker.date.backward(days: 3)),
+        userID: user.id,
+        parentID: nil,
+        chatID: chat.id,
+        attachments: NSMutableArrayKt.snapshot([]),
+        reactions: NSMutableArrayKt.snapshot([])
+    )
+    
+    message.updateText(text: faker.lorem.sentences(amount: 2))
+    
+    return message
+}
+

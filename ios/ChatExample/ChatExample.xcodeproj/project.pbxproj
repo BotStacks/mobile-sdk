@@ -21,6 +21,11 @@
 		06B42D0C2BA6758900A02CFF /* ChatControllerExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D0B2BA6758900A02CFF /* ChatControllerExample.swift */; };
 		06B42D0E2BA677AB00A02CFF /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D0D2BA677AB00A02CFF /* Login.swift */; };
 		06B42D102BA7607C00A02CFF /* AppSecrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = 06B42D0F2BA7607C00A02CFF /* AppSecrets.plist */; };
+		06B42D122BA7FB8C00A02CFF /* ChatList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D112BA7FB8C00A02CFF /* ChatList.swift */; };
+		06B42D142BA7FBAC00A02CFF /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D132BA7FBAC00A02CFF /* ChatMessage.swift */; };
+		06B42D162BA7FBC700A02CFF /* ChatMessagePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D152BA7FBC700A02CFF /* ChatMessagePreview.swift */; };
+		06B42D182BA7FBD800A02CFF /* UserSelect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D172BA7FBD800A02CFF /* UserSelect.swift */; };
+		06B42D1A2BA8060E00A02CFF /* Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D192BA8060E00A02CFF /* Debug.swift */; };
 		06EA28722B9E66F0000FE324 /* ChatExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28712B9E66F0000FE324 /* ChatExampleApp.swift */; };
 		06EA28742B9E66F0000FE324 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28732B9E66F0000FE324 /* ContentView.swift */; };
 		06EA28762B9E66F1000FE324 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06EA28752B9E66F1000FE324 /* Assets.xcassets */; };
@@ -47,6 +52,11 @@
 		06B42D0B2BA6758900A02CFF /* ChatControllerExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatControllerExample.swift; sourceTree = "<group>"; };
 		06B42D0D2BA677AB00A02CFF /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		06B42D0F2BA7607C00A02CFF /* AppSecrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AppSecrets.plist; sourceTree = "<group>"; };
+		06B42D112BA7FB8C00A02CFF /* ChatList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatList.swift; sourceTree = "<group>"; };
+		06B42D132BA7FBAC00A02CFF /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
+		06B42D152BA7FBC700A02CFF /* ChatMessagePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagePreview.swift; sourceTree = "<group>"; };
+		06B42D172BA7FBD800A02CFF /* UserSelect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSelect.swift; sourceTree = "<group>"; };
+		06B42D192BA8060E00A02CFF /* Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debug.swift; sourceTree = "<group>"; };
 		06EA286E2B9E66F0000FE324 /* ChatExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06EA28712B9E66F0000FE324 /* ChatExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatExampleApp.swift; sourceTree = "<group>"; };
 		06EA28732B9E66F0000FE324 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -80,6 +90,7 @@
 				06EA28862B9F8FAF000FE324 /* MeasuredView.swift */,
 				06B42CF92BA4A5D600A02CFF /* VCRepresentable.swift */,
 				06B42D022BA501D400A02CFF /* SampleData.swift */,
+				06B42D192BA8060E00A02CFF /* Debug.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -95,6 +106,10 @@
 				06B42CFD2BA4B78A00A02CFF /* UserProfile.swift */,
 				06B42D002BA5009A00A02CFF /* ChannelGroup.swift */,
 				06B42D042BA509C800A02CFF /* ChatInput.swift */,
+				06B42D112BA7FB8C00A02CFF /* ChatList.swift */,
+				06B42D132BA7FBAC00A02CFF /* ChatMessage.swift */,
+				06B42D152BA7FBC700A02CFF /* ChatMessagePreview.swift */,
+				06B42D172BA7FBD800A02CFF /* UserSelect.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -308,18 +323,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				06B42D142BA7FBAC00A02CFF /* ChatMessage.swift in Sources */,
 				06B42D012BA5009A00A02CFF /* ChannelGroup.swift in Sources */,
 				06B42D032BA501D400A02CFF /* SampleData.swift in Sources */,
 				06B42CF22BA34BAC00A02CFF /* ComponentViews.swift in Sources */,
+				06B42D162BA7FBC700A02CFF /* ChatMessagePreview.swift in Sources */,
 				06EA28742B9E66F0000FE324 /* ContentView.swift in Sources */,
 				06B42CF62BA3878400A02CFF /* ChannelRow.swift in Sources */,
+				06B42D122BA7FB8C00A02CFF /* ChatList.swift in Sources */,
 				06EA28802B9E67B6000FE324 /* Badge.swift in Sources */,
 				06B42CFA2BA4A5D600A02CFF /* VCRepresentable.swift in Sources */,
 				06EA28872B9F8FAF000FE324 /* MeasuredView.swift in Sources */,
 				06B42D052BA509C800A02CFF /* ChatInput.swift in Sources */,
 				06B42D0A2BA6749300A02CFF /* BotStacksChatController.swift in Sources */,
+				06B42D1A2BA8060E00A02CFF /* Debug.swift in Sources */,
 				06B42D0C2BA6758900A02CFF /* ChatControllerExample.swift in Sources */,
 				06B42CF02BA34B4600A02CFF /* Router.swift in Sources */,
+				06B42D182BA7FBD800A02CFF /* UserSelect.swift in Sources */,
 				06B42CFC2BA4B61900A02CFF /* Spinner.swift in Sources */,
 				06B42D0E2BA677AB00A02CFF /* Login.swift in Sources */,
 				06EA28892B9F9CDF000FE324 /* Avatar.swift in Sources */,

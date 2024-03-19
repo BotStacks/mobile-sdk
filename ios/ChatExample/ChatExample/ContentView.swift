@@ -36,14 +36,15 @@ struct ComponentShowCase: View {
                }
                
                Section {
-                   ListRow(title: "Avatar") { router.navigate(to: .avatars) }
+                   ListRow(title: "Avatar") { router.navigate(to: .avatar) }
                    ListRow(title: "Badge") { router.navigate(to: .badges) }
                    ListRow(title: "ChannelGroup") { router.navigate(to: .channelgroup) }
                    ListRow(title: "ChannelRow") { router.navigate(to: .channelrow) }
                    ListRow(title: "ChatInput") { router.navigate(to: .chatinput) }
-                   ListRow(title: "Header") { router.navigate(to: .headers) }
-                   ListRow(title: "Spinner") { router.navigate(to: .spinners) }
-                   ListRow(title: "UserProfile") { router.navigate(to: .userprofiles) }
+                   ListRow(title: "ChatMessage") { router.navigate(to: .chatmessage) }
+                   ListRow(title: "Header") { router.navigate(to: .header) }
+                   ListRow(title: "Spinner") { router.navigate(to: .spinner) }
+                   ListRow(title: "UserProfile") { router.navigate(to: .userprofile) }
                } header: {
                    Text("Components")
                }

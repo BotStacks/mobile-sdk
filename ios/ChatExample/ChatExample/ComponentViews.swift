@@ -74,6 +74,7 @@ internal struct ChatInputExample : View {
     private let chat: Chat = generateChannel()
     
     var body: some View {
+        
         VStack {
             Spacer()
             ChatInput(chat: chat, onMedia: {}).padding()
@@ -82,6 +83,49 @@ internal struct ChatInputExample : View {
             maxHeight: .infinity,
             alignment: .topLeading
         )
+    }
+}
+
+internal struct ChatListExample: View {
+    var body: some View {
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
+    }
+}
+
+internal struct ChatMessages: View {
+    
+    private var user1: User
+    private var user2: User
+    private var chat: Chat
+    
+    private var messages: [Message]
+    
+    init() {
+        user1 = generateUser()
+        user2 = generateUser()
+        chat = generateChannel(with: [user1, user2], kind: .group)
+        messages = [
+            generateMessage(from: user1, in: chat),
+            generateMessage(from: user1, in: chat),
+            generateMessage(from: user2, in: chat)
+        ]
+    }
+    
+    var body: some View {
+        ComponentView(title: "ChatMessage") {
+            VStack(alignment: .leading) {
+                ForEach(messages, id: \.id) { message in
+                    ChatMessage(message: message)
+                        .withAvatar(true)
+                }
+            }
+        }
+    }
+}
+
+internal struct ChatMessagePreviews: View {
+    var body: some View {
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
     }
 }
 
@@ -190,6 +234,12 @@ internal struct UserProfiles: View {
                 }
             }
         }
+    }
+}
+
+internal struct UserSelectExample: View {
+    var body: some View {
+        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
     }
 }
 

@@ -21,18 +21,21 @@ struct ChatExampleApp: App {
                     .ignoresSafeArea()
                     .navigationDestination(for: Router.Destination.self) { destination in
                         switch destination {
-                        case .avatars: Avatars()
+                        case .avatar: Avatars()
                         case .badges: Badges()
                         case .channelrow: ChannelRows()
                         case .channelgroup: ChannelGroups()
                         case .chatinput: ChatInputExample()
-                        case .headers: Headers()
-                        case .spinners: Spinners()
-                        case .userprofiles: UserProfiles()
+                        case .chatlist: ChatListExample()
+                        case .chatmessage: ChatMessages()
+                        case .chatmessagepreview: ChatMessagePreviews()
+                        case .header: Headers()
+                        case .spinner: Spinners()
+                        case .userprofile: UserProfiles()
+                        case .userselect: UserSelectExample()
                             
                         case .login: LoginView()
                         case .controller: ChatControllerExample()
-
                         }
                     }
             }.environmentObject(router)

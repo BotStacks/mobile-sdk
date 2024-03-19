@@ -2,14 +2,19 @@ package ai.botstacks.sdk.ui.components
 
 import ai.botstacks.sdk.internal.ui.components.EmptyListView
 import ai.botstacks.sdk.internal.utils.ui.composeColor
+import ai.botstacks.sdk.internal.utils.ui.debugBounds
 import ai.botstacks.sdk.state.Chat
+import ai.botstacks.sdk.state.Message
+import ai.botstacks.sdk.state.MessageAttachment
 import ai.botstacks.sdk.state.User
 import ai.botstacks.sdk.ui.BotStacks
 import ai.botstacks.sdk.ui.theme.FontStyle
 import ai.botstacks.sdk.ui.theme.painterImageAsset
 import ai.botstacks.sdk.ui.utils.IntrinsicWidthUIKitView
 import ai.botstacks.sdk.ui.utils.measuredThemedViewController
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.ui.Modifier
 import platform.UIKit.UIColor
 import platform.UIKit.UIImage
 import platform.UIKit.UIView
@@ -133,6 +138,33 @@ fun _ChatList(
         },
         filter = filter,
         onChatClicked = onChatClicked
+    )
+}
+
+fun _ChatMessage(
+    message: Message,
+    shapeDefinition: ShapeDefinition,
+    showAvatar: Boolean = false,
+    showTimestamp: Boolean = true,
+    onPressUser: (User) -> Unit,
+    onLongPress: () -> Unit,
+    onClick: ((MessageAttachment?) -> Unit)? = null,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured) {
+    val shape = when (shapeDefinition) {
+        ShapeDefinition.small -> BotStacks.shapes.small
+        ShapeDefinition.medium -> BotStacks.shapes.medium
+        ShapeDefinition.large -> BotStacks.shapes.large
+    }
+
+    ChatMessage(
+        message = message,
+        shape = shape,
+        showAvatar = showAvatar,
+        showTimestamp = showTimestamp,
+        onPressUser = onPressUser,
+        onLongPress = onLongPress,
+        onClick = onClick
     )
 }
 

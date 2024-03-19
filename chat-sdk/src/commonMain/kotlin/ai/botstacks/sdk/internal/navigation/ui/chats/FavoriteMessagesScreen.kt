@@ -37,9 +37,8 @@ internal fun FavoritesMessagesScreen(
             ChatMessage(
                 message = message,
                 onPressUser = openProfile,
-                onLongPress = {},
-                onClick = { openReplies(message) }
-            )
+                onLongPress = {}
+            ) { openReplies(message) }
         }
     }
 }

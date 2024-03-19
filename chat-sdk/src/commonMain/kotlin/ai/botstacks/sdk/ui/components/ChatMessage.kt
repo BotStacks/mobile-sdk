@@ -22,34 +22,32 @@ import ai.botstacks.sdk.internal.utils.genChatextMessage
 import ai.botstacks.sdk.internal.utils.genCurrentUser
 import ai.botstacks.sdk.internal.utils.genU
 import ai.botstacks.sdk.internal.utils.location
+import ai.botstacks.sdk.internal.utils.ui.debugBounds
 import ai.botstacks.sdk.state.AttachmentType
 import ai.botstacks.sdk.state.MessageAttachment
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ai.botstacks.`chat-sdk`.generated.resources.Res
-import dev.icerock.moko.resources.compose.painterResource
 import kotlinx.datetime.Instant
 
 /**
@@ -167,11 +165,10 @@ private fun ChatMessage(
     ) {
         val maxWidth = maxWidth
         Column(
-            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Bottom,
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                 horizontalArrangement = Arrangement.spacedBy(dimens.grid.x2, alignment),
                 verticalAlignment = Alignment.Bottom,
             ) {
@@ -233,7 +230,9 @@ private fun ChatMessage(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(dimens.grid.x2, alignment = alignment),
             ) {
-                Spacer(Modifier.requiredWidth(AvatarSize.Small.value))
+                if (alignment == Alignment.Start && isGroup) {
+                    Spacer(Modifier.requiredWidth(AvatarSize.Small.value))
+                }
                 if (showTimestamp) {
                     when {
                         isSending -> {
