@@ -1,9 +1,13 @@
 package ai.botstacks.sdk.internal.ui.components.location
 
 import ai.botstacks.sdk.internal.state.Location
+import ai.botstacks.sdk.ui.utils.IntrinsicWidthUIKitView
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -14,6 +18,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.interop.UIKitView
+import androidx.compose.ui.unit.dp
 import cocoapods.GoogleMaps.GMSCameraPosition
 import cocoapods.GoogleMaps.GMSMapView
 import cocoapods.GoogleMaps.GMSMapViewDelegateProtocol
@@ -88,7 +93,7 @@ internal actual fun MapPin(
     //       map elements. That's why theres all these `is` variables, and the `isRedrawMapTriggered`
     //       variable.
     //       If its not done like this, the UI for the map will not allow the user to move around.
-    Box(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize().width(300.dp)) {
         // Google Maps
         UIKitView(
             modifier = modifier.fillMaxSize(),
@@ -128,7 +133,7 @@ internal actual fun MapPin(
 
                     isMapRedrawTriggered = false
                 }
-            },
+            }
         )
     }
 }

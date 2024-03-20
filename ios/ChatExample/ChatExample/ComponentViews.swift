@@ -53,7 +53,7 @@ internal struct ChannelRows: View {
             ) {
                 print("dudes clicked")
             }
-        }.padding()
+        }
     }
 }
 
@@ -96,6 +96,8 @@ internal struct ChatMessages: View {
     
     private var user1: User
     private var user2: User
+    private var user3: User
+    private var user4: User
     private var chat: Chat
     
     private var messages: [Message]
@@ -103,11 +105,15 @@ internal struct ChatMessages: View {
     init() {
         user1 = generateUser()
         user2 = generateUser()
-        chat = generateChannel(with: [user1, user2], kind: .group)
+        user3 = generateUser()
+        user4 = generateUser()
+        chat = generateChannel(with: [user1, user2, user3, user4], kind: .group)
         messages = [
             generateMessage(from: user1, in: chat),
             generateMessage(from: user1, in: chat),
-            generateMessage(from: user2, in: chat)
+            generateMessage(from: user2, in: chat),
+            generateMessage(from: user3, in: chat, attachments: [generateImageAttachment()]),
+            generateMessage(from: user4, in: chat, attachments: [generateLocationAttachment()])
         ]
     }
     
@@ -118,7 +124,11 @@ internal struct ChatMessages: View {
                     ChatMessage(message: message)
                         .withAvatar(true)
                 }
-            }
+            }.frame(
+                maxWidth: .infinity,
+                maxHeight: .infinity,
+                alignment: .topLeading
+            ).padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 0))
         }
     }
 }

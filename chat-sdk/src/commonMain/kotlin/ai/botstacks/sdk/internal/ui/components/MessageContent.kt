@@ -5,6 +5,7 @@
 package ai.botstacks.sdk.internal.ui.components
 
 import ai.botstacks.sdk.BotStacksChat
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.state.Location
 import ai.botstacks.sdk.ui.BotStacks
 import ai.botstacks.sdk.ui.BotStacks.colorScheme
@@ -75,7 +76,7 @@ internal fun MessageTextContent(
 @Composable
 internal fun MessageImageContent(
     username: String,
-    image: MessageAttachment,
+    url: String,
     isCurrentUser: Boolean,
     modifier: Modifier = Modifier,
     shape: CornerBasedShape = BotStacks.shapes.medium,
@@ -95,7 +96,7 @@ internal fun MessageImageContent(
         }
 
         ImageRenderer(
-            url = image.url,
+            url = url,
             contentDescription = "shared image",
             contentScale = ContentScale.Crop,
             modifier = Modifier

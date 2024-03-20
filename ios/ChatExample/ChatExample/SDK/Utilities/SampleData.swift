@@ -59,18 +59,70 @@ func generateChannelList() -> [Chat] {
     return channels
 }
 
-func generateMessage(from user: User, in chat: Chat) -> Message {
+func generateImageAttachment() -> MessageAttachment {
+    let randomNumber = Int.random(in: 0...99)
+    let image = "https://source.unsplash.com/random/?\(randomNumber)"
+    let attachment = MessageAttachment(
+        id: UUID().uuidString,
+        type: AttachmentType.image,
+        url: image,
+        data: nil,
+        mime: "image/jpeg",
+        width: nil,
+        height: nil,
+        duration: nil,
+        address: nil,
+        latitude: nil,
+        longitude: nil
+    )
+    
+    return attachment
+}
+
+func generateLocationAttachment() -> MessageAttachment {
+    let fakedLocation = faker.address
+    let location = Location(
+        latitude: 42.3314,
+        longitude: 83.0458,
+        address: nil
+    )
+    
+    print(location)
+    
+    let attachment = MessageAttachment(
+        id: UUID().uuidString,
+        type: AttachmentType.location,
+        url: "",
+        data: nil,
+        mime: nil,
+        width: nil,
+        height: nil,
+        duration: nil,
+        address: nil,
+        latitude: location.latitude,
+        longitude: location.longitude
+    )
+    
+    return attachment
+}
+
+func generateMessage(
+    from user: User,
+    in chat: Chat,
+    text: String = faker.lorem.sentences(amount: 2),
+    attachments: [MessageAttachment] = []
+) -> Message {
     let message = Message(
         id: UUID().uuidString,
         createdAt: NSDateKt.toInstant(faker.date.backward(days: 3)),
         userID: user.id,
         parentID: nil,
         chatID: chat.id,
-        attachments: NSMutableArrayKt.snapshot([]),
-        reactions: NSMutableArrayKt.snapshot([])
+        _attachments: attachments,
+        _reactions: []
     )
-    
-    message.updateText(text: faker.lorem.sentences(amount: 2))
+
+    message.updateText(text: text)
     
     return message
 }

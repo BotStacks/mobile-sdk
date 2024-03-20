@@ -9,6 +9,7 @@ import ai.botstacks.sdk.internal.utils.readPlist
 import ai.botstacks.sdk.internal.utils.retryIO
 import androidx.compose.runtime.Stable
 import cocoapods.Giphy.Giphy
+import cocoapods.GoogleMaps.GMSServices
 import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.CoroutineScope
@@ -74,6 +75,8 @@ actual class BotStacksChatPlatform : BotStacksChat() {
         }
 
         if (!googleMapsApiKey.isNullOrEmpty()) {
+            Monitor.debug("Enabling maps support")
+            GMSServices.provideAPIKey(googleMapsApiKey)
             hasMapsSupport = true
         }
 

@@ -69,7 +69,7 @@ internal fun Chat.send(
         userID = User.current!!.id,
         parentID = inReplyTo,
         chatID = id,
-        attachments = atts.map { it.toAttachment().toAttachment() }.toMutableStateList(),
+        _attachments = atts.map { it.toAttachment().toAttachment() },
     )
     m.updateText(text.orEmpty())
     m.upload = upload

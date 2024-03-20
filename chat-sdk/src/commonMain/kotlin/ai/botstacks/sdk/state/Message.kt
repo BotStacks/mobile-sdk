@@ -30,8 +30,8 @@ data class Message(
     internal val userID: String,
     internal val parentID: String?,
     internal val chatID: String,
-    internal val attachments: SnapshotStateList<MessageAttachment> = mutableStateListOf(),
-    internal val reactions: Reactions = mutableStateListOf()
+    private val _attachments: List<MessageAttachment> = emptyList(),
+    internal val _reactions: List<Pair<String, List<String>>> = emptyList()
 ) : Identifiable {
     var text by mutableStateOf("")
         internal set
@@ -41,6 +41,9 @@ data class Message(
     var favorite by mutableStateOf(false)
     var currentReaction by mutableStateOf<String?>(null)
     var parent by mutableStateOf<Message?>(null)
+
+    internal val attachments: SnapshotStateList<MessageAttachment> = _attachments.toMutableStateList()
+    internal val reactions: Reactions = _reactions.map { it.first to it.second.toMutableStateList() }.toMutableStateList()
 
     val isGroup = Chat.get(chatID)?.isGroup ?: false
 

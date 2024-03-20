@@ -46,20 +46,25 @@ internal fun measuredThemedViewController(
 }
 
 @Composable
-internal fun IntrinsicWidthUIKitView(uiView: UIView) {
-    val size = remember(uiView) {
-        uiView.sizeThatFits(cValue { CGSizeZero })
+internal fun <T: UIView> IntrinsicWidthUIKitView(
+    modifier: Modifier = Modifier,
+    uiView: () -> T,
+    update: (T) -> Unit = { },
+) {
+    val view = remember(uiView) { uiView() }
+    val size = remember(view) {
+        view.sizeThatFits(cValue { CGSizeZero })
             .useContents { DpSize(width.dp, height.dp) }
     }
 
     Box {
         UIKitView(
             background = BotStacks.colorScheme.header,
-            factory = { uiView },
+            factory = { view },
+            update = update,
             modifier = Modifier
                 .width(size.width)
-                .height(HeaderHeight)
+                .then(modifier)
         )
     }
-
 }

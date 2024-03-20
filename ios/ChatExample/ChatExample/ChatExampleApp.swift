@@ -50,14 +50,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        BotStacksChat.shared.setupLogging(level: .error, log: { log in print(log) })
+        BotStacksChat.shared.setupLogging(level: .debug, log: { log in print(log) })
         guard let apiKey = readPlist(list: "AppSecrets", key: "BOTSTACKS_API_KEY") else {
             return true
         }
         
-        print(apiKey)
+        let googleMapsApiKey = readPlist(list: "AppSecrets", key: "GOOGLE_MAPS_API_KEY")
+        print(googleMapsApiKey)
         
-        BotStacksChat.shared.setup(apiKey: apiKey)
+        BotStacksChat.shared.setup(apiKey: apiKey, googleMapsApiKey: googleMapsApiKey)
         
         return true
     }

@@ -15,7 +15,7 @@ class BotStacksChat {
     
     static let shared = BotStacksChat()
         
-    public func setup(
+public func setup(
         apiKey: String, 
         giphyApiKey: String? = nil,
         googleMapsApiKey: String? = nil,

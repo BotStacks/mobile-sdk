@@ -71,9 +71,7 @@ internal actual fun ImageRenderer(
         }
     }
     LaunchedEffect(url) {
-        isAnimated = isAnimated(url).also {
-            Monitor.debug("$url is animated=$it")
-        }
+        isAnimated = isAnimated(url)
     }
 }
 

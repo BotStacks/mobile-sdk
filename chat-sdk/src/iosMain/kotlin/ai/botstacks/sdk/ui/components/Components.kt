@@ -12,6 +12,7 @@ import ai.botstacks.sdk.ui.theme.FontStyle
 import ai.botstacks.sdk.ui.theme.painterImageAsset
 import ai.botstacks.sdk.ui.utils.IntrinsicWidthUIKitView
 import ai.botstacks.sdk.ui.utils.measuredThemedViewController
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.ui.Modifier
@@ -126,12 +127,12 @@ fun _ChatList(
     ChatList(
         header = {
             if (header != null) {
-                IntrinsicWidthUIKitView(uiView = header)
+                IntrinsicWidthUIKitView(uiView = { header }, modifier = Modifier.height(HeaderHeight))
             }
         },
         emptyState = {
             if (emptyState != null) {
-                IntrinsicWidthUIKitView(uiView = emptyState)
+                IntrinsicWidthUIKitView(uiView = { emptyState }, modifier = Modifier.height(HeaderHeight))
             } else {
                 EmptyListView(config = BotStacks.assets.emptyChats)
             }
@@ -185,7 +186,7 @@ fun _Header(
         state = state,
         title = {
             if (titleSlot != null) {
-                IntrinsicWidthUIKitView(uiView = titleSlot())
+                IntrinsicWidthUIKitView(uiView = titleSlot, modifier = Modifier.height(HeaderHeight))
             } else {
                 title?.let { HeaderDefaults.Title(title) }
             }
@@ -210,7 +211,8 @@ fun _Header(
             if (menu != null) {
                 println("menu from SwiftUI")
                 IntrinsicWidthUIKitView(
-                    uiView = menu()
+                    uiView = menu,
+                    modifier = Modifier.height(HeaderHeight)
                 )
                 return@Header
             }
