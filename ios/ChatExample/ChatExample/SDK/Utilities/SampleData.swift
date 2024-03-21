@@ -80,14 +80,11 @@ func generateImageAttachment() -> MessageAttachment {
 }
 
 func generateLocationAttachment() -> MessageAttachment {
-    let fakedLocation = faker.address
     let location = Location(
         latitude: 42.3314,
         longitude: 83.0458,
         address: nil
     )
-    
-    print(location)
     
     let attachment = MessageAttachment(
         id: UUID().uuidString,
@@ -125,5 +122,32 @@ func generateMessage(
     message.updateText(text: text)
     
     return message
+}
+
+func generateChatWithMessages() -> Chat {
+    let user1 = generateUser()
+    let user2 = generateUser()
+    let user3 = generateUser()
+    let user4 = generateUser()
+    let chat = generateChannel(with: [user1, user2, user3, user4], kind: .group)
+    let messages = [
+        generateMessage(from: user1, in: chat),
+        generateMessage(from: user1, in: chat),
+        generateMessage(from: user2, in: chat),
+        generateMessage(from: user3, in: chat, attachments: [generateImageAttachment()]),
+        generateMessage(from: user4, in: chat, attachments: [generateLocationAttachment()])
+    ]
+    
+    messages.forEach { message in
+        chat.addMessage(message: message)
+    }
+    
+    return chat
+}
+
+func generateChatList() -> [Chat] {
+    let chats = (0..<5).map { _ in generateChatWithMessages() }
+    
+    return chats
 }
 

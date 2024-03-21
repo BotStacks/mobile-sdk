@@ -134,8 +134,27 @@ internal struct ChatMessages: View {
 }
 
 internal struct ChatMessagePreviews: View {
+    
+    private var chats: [Chat]
+    
+    init() {
+        chats = generateChatList()
+    }
+    
     var body: some View {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
+        ComponentView(title: "ChatMessagePreview") {
+            VStack(alignment: .leading) {
+                ForEach(chats, id: \.id) { chat in
+                    ChatMessagePreview(chat: chat) {
+                        print("chat \(chat.displayName) clicked")
+                    }
+                }
+            }.frame(
+                maxWidth: .infinity,
+                maxHeight: .infinity,
+                alignment: .topLeading
+            )
+        }
     }
 }
 

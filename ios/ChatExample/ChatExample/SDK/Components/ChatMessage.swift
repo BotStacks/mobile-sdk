@@ -39,6 +39,23 @@ private struct ChatMessageViewControllerRepresentable : VCRepresentable {
     }
 }
 
+///
+/// ChatMessage
+///
+/// Renders the contents of a given `Message` from a `ai.botstacks.sdk.state.Chat`.
+/// This is used by ``MessageList`` to form the contents of a conversational chat, by properly aligning
+/// messages to left or right depending on sender (left aligned for incoming and right aligned for outgoing).
+///
+/// - Parameters:
+///  - message: The message to display.
+///  - shape: corner-based shaped definition to render the "bubble" in. This defaults to `ai.botstacks.sdk.ui.theme.ShapeDefinitions.medium`
+///  - showAvatar: Whether to show the associated user's avatar along with this message.
+///  - showTimestamp: Whether to show the timestamp this message was sent or received.
+///  - onPressUser: callback for when a user's avatar (when visible) is clicked.
+///  - onLongPress: callback for when a message "bubble" is clicked.
+///  - onClick: callback for when an attachment is clicked. This is utlized by [MessageList] to show images for full screen viewing.
+///  
+///
 public struct ChatMessage: View {
     
     private var message: Message

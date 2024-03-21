@@ -44,6 +44,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import ai.botstacks.`chat-sdk`.generated.resources.Res
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.height
 import dev.icerock.moko.resources.compose.painterResource
 
 /**
@@ -67,6 +69,7 @@ fun ChatMessagePreview(
 ) {
     Row(
         modifier = modifier
+            .height(IntrinsicSize.Min)
             .clickable { onClick() }
             .padding(BotStacks.dimens.inset, BotStacks.dimens.grid.x4),
         horizontalArrangement = Arrangement.spacedBy(BotStacks.dimens.grid.x3),

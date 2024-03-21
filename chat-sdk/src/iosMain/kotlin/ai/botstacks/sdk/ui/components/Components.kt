@@ -169,6 +169,14 @@ fun _ChatMessage(
     )
 }
 
+fun _ChatMessagePreview(
+    chat: Chat,
+    onClick: () -> Unit,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured) {
+    ChatMessagePreview(chat = chat, onClick = onClick)
+}
+
 fun _Header(
     state: HeaderState = HeaderState(),
     title: String? = null,
