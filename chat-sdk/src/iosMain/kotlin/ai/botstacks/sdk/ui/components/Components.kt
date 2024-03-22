@@ -10,10 +10,10 @@ import ai.botstacks.sdk.state.User
 import ai.botstacks.sdk.ui.BotStacks
 import ai.botstacks.sdk.ui.theme.FontStyle
 import ai.botstacks.sdk.ui.theme.painterImageAsset
-import ai.botstacks.sdk.ui.utils.IntrinsicWidthUIKitView
+import ai.botstacks.sdk.ui.utils.IntrinsicUIKitView
 import ai.botstacks.sdk.ui.utils.measuredThemedViewController
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.ui.Modifier
 import platform.UIKit.UIColor
@@ -127,12 +127,19 @@ fun _ChatList(
     ChatList(
         header = {
             if (header != null) {
-                IntrinsicWidthUIKitView(uiView = { header }, modifier = Modifier.height(HeaderHeight))
+                IntrinsicUIKitView(
+                    heightIn = true,
+                    uiView = { header },
+                    modifier = Modifier
+                )
             }
         },
         emptyState = {
             if (emptyState != null) {
-                IntrinsicWidthUIKitView(uiView = { emptyState }, modifier = Modifier.height(HeaderHeight))
+                IntrinsicUIKitView(
+                    uiView = { emptyState },
+                    modifier = Modifier
+                )
             } else {
                 EmptyListView(config = BotStacks.assets.emptyChats)
             }
@@ -194,7 +201,11 @@ fun _Header(
         state = state,
         title = {
             if (titleSlot != null) {
-                IntrinsicWidthUIKitView(uiView = titleSlot, modifier = Modifier.height(HeaderHeight))
+                IntrinsicUIKitView(
+                    backgroundColor = BotStacks.colorScheme.header,
+                    uiView = titleSlot,
+                    modifier = Modifier.height(HeaderHeight)
+                )
             } else {
                 title?.let { HeaderDefaults.Title(title) }
             }
@@ -218,7 +229,8 @@ fun _Header(
         endAction = {
             if (menu != null) {
                 println("menu from SwiftUI")
-                IntrinsicWidthUIKitView(
+                IntrinsicUIKitView(
+                    backgroundColor = BotStacks.colorScheme.header,
                     uiView = menu,
                     modifier = Modifier.height(HeaderHeight)
                 )
@@ -234,6 +246,37 @@ fun _Header(
                 }
             }
         }
+    )
+}
+
+fun _MessageList(
+    chat: Chat,
+    header: (() -> UIView)? = null,
+    emptyState: (() -> UIView)? = null,
+    onPressUser: (User) -> Unit,
+    onLongPress: (Message) -> Unit,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured) {
+    MessageList(
+        modifier = Modifier.fillMaxSize(),
+        chat = chat,
+        header = {
+            if (header != null) {
+                IntrinsicUIKitView(
+                    modifier = Modifier.height(HeaderHeight).debugBounds(),
+                    uiView = header
+                )
+            }
+        },
+        emptyState = {
+            if (emptyState != null) {
+                IntrinsicUIKitView(modifier = Modifier.fillMaxSize(), uiView = emptyState)
+            } else {
+                EmptyListView(config = BotStacks.assets.emptyChat)
+            }
+        },
+        onLongPress = onLongPress,
+        onPressUser = onPressUser
     )
 }
 

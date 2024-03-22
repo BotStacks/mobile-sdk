@@ -44,6 +44,7 @@ struct ComponentShowCase: View {
                    ListRow(title: "ChatMessage") { router.navigate(to: .chatmessage) }
                    ListRow(title: "ChatMessagePreview") { router.navigate(to: .chatmessagepreview) }
                    ListRow(title: "Header") { router.navigate(to: .header) }
+                   ListRow(title: "MessageList") { router.navigate(to: .messagelist) }
                    ListRow(title: "Spinner") { router.navigate(to: .spinner) }
                    ListRow(title: "UserProfile") { router.navigate(to: .userprofile) }
                } header: {

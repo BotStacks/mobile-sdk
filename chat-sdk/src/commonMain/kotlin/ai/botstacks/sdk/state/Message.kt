@@ -50,6 +50,9 @@ data class Message(
     val replies by lazy { RepliesPager(this) }
     val user: User
         get() = User.get(userID) ?: throw IllegalStateException()
+
+    val userOrNull: User?
+        get() = User.get(userID)
     val chat: Chat
         get() = Chat.get(chatID)  ?: throw IllegalStateException()
     val path: String get() = "message/$id"

@@ -180,6 +180,7 @@ extension Header {
         snapshot.menu = { view }()
         return snapshot
     }
+    
     public func withSearchVisible(_ showSearch: Bool, _ showClear: Bool = false) -> Header {
         var snapshot = self
         snapshot.state = HeaderState(showSearch: showSearch, showSearchClear: showSearch)

@@ -80,10 +80,12 @@ fun ChatMessage(
     onLongPress: () -> Unit,
     onClick: ((MessageAttachment?) -> Unit)? = null
 ) {
-    if (message.user.blocked) {
+    val user = message.userOrNull ?: return
+
+    if (user.blocked) {
         return
     }
-    val current = message.user.isCurrent
+    val current = user.isCurrent
     val align = if (current) Alignment.End else Alignment.Start
 
     Column(
@@ -101,8 +103,8 @@ fun ChatMessage(
                     message.markdown.isEmpty()
 
             ChatMessage(
-                avatar = message.user.avatar,
-                username = message.user.displayNameFb,
+                avatar = user.avatar,
+                username = user.displayNameFb,
                 content = null,
                 attachment = attachment,
                 date = message.createdAt,
@@ -114,7 +116,7 @@ fun ChatMessage(
                 showTimestamp = showTimestampForThis,
                 isSending = message.isSending,
                 hasError = message.failed,
-                onPressUser = { onPressUser(message.user) },
+                onPressUser = { onPressUser(user) },
                 onLongPress = onLongPress,
                 onClick = onClick
             )
@@ -122,8 +124,8 @@ fun ChatMessage(
 
         if (message.markdown.isNotEmpty()) {
             ChatMessage(
-                avatar = message.user.avatar,
-                username = message.user.displayNameFb,
+                avatar = user.avatar,
+                username = user.displayNameFb,
                 content = message.markdown,
                 attachment = null,
                 date = message.createdAt,
@@ -135,7 +137,7 @@ fun ChatMessage(
                 showTimestamp = (message.attachments.isNotEmpty() && showAvatar) || message.attachments.isEmpty() && showAvatar,
                 isSending = message.isSending,
                 hasError = message.failed,
-                onPressUser = { onPressUser(message.user) },
+                onPressUser = { onPressUser(user) },
                 onLongPress = onLongPress,
                 onClick = null
             )

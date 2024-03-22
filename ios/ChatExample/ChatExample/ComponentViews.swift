@@ -128,7 +128,7 @@ internal struct ChatMessages: View {
                 maxWidth: .infinity,
                 maxHeight: .infinity,
                 alignment: .topLeading
-            ).padding(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 0))
+            ).padding(EdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 0))
         }
     }
 }
@@ -149,11 +149,7 @@ internal struct ChatMessagePreviews: View {
                         print("chat \(chat.displayName) clicked")
                     }
                 }
-            }.frame(
-                maxWidth: .infinity,
-                maxHeight: .infinity,
-                alignment: .topLeading
-            )
+            }
         }
     }
 }
@@ -229,6 +225,34 @@ internal struct Headers: View {
     }
 }
 
+internal struct MessageListExample: View {
+    
+    private var chat: Chat
+    
+    init() {
+        chat = generateChatWithMessages()
+    }
+    
+    var body: some View {
+        // uses own internal scroll handling
+        ComponentView(title: "MessageList", canScroll: false) {
+            MessageList(
+                chat: chat,
+                onPressUser: { _ in 
+                    
+                },
+                onLongPress: { _ in
+                }
+        
+            )
+        }.frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .topLeading
+        )
+    }
+}
+
 internal struct Spinners: View {
     var body: some View {
         ComponentView(title: "Spinner") {
@@ -277,21 +301,26 @@ private struct ComponentView<Content: View>: View {
     @EnvironmentObject var router: Router
     
     var title: String
+    var withScrollView: Bool
     var content: () -> Content
     
-    init(title: String, @ViewBuilder content: @escaping () -> Content) {
+    init(title: String, canScroll: Bool = true, @ViewBuilder content: @escaping () -> Content) {
         self.title = title
+        self.withScrollView = canScroll
         self.content = content
     }
     
     var body: some View {
-        VStack(alignment: .center) {
+        VStack(alignment: .leading, spacing: 0) {
             Header()
                 .title(title)
                 .backClicked {
                     router.navigateBack()
                 }
-            ScrollView {
+            
+            if withScrollView {
+                ScrollView(content: content)
+            } else {
                 content()
             }
         }

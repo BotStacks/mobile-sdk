@@ -105,11 +105,11 @@ fun MessageList(
         if (item is Message) {
             val previousMessage = pager.items.getOrNull(index + 1)
                 ?.let { it as? Message }
-                ?.takeIf { it.user == item.user }
+                ?.takeIf { it.userOrNull == item.userOrNull && item.userOrNull != null && it.userOrNull != null }
 
             val nextMessage = pager.items.getOrNull(index - 1)
                 ?.let { it as? Message }
-                ?.takeIf { it.user == item.user }
+                ?.takeIf { it.userOrNull == item.userOrNull && item.userOrNull != null && it.userOrNull != null }
 
             val isPrevClose = previousMessage
                 ?.takeIf { it.createdAt.minutesBetween(item.createdAt) in 0 until 1 } != null
@@ -127,7 +127,7 @@ fun MessageList(
             ChatMessage(
                 modifier = Modifier.padding(arrangement),
                 message = item,
-                shape = shapeForMessage(item.user.isCurrent, isPrevClose, isNextClose),
+                shape = shapeForMessage(item.userOrNull?.isCurrent == true, isPrevClose, isNextClose),
                 showTimestamp = !isNextClose,
                 showAvatar = !isNextClose,
                 onPressUser = onPressUser,

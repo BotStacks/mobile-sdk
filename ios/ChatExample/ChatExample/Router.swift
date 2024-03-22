@@ -21,6 +21,7 @@ final class Router: ObservableObject {
         case chatmessage
         case chatmessagepreview
         case header
+        case messagelist
         case spinner
         case userprofile
         case userselect
