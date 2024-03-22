@@ -84,12 +84,14 @@ fun ChatMessagePreview(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(BotStacks.dimens.grid.x2),
             ) {
                 Text(
+                    modifier = Modifier.weight(1f),
                     text = chat.displayName,
                     fontStyle = fonts.label1,
                     color = colorScheme.onBackground,
+                    overflow = TextOverflow.Ellipsis,
                     maxLines = 1
                 )
 

@@ -41,6 +41,7 @@ struct ComponentShowCase: View {
                    ListRow(title: "ChannelGroup") { router.navigate(to: .channelgroup) }
                    ListRow(title: "ChannelRow") { router.navigate(to: .channelrow) }
                    ListRow(title: "ChatInput") { router.navigate(to: .chatinput) }
+                   ListRow(title: "ChatList") { router.navigate(to: .chatlist) }
                    ListRow(title: "ChatMessage") { router.navigate(to: .chatmessage) }
                    ListRow(title: "ChatMessagePreview") { router.navigate(to: .chatmessagepreview) }
                    ListRow(title: "Header") { router.navigate(to: .header) }

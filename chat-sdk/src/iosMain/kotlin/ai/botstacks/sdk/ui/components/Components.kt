@@ -118,18 +118,19 @@ fun _ChatInput(
 }
 
 fun _ChatList(
-    header: UIView? = null,
-    emptyState: UIView? = null,
+    header: (() -> UIView)? = null,
+    emptyState: (() -> UIView)? = null,
     filter: (Chat) -> Boolean = { true },
     onChatClicked: (Chat) -> Unit,
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured) {
     ChatList(
+        modifier = Modifier.fillMaxSize(),
         header = {
             if (header != null) {
                 IntrinsicUIKitView(
                     heightIn = true,
-                    uiView = { header },
+                    uiView = header,
                     modifier = Modifier
                 )
             }
@@ -137,7 +138,7 @@ fun _ChatList(
         emptyState = {
             if (emptyState != null) {
                 IntrinsicUIKitView(
-                    uiView = { emptyState },
+                    uiView = emptyState,
                     modifier = Modifier
                 )
             } else {
@@ -228,7 +229,6 @@ fun _Header(
         onBackClicked = onBackClicked,
         endAction = {
             if (menu != null) {
-                println("menu from SwiftUI")
                 IntrinsicUIKitView(
                     backgroundColor = BotStacks.colorScheme.header,
                     uiView = menu,

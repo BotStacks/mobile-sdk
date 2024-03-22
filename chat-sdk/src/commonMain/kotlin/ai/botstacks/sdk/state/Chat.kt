@@ -91,6 +91,7 @@ class Chat(id: String, val kind: ChatType) : Pager<Message>(id), Identifiable {
             false
         } else {
             items.add(0, message)
+            latest = message
             true
         }
     }

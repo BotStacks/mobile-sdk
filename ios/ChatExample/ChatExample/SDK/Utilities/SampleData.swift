@@ -121,6 +121,8 @@ func generateMessage(
 
     message.updateText(text: text)
     
+    chat.addMessage(message: message)
+    
     return message
 }
 

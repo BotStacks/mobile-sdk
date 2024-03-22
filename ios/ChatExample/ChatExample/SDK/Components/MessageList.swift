@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import BotStacks_ChatSDK
 
-/// The VC representable that abstracts away our KMP Compose ChatMessagePreview component.
+/// The VC representable that abstracts away our KMP Compose MessageList component.
 private struct MessageListViewControllerRepresentable : VCRepresentable {
     
     @State var chat: Chat

@@ -87,8 +87,19 @@ internal struct ChatInputExample : View {
 }
 
 internal struct ChatListExample: View {
+
+    private var chats: [Chat]
+    
+    init() {
+        chats = generateChatList()
+    }
+    
     var body: some View {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
+        ComponentView(title: "ChatList", canScroll: false) {
+            ChatList { chat in
+                print("\(chat.displayName) clicked")
+            }
+        }
     }
 }
 
@@ -245,11 +256,7 @@ internal struct MessageListExample: View {
                 }
         
             )
-        }.frame(
-            maxWidth: .infinity,
-            maxHeight: .infinity,
-            alignment: .topLeading
-        )
+        }
     }
 }
 
