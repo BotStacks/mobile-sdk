@@ -12,6 +12,7 @@ import BotStacks_ChatSDK
 final class Router: ObservableObject {
     
     public enum Destination: Codable, Hashable {
+        
         case showcase
         
         // MARK: components
@@ -31,6 +32,9 @@ final class Router: ObservableObject {
         
         // MARK: views
         case channeluserselect(BSCSDKChannelUserSelectionState)
+        case channelsettingsexample
+        case channelsettings(String)
+        case channelsettings_userselect(BSCSDKChannelSettingsState)
         
         // MARK: E2E Controller nodes
         case controller

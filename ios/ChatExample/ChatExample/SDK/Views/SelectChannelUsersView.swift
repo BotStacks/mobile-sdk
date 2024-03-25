@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import Combine
 import BotStacks_ChatSDK
 
 /// The VC representable that abstracts away our KMP Compose SelectChannelUsers View.
@@ -28,6 +27,12 @@ private struct SelectChannelUsersViewControllerRepresentable : VCRepresentable {
 ///
 /// SelectChannelUsersView
 ///
+/// A screen content view for selecting users within a channel. This is used in coordination with
+/// either a ``ChatExample/CreateChannelView`` or a ``ChatExample/ChannelSettingsView`` to set or update the users in a given channel.
+///
+/// - Parameters:
+///  - state: the state holding the selected users for this view.
+///
 public struct SelectChannelUsersView: View {
     
     @ObservedObject var state: BSCSDKChannelUserSelectionState
@@ -39,6 +44,13 @@ public struct SelectChannelUsersView: View {
     }
 }
 
+///
+/// BSCSDKChannelUserSelectState
+///
+/// Wrapper observable holder around [ChannelUserSelectionState] that allows it to implement ``Codable`` and ``Hashable``.
+///
+/// Can be initialized from a `Chat` or an existing `[User]`.
+/// 
 public class BSCSDKChannelUserSelectionState : ObservableObject, Codable, Hashable {
   
     private var userIds: [String]
@@ -47,7 +59,6 @@ public class BSCSDKChannelUserSelectionState : ObservableObject, Codable, Hashab
     @Published internal var _state: ChannelUserSelectionState = ChannelUserSelectionState(initialSelections: [])
     
     public init(selections: [User]) {
-        print("init state with \(selections)")
         self.userIds = selections.map { $0.id }
         self.chatId = nil
         setup()
@@ -55,6 +66,12 @@ public class BSCSDKChannelUserSelectionState : ObservableObject, Codable, Hashab
     
     public init(chat: Chat) {
         self.chatId = chat.id
+        self.userIds = []
+        setup()
+    }
+    
+    public init(chatId: String) {
+        self.chatId = chatId
         self.userIds = []
         setup()
     }
@@ -77,12 +94,12 @@ public class BSCSDKChannelUserSelectionState : ObservableObject, Codable, Hashab
         let container = try decoder.container(keyedBy: CodingKeys.self)
         userIds = try container.decode([String].self, forKey: .userIds)
         chatId = try container.decodeIfPresent(String.self, forKey: .chatId)
+        setup()
     }
     
     var selections: [User] {
         get {
             let s = _state.selections.compactMap { $0 as? User }
-            print("\(s.count) items")
             return s
         }
         set {
@@ -117,12 +134,10 @@ public class BSCSDKChannelUserSelectionState : ObservableObject, Codable, Hashab
     }
     
     private func fetchUser(with id: String) -> User? {
-        print("fetchUser \(id)")
         return BotStacksChatStore.companion.current.userWith(id: id)
     }
     
     private func fetchChat(with id: String) -> Chat? {
-        print("fetchChat \(id)")
         return BotStacksChatStore.companion.current.chatWith(id: id)
     }
 }

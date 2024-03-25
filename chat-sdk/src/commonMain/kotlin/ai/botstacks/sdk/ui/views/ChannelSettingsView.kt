@@ -51,6 +51,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.TextFieldValue
 import ai.botstacks.`chat-sdk`.generated.resources.Res
 import ai.botstacks.sdk.internal.Monitor
+import ai.botstacks.sdk.internal.utils.async
+import ai.botstacks.sdk.internal.utils.op
+import ai.botstacks.sdk.internal.utils.opbg
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.referentialEqualityPolicy
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import com.mohamedrejeb.calf.io.KmpFile
 import com.mohamedrejeb.calf.picker.FilePickerFileType
 import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
@@ -71,8 +78,10 @@ import dev.icerock.moko.resources.compose.painterResource
  * Resulting changes are persisted internally and do not need to be saved manually.
  *
  */
-@Stable
 class ChannelSettingsState(private val chat: Chat) {
+
+    constructor(id: String) : this(Chat.get(id = id)!!)
+
     internal var selectedImage by mutableStateOf<KmpFile?>(null)
 
     internal val channelImage: Any?
@@ -85,7 +94,7 @@ class ChannelSettingsState(private val chat: Chat) {
 
     internal var private by mutableStateOf(chat._private)
 
-    internal var participants = mutableStateListOf<User>()
+    var participants by mutableStateOf<MutableList<User>>(value = mutableListOf(), policy = referentialEqualityPolicy())
     internal val participantCount get() = participants.count()
 
     internal val sortedParticipants
@@ -98,6 +107,7 @@ class ChannelSettingsState(private val chat: Chat) {
         private set
 
     init {
+        println("init of csv ${hashCode()}")
         participants.addAll(chat.members.map { it.user })
     }
 
@@ -135,6 +145,14 @@ class ChannelSettingsState(private val chat: Chat) {
             }.onSuccess {
                 saving = false
             }
+        }
+    }
+
+    fun update(onSuccess: (Chat?) -> Unit, onError: (Throwable) -> Unit) {
+        opbg {
+            update()
+                .onSuccess(onSuccess)
+                .onFailure(onError)
         }
     }
 }

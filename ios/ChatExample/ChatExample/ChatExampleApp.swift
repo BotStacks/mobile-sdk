@@ -36,9 +36,10 @@ struct ChatExampleApp: App {
                         case .userprofile: UserProfiles()
                         case .userselect: UserSelectExample()
                             
-                        case .channeluserselect(let state):
-                            ChannelUserSelect(state: state)
-                            
+                        case .channeluserselect(let state): ChannelUserSelect(state: state)
+                        case .channelsettingsexample: ChannelSettingsExample()
+                        case .channelsettings(let chatId): ChannelSettingsExample_SettingsView(chatId: chatId)
+                        case .channelsettings_userselect(let state): ChannelSettings_UserSelect(state: state)
                         case .controller: ChatControllerExample()
                         }
                     }

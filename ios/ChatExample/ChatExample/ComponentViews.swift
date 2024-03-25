@@ -299,7 +299,7 @@ internal struct UserProfiles: View {
 
 internal struct UserSelectExample: View {
     
-    @EnvironmentObject var router: Router
+    @EnvironmentObject private var router: Router
     
     @StateObject private var state: BSCSDKChannelUserSelectionState = BSCSDKChannelUserSelectionState(selections: [])
     
@@ -322,23 +322,44 @@ internal struct ComponentView<Content: View>: View {
     
     @EnvironmentObject var router: Router
     
-    var title: String
-    var withScrollView: Bool
-    var content: () -> Content
+    private var title: String
+    private var withScrollView: Bool
+    private var onBackClicked: (() -> Void)? = nil
+    private var endAction: EndAction? = nil
+    private var content: () -> Content
     
-    init(title: String, canScroll: Bool = true, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        title: String,
+        canScroll: Bool = true,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.title = title
         self.withScrollView = canScroll
         self.content = content
     }
     
+    private func applyEndActionToHeader(to view: Header) -> Header {
+            if let endAction = endAction {
+                return view.withEndAction(endAction)
+            } else {
+                return view
+            }
+        }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Header()
-                .title(title)
-                .backClicked {
-                    router.navigateBack()
-                }
+            applyEndActionToHeader(
+                to: Header()
+                    .title(title)
+                    .backClicked {
+                        if let backClick = onBackClicked {
+                            backClick()
+                        } else {
+                            router.navigateBack()
+                        }
+                    }
+            )
+                
             
             if withScrollView {
                 ScrollView(content: content)
@@ -349,5 +370,19 @@ internal struct ComponentView<Content: View>: View {
         .ignoresSafeArea()
         .navigationBarTitle(Text(""), displayMode: .inline) // Hide navigation bar title
         .navigationBarBackButtonHidden()
+    }
+}
+
+extension ComponentView {
+    func onBack(_ block: @escaping () -> Void) -> ComponentView {
+        var snapshot = self
+        snapshot.onBackClicked = block
+        return snapshot
+    }
+    
+    func withEndAction(_ action: EndAction) -> ComponentView {
+        var snapshot = self
+        snapshot.endAction = action
+        return snapshot
     }
 }
