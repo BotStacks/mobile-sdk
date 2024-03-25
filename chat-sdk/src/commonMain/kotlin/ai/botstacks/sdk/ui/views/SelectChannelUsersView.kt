@@ -28,9 +28,15 @@ import androidx.compose.ui.text.input.TextFieldValue
 
 @Stable
 class ChannelUserSelectionState(
-    var selections: SnapshotStateList<User> = mutableStateListOf()
+    initialSelections: List<User>,
 ) {
-    constructor(chat: Chat) : this(chat.members.map { it.user }.toMutableStateList())
+    constructor(chat: Chat) : this(chat.members.map { it.user })
+
+    var selections = mutableStateListOf<User>()
+
+    init {
+        selections.addAll(initialSelections)
+    }
 
     fun addUser(user: User) {
         selections = selections.apply { add(user) }
@@ -88,7 +94,7 @@ fun SelectChannelUsersView(
             pager = BotStacksChatStore.current.users,
             filter = filter@{
                 if (search.text.isEmpty()) return@filter true
-                it.displayNameFb.contains(search.text)
+                it.displayNameFb.contains(search.text, ignoreCase = true)
             }
         ) { user ->
             var isSelected by remember(state.selections) {

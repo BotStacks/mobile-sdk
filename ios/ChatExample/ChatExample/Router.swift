@@ -7,10 +7,13 @@
 
 import Foundation
 import SwiftUI
+import BotStacks_ChatSDK
 
 final class Router: ObservableObject {
     
     public enum Destination: Codable, Hashable {
+        case showcase
+        
         // MARK: components
         case avatar
         case badges
@@ -26,8 +29,10 @@ final class Router: ObservableObject {
         case userprofile
         case userselect
         
+        // MARK: views
+        case channeluserselect(BSCSDKChannelUserSelectionState)
+        
         // MARK: E2E Controller nodes
-        case login
         case controller
     
     }

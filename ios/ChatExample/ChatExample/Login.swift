@@ -30,7 +30,7 @@ struct LoginView: View {
                         
                         switch result {
                         case .success:
-                            router.navigate(to: .controller)
+                            router.navigate(to: .showcase)
                         case .failure(let error):
                             print(error)
                         }

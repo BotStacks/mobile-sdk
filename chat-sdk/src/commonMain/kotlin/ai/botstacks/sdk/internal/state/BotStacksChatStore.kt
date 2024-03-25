@@ -25,16 +25,16 @@ import androidx.compose.runtime.setValue
 import kotlin.properties.Delegates
 
 @Stable
-internal data class BotStacksChatStore(val id: String = uuid()) {
+data class BotStacksChatStore(val id: String = uuid()) {
 
     //    val messages = ThreadPager()
     val favorites = FavoritesPager()
-    val settings = Settings()
+    internal val settings = Settings()
     val network = ChannelsPager()
     val contacts = ContactsPager()
     val users = UsersPager()
     val invites = mutableStateMapOf<String, MutableList<User>>()
-    val cache = Caches()
+    internal val cache = Caches()
     val memberships = mutableStateListOf<Participant>()
     val chats: List<Chat>
         get() = memberships.filter { it.isMember }
@@ -64,6 +64,9 @@ internal data class BotStacksChatStore(val id: String = uuid()) {
         API.init()
         settings.init()
     }
+
+    fun userWith(id: String) = cache.users[id]
+    fun chatWith(id: String) = cache.chats[id]
 
     suspend fun loadAsync() {
         currentUserID ?: return

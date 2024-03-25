@@ -132,7 +132,7 @@ private data class SelectUsersScreen(
             if (chat != null) {
                 ChannelUserSelectionState(chat = chat,)
             } else {
-                ChannelUserSelectionState(selections = users.toMutableStateList())
+                ChannelUserSelectionState(initialSelections = users.toMutableStateList())
             }
         }
 

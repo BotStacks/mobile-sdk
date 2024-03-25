@@ -298,12 +298,27 @@ internal struct UserProfiles: View {
 }
 
 internal struct UserSelectExample: View {
+    
+    @EnvironmentObject var router: Router
+    
+    @StateObject private var state: BSCSDKChannelUserSelectionState = BSCSDKChannelUserSelectionState(selections: [])
+    
     var body: some View {
-        /*@START_MENU_TOKEN@*//*@PLACEHOLDER=Hello, world!@*/Text("Hello, world!")/*@END_MENU_TOKEN@*/
+        ComponentView(title: "UserSelect") {
+            UserSelect(
+                selectedUsers: $state.selections,
+                canRemove: true,
+                showAdd: true,
+                onRemove: { user in
+                    state.removeUser(user: user)
+                },
+                onAddSelected: { router.navigate(to: .channeluserselect(state)) }
+            ).padding(.vertical)
+        }
     }
 }
 
-private struct ComponentView<Content: View>: View {
+internal struct ComponentView<Content: View>: View {
     
     @EnvironmentObject var router: Router
     

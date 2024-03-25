@@ -15,13 +15,13 @@ struct ContentView: View {
             Header()
             ComponentShowCase()
             Spacer()
-        }
-        .frame(
+        }.frame(
             maxWidth: .infinity,
             maxHeight: .infinity,
-            alignment: .topLeading
-        )
-        .navigationBarTitle(Text(""), displayMode: .inline) // Hide navigation bar title
+            alignment: .top
+        ).ignoresSafeArea()
+            .navigationBarTitle(Text(""), displayMode: .inline) // Hide navigation bar title
+            .navigationBarBackButtonHidden()
     }
 }
 
@@ -32,7 +32,7 @@ struct ComponentShowCase: View {
         VStack {
            List {
                Section {
-                   ListRow(title: "Chat Controller Example") { router.navigate(to: .login) }
+                   ListRow(title: "Chat Controller Example") { router.navigate(to: .controller) }
                }
                
                Section {
@@ -48,16 +48,18 @@ struct ComponentShowCase: View {
                    ListRow(title: "MessageList") { router.navigate(to: .messagelist) }
                    ListRow(title: "Spinner") { router.navigate(to: .spinner) }
                    ListRow(title: "UserProfile") { router.navigate(to: .userprofile) }
+                   ListRow(title: "UserSelect") { router.navigate(to: .userselect) }
                } header: {
                    Text("Components")
                }
+               
+               Section {
+                   ListRow(title: "SelectChannelUsersView") { router.navigate(to: .channeluserselect(BSCSDKChannelUserSelectionState(selections: []))) }
+               } header: {
+                   Text("Views")
+               }
             }
         }
-        .frame(
-            maxWidth: .infinity,
-            maxHeight: .infinity,
-            alignment: .top
-        )
     }
 }
 

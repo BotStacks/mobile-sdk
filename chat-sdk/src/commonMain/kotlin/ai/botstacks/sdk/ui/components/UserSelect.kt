@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import ai.botstacks.`chat-sdk`.generated.resources.Res
+import androidx.compose.foundation.layout.PaddingValues
 import dev.icerock.moko.resources.compose.painterResource
 
 /**
@@ -27,7 +28,7 @@ import dev.icerock.moko.resources.compose.painterResource
  * @param selectedUsers Currently selected users
  * @param canRemove If enabled, currently selected users can be removed on click (Will trigger [onRemove].
  * @param showAdd If enabled, a trailing add option will appear allowing you to handle [onAddSelected] to navigate to another
- * view to add users. @see [SelectChannelUsers] for a use case.
+ * view to add users. @see [ai.botstacks.sdk.ui.views.SelectChannelUsersView] for a use case.
  * @param onRemove callback for when a user is removed.
  * @param onAddSelected callback when the trailing add option is clicked; requires [showAdd] to be true.
  *
@@ -50,7 +51,7 @@ fun UserSelect(
         items(selectedUsers) {
             Avatar(
                 modifier = Modifier
-                    .clickable { onRemove(it) },
+                    .clickable(enabled = canRemove) { onRemove(it) },
                 user = it,
                 isRemovable = canRemove,
             )

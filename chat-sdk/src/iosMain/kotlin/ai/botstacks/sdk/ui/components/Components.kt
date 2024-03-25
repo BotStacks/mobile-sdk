@@ -12,9 +12,13 @@ import ai.botstacks.sdk.ui.theme.FontStyle
 import ai.botstacks.sdk.ui.theme.painterImageAsset
 import ai.botstacks.sdk.ui.utils.IntrinsicUIKitView
 import ai.botstacks.sdk.ui.utils.measuredThemedViewController
+import ai.botstacks.sdk.utils.ComposeState
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Icon
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import platform.UIKit.UIColor
 import platform.UIKit.UIImage
@@ -291,4 +295,25 @@ fun _UserProfile(
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured) {
     UserProfile(user = user)
+}
+
+fun _UserSelect(
+    selectedUsers: ComposeState<List<User>>,
+    canRemove: Boolean = false,
+    showAdd: Boolean = true,
+    onRemove: (User) -> Unit = { },
+    onAddSelected: () -> Unit = { },
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured) {
+    val mutableUsers by remember(selectedUsers) {
+        derivedStateOf { selectedUsers }
+    }
+
+    UserSelect(
+        selectedUsers = mutableUsers.state.value,
+        canRemove = canRemove,
+        showAdd = showAdd,
+        onRemove = onRemove,
+        onAddSelected = onAddSelected,
+    )
 }

@@ -17,10 +17,11 @@ struct ChatExampleApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.navPath) {
-                ContentView()
+                LoginView()
                     .ignoresSafeArea()
                     .navigationDestination(for: Router.Destination.self) { destination in
                         switch destination {
+                        case .showcase: ContentView()
                         case .avatar: Avatars()
                         case .badges: Badges()
                         case .channelrow: ChannelRows()
@@ -35,7 +36,9 @@ struct ChatExampleApp: App {
                         case .userprofile: UserProfiles()
                         case .userselect: UserSelectExample()
                             
-                        case .login: LoginView()
+                        case .channeluserselect(let state):
+                            ChannelUserSelect(state: state)
+                            
                         case .controller: ChatControllerExample()
                         }
                     }

@@ -29,6 +29,12 @@ func generateUser() -> User {
     return user
 }
 
+func generateUserList() -> [User] {
+    let users = (0..<25).map { _ in generateUser() }
+    
+    return users
+}
+
 func generateChannel(with users: [User] =  [], kind: ChatType = .group) -> Chat {
     let users = if users.isEmpty {
         (0..<20).map { _ in generateUser() }
