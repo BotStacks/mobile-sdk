@@ -35,6 +35,9 @@ final class Router: ObservableObject {
         case channelsettingsexample
         case channelsettings(String)
         case channelsettings_userselect(BSCSDKChannelSettingsState)
+        case editprofile
+        case userdetails_userselect
+        case userdetails(String)
         
         // MARK: E2E Controller nodes
         case controller

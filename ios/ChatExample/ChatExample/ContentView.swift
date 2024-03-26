@@ -55,7 +55,10 @@ struct ComponentShowCase: View {
                
                Section {
                    ListRow(title: "ChannelSettingsView") { router.navigate(to: .channelsettingsexample) }
+                   ListRow(title: "EditProfileView") { router.navigate(to: .editprofile) }
                    ListRow(title: "SelectChannelUsersView") { router.navigate(to: .channeluserselect(BSCSDKChannelUserSelectionState(selections: []))) }
+                   ListRow(title: "UserDetailsView") { router.navigate(to: .userdetails_userselect) }
+                   
                } header: {
                    Text("Views")
                }

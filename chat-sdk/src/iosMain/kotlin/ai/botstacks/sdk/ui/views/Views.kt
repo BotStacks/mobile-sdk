@@ -26,9 +26,23 @@ fun _CreateChannelView(
     )
 }
 
+fun _EditProfileView(
+    state: EditProfileState,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured = onMeasured) {
+    EditProfileView(state)
+}
+
 fun _SelectChannelUsersView(
     state: ChannelUserSelectionState,
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured = onMeasured) {
     SelectChannelUsersView(state)
+}
+
+fun _UserDetailsView(
+    state: UserDetailsState,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured = onMeasured) {
+    UserDetailsView(state)
 }

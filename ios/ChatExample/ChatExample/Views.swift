@@ -69,7 +69,7 @@ internal struct ChannelSettingsExample_SettingsView: View {
                 state.update { result in
                     saving = false
                     switch result {
-                    case .success(let chat):
+                    case .success( _):
                         router.navigateBack()
                     case .failure(let error):
                         self.errorMessage = "An error occurred.\n\(error.localizedDescription)"
@@ -116,3 +116,110 @@ internal struct ChannelSettings_UserSelect : View {
     }
 }
 
+internal struct EditProfile: View {
+    
+    @EnvironmentObject var router: Router
+    
+    @State private var state: BSCSDKEditProfileState = BSCSDKEditProfileState()
+    
+    @State private var showError = false
+    @State private var errorMessage = ""
+    @State private var saving = false
+    
+    var body: some View {
+        ZStack {
+            ComponentView(
+                title: "Edit Profile",
+                canScroll: false
+            ) {
+                EditProfileView(state: state)
+            }.withEndAction(EndAction.save(onClick: {
+                saving = true
+                state.update { result in
+                    saving = false
+                    switch result {
+                    case .success( _):
+                        router.navigateBack()
+                    case .failure(let error):
+                        self.errorMessage = "An error occurred.\n\(error.localizedDescription)"
+                        self.showError = true
+                    }
+                }
+            })).alert(isPresented: $showError) {
+                Alert(title: Text("Error"), message: Text(errorMessage), dismissButton: .default(Text("OK")))
+            }
+            
+            if saving {
+                ProgressOverlay()
+            }
+        }
+    }
+}
+
+internal struct UserDetailsExample_UserSelect: View {
+    
+    @EnvironmentObject var router: Router
+    
+    
+    private var users: [User]
+    
+    init() {
+        self.users = generateUserList()
+    }
+    
+    var body: some View {
+        List {
+            ForEach(users, id: \.id) { user in
+                
+            }
+        }
+        VStack(alignment: .leading) {
+            ForEach(users, id: \.id) { user in
+                ListRow(title: user.displayNameFb) {
+                    router.navigate(to: .userdetails(user.id))
+                }
+            }
+        }.frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity,
+            alignment: .topLeading
+        ).padding(EdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 0))
+    }
+    
+    private struct ListRow: View {
+        
+        public var title: String
+        public var onClick: () -> Void
+        
+        var body: some View {
+            HStack {
+                Text(title)
+                Spacer()
+            }.contentShape(Rectangle())
+             .onTapGesture {
+                 onClick()
+             }
+        }
+    }
+}
+
+internal struct UserDetailsExample_Details: View {
+    
+    private var userId: String
+    
+    @State private var state: BSCSDKUserDetailsState
+        
+    init(userId: String) {
+        self.userId = userId
+        self._state = State(wrappedValue: BSCSDKUserDetailsState(userId: userId))
+    }
+    
+    var body: some View {
+        ComponentView(
+            title: "Details",
+            canScroll: false
+        ) {
+            UserDetailsView(state: state)
+        }
+    }
+}

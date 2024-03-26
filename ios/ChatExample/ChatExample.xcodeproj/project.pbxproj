@@ -32,6 +32,8 @@
 		06B42D242BB1CDC600A02CFF /* ChannelSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D232BB1CDC600A02CFF /* ChannelSettingsView.swift */; };
 		06B42D262BB2106900A02CFF /* ProgressOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D252BB2106900A02CFF /* ProgressOverlay.swift */; };
 		06B42D282BB312CC00A02CFF /* CreateChannelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D272BB312CC00A02CFF /* CreateChannelView.swift */; };
+		06B42D2A2BB3156700A02CFF /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D292BB3156700A02CFF /* EditProfileView.swift */; };
+		06B42D2C2BB3165800A02CFF /* UserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D2B2BB3165800A02CFF /* UserDetailsView.swift */; };
 		06EA28722B9E66F0000FE324 /* ChatExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28712B9E66F0000FE324 /* ChatExampleApp.swift */; };
 		06EA28742B9E66F0000FE324 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28732B9E66F0000FE324 /* ContentView.swift */; };
 		06EA28762B9E66F1000FE324 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06EA28752B9E66F1000FE324 /* Assets.xcassets */; };
@@ -69,6 +71,8 @@
 		06B42D232BB1CDC600A02CFF /* ChannelSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelSettingsView.swift; sourceTree = "<group>"; };
 		06B42D252BB2106900A02CFF /* ProgressOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressOverlay.swift; sourceTree = "<group>"; };
 		06B42D272BB312CC00A02CFF /* CreateChannelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateChannelView.swift; sourceTree = "<group>"; };
+		06B42D292BB3156700A02CFF /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
+		06B42D2B2BB3165800A02CFF /* UserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsView.swift; sourceTree = "<group>"; };
 		06EA286E2B9E66F0000FE324 /* ChatExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06EA28712B9E66F0000FE324 /* ChatExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatExampleApp.swift; sourceTree = "<group>"; };
 		06EA28732B9E66F0000FE324 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -134,6 +138,8 @@
 				06B42D1F2BAE40B300A02CFF /* SelectChannelUsersView.swift */,
 				06B42D232BB1CDC600A02CFF /* ChannelSettingsView.swift */,
 				06B42D272BB312CC00A02CFF /* CreateChannelView.swift */,
+				06B42D292BB3156700A02CFF /* EditProfileView.swift */,
+				06B42D2B2BB3165800A02CFF /* UserDetailsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -365,11 +371,13 @@
 				06EA28872B9F8FAF000FE324 /* MeasuredView.swift in Sources */,
 				06B42D282BB312CC00A02CFF /* CreateChannelView.swift in Sources */,
 				06B42D052BA509C800A02CFF /* ChatInput.swift in Sources */,
+				06B42D2C2BB3165800A02CFF /* UserDetailsView.swift in Sources */,
 				06B42D0A2BA6749300A02CFF /* BotStacksChatController.swift in Sources */,
 				06B42D1A2BA8060E00A02CFF /* Debug.swift in Sources */,
 				06B42D0C2BA6758900A02CFF /* ChatControllerExample.swift in Sources */,
 				06B42D262BB2106900A02CFF /* ProgressOverlay.swift in Sources */,
 				06B42CF02BA34B4600A02CFF /* Router.swift in Sources */,
+				06B42D2A2BB3156700A02CFF /* EditProfileView.swift in Sources */,
 				06B42D182BA7FBD800A02CFF /* UserSelect.swift in Sources */,
 				06B42CFC2BA4B61900A02CFF /* Spinner.swift in Sources */,
 				06B42D242BB1CDC600A02CFF /* ChannelSettingsView.swift in Sources */,
