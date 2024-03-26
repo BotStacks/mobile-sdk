@@ -107,7 +107,6 @@ class ChannelSettingsState(private val chat: Chat) {
         private set
 
     init {
-        println("init of csv ${hashCode()}")
         participants.addAll(chat.members.map { it.user })
     }
 

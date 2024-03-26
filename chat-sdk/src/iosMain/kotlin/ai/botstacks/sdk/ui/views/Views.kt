@@ -14,6 +14,18 @@ fun _ChannelSettingsView(
         onAddUsers = onAddUsers,
     )
 }
+
+fun _CreateChannelView(
+    state: CreateChannelState,
+    onSelectUsers: () -> Unit,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured = onMeasured) {
+    CreateChannelView(
+        state = state,
+        onSelectUsers = onSelectUsers,
+    )
+}
+
 fun _SelectChannelUsersView(
     state: ChannelUserSelectionState,
     onMeasured: (Double, Double) -> Unit,
