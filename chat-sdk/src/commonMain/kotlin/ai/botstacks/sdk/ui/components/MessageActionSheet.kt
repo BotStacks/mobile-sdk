@@ -21,13 +21,25 @@ import ai.botstacks.sdk.internal.utils.genChatextMessage
 import androidx.compose.ui.unit.dp
 import ai.botstacks.`chat-sdk`.generated.resources.Res
 
+internal enum class MessageAction {
+    react,
+    copy,
+    reply,
+    favorite;
+
+    companion object {
+        val supportedActions = listOf(
+            copy
+        )
+    }
+}
 /**
  * MediaActionSheetState
  *
  * A state that drives visibility of the [MessageActionSheet].
  */
 @OptIn(ExperimentalMaterialApi::class)
-class MessageActionSheetState(sheetState: ModalBottomSheetState) : ActionSheetState(sheetState) {
+class MessageActionSheetState(sheetState: ModalBottomSheetState? = null) : ActionSheetState(sheetState) {
     var messageForAction by mutableStateOf<Message?>(null)
 }
 
@@ -62,9 +74,30 @@ fun rememberMessageActionSheetState(message: Message? = null): MessageActionShee
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
 fun MessageActionSheet(
-    state: MessageActionSheetState = rememberMessageActionSheetState(),
+    state: MessageActionSheetState,
     content: @Composable () -> Unit
 ) {
+    MessageActionSheetContainer(state) { onAction ->
+        ModalBottomSheetLayout(
+            modifier = Modifier.fillMaxSize(),
+            sheetState = state.sheetState ?: ActionSheetDefaults.SheetState,
+            sheetBackgroundColor = colorScheme.background,
+            sheetContentColor = colorScheme.onBackground,
+            scrimColor = colorScheme.scrim,
+            sheetContent = {
+                MessageActionSheetContent(onAction)
+            },
+            content = content
+        )
+    }
+}
+
+@Composable
+internal fun MessageActionSheetContainer(
+    state: MessageActionSheetState,
+    content: @Composable (onSelection: (MessageAction) -> Unit) -> Unit,
+) {
+
     val annotatedString = (state.messageForAction?.text ?: "").annotated()
 
     val clipboardManager = LocalClipboardManager.current
@@ -77,16 +110,27 @@ fun MessageActionSheet(
         }
     }
 
-    ModalBottomSheetLayout(
-        modifier = Modifier.fillMaxSize(),
-        sheetState = state.sheetState ?: ActionSheetDefaults.SheetState,
-        sheetBackgroundColor = colorScheme.background,
-        sheetContentColor = colorScheme.onBackground,
-        scrimColor = colorScheme.scrim,
-        sheetContent = {
-            Column(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
-                Spacer(Modifier.height(8.dp))
-                // TODO: add back once emoji keyboard is KMP
+    Box {
+        content { action ->
+            when (action) {
+                MessageAction.react -> Unit
+                MessageAction.copy -> {
+                    clipboardManager.setText(annotatedString)
+                    state.messageForAction = null
+                }
+                MessageAction.reply -> Unit
+                MessageAction.favorite -> Unit
+            }
+        }
+    }
+}
+@Composable
+internal fun MessageActionSheetContent(
+    onSelection: (MessageAction) -> Unit
+) {
+    Column(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
+        Spacer(Modifier.height(8.dp))
+        // TODO: add back once emoji keyboard is KMP
 //                EmojiBar(
 //                    current = message?.currentReaction,
 //                    onEmoji = {
@@ -111,17 +155,13 @@ fun MessageActionSheet(
 //                    hide()
 //                }
 
-                ActionItem(
-                    text = "Copy message text",
-                    icon = Res.images.copy,
-                ) {
-                    clipboardManager.setText(annotatedString)
-                    state.messageForAction = null
-                }
-            }
-        },
-        content = content
-    )
+        ActionItem(
+            text = "Copy message text",
+            icon = Res.images.copy,
+        ) {
+            onSelection(MessageAction.copy)
+        }
+    }
 }
 
 @IPreviews

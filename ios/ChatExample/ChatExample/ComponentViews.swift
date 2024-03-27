@@ -120,6 +120,8 @@ internal struct ChatMessages: View {
     
     private var messages: [Message]
     
+    @StateObject private var state: BSCSDKMessageActionSheetState = BSCSDKMessageActionSheetState()
+    
     init() {
         user1 = generateUser()
         user2 = generateUser()
@@ -141,12 +143,19 @@ internal struct ChatMessages: View {
                 ForEach(messages, id: \.id) { message in
                     ChatMessage(message: message)
                         .withAvatar(true)
+                        .onLongPress {
+                            state.messageForAction = message
+                        }
                 }
             }.frame(
                 maxWidth: .infinity,
                 maxHeight: .infinity,
                 alignment: .topLeading
-            ).padding(EdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 0))
+            ).sheet(isPresented: state.isShowing) {
+                MessageActionSheet(state: state)
+            }.padding(
+                EdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 0)
+            )
         }
     }
 }
