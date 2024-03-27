@@ -2,10 +2,10 @@ package ai.botstacks.sdk.internal.state
 
 import ai.botstacks.sdk.internal.API
 import ai.botstacks.sdk.BotStacksChat
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.Server
 import ai.botstacks.sdk.type.AttachmentInput
 import ai.botstacks.sdk.type.AttachmentType
-import ai.botstacks.sdk.internal.Monitoring
 import ai.botstacks.sdk.internal.utils.bg
 import ai.botstacks.sdk.internal.utils.contentType
 import ai.botstacks.sdk.internal.utils.op
@@ -51,7 +51,7 @@ internal data class Upload(val id: String = uuid(), val file: KmpFile) {
         url?.let {
             cont.resume(it)
         } ?: error?.let {
-            Monitoring.log(it.message.orEmpty())
+            Monitor.error(it.message.orEmpty())
             cont.resume(null)
         } ?: run {
             _await = cont
@@ -90,10 +90,10 @@ internal data class Upload(val id: String = uuid(), val file: KmpFile) {
                     }["url"].toString().removeSurrounding("\"")
                 } else {
                     val message = response.body<ByteArray>().decodeToString()
-                    Monitoring.error("Upload response code: " + response.status.value + " Message: " + message)
+                    Monitor.error("Upload response code: " + response.status.value + " Message: " + message)
                 }
             } catch (err: Error) {
-                Monitoring.error(err, "Upload error")
+                Monitor.error(err, "Upload error")
                 error = err
             }
             if (url == null && error == null) {

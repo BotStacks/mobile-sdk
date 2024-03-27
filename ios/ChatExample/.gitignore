@@ -1,0 +1,24 @@
+## Private assets
+
+## System files
+.DS_Store
+
+## Build generated
+build/
+.build/
+DerivedData
+Pods
+
+## Various settings
+*.pbxuser
+!default.pbxuser
+xcuserdata
+
+## Other
+*.xccheckout
+*.xcuserstate
+*.xcscmblueprint
+
+## Obj-C/Swift specific
+*.hmap
+*.ipa

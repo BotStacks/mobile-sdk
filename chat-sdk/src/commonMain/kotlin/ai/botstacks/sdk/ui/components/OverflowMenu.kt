@@ -23,7 +23,7 @@ interface OverflowMenuScope {
     /**
      * Adds an item where content is completely provided by caller.
      */
-    fun item(
+    public fun item(
         content: @Composable (PaddingValues) -> Unit
     )
 
@@ -37,7 +37,7 @@ interface OverflowMenuScope {
      * @param title Title for this item.
      *
      */
-    fun label(
+    public fun label(
         enabled: Boolean = true,
         onClick: () -> Unit,
         icon: (@Composable () -> Unit)? = null,

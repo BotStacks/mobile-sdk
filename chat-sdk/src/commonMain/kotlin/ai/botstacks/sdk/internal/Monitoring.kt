@@ -4,72 +4,67 @@
 
 package ai.botstacks.sdk.internal
 
+import ai.botstacks.sdk.BotStacksChat
+import ai.botstacks.sdk.LogLevel
 import ai.botstacks.sdk.SdkConfig
 
-internal object Monitoring {
-    private val printLogs = SdkConfig.DEBUG
+internal val Monitor
+    get() = BotStacksChat.monitoring
 
-    fun setup() {
-        println("Monitoring :: printLogs=$printLogs")
-//        Sentry.init {
-//            it.dsn = "https://17891a46f1414379ab8dee14743c15a6@o4505121822801920.ingest.sentry.io/4505121983168512"
-//        }
-    }
+internal class Monitoring(
+    private val level: LogLevel = LogLevel.NONE,
+    private val log: (String) -> Unit = { println(it) }
+) {
+    private val printLogs = SdkConfig.DEBUG ||  level != LogLevel.NONE
 
-    fun error(message: String, data: Map<String, Any>? = null) {
+    fun debug(message: String, data: Map<String, Any>? = null) {
         if (printLogs) {
-            println(message + " ${data?.entries?.joinToString().orEmpty()}")
-        }
-//        Sentry.captureMessage(
-//            if (data != null) message + " Data: ${data.entries.joinToString()}" else message,
-//        )
-    }
-
-    fun error(error: Throwable, message: String? = null) {
-        if (printLogs) {
-            if (message != null) {
-                println(message)
+            if (level == LogLevel.DEBUG || level == LogLevel.VERBOSE) {
+                log(message + " ${data?.entries?.joinToString().orEmpty()}")
             }
-            println(error.stackTraceToString())
         }
-
-//            Sentry.captureMessage("Error data: " + data.entries.joinToString())
-//        Sentry.captureException(error)
     }
 
-    fun log(message: String, data: Map<String, Any>? = null) {
+    fun network(message: String) {
         if (printLogs) {
-            println(message + " ${data?.entries?.joinToString().orEmpty()}")
+            if (level == LogLevel.NETWORK_ONLY || level == LogLevel.VERBOSE) {
+                log(message)
+            }
         }
-//        Sentry.captureMessage(
-//            if (data != null) message + " Data: ${data.entries.joinToString()}" else message,
-//        )
     }
 
     fun info(message: String, data: Map<String, Any>? = null) {
         if (printLogs) {
-            println(message + " ${data?.entries?.joinToString().orEmpty()}")
+            if (level == LogLevel.INFO || level == LogLevel.VERBOSE) {
+                log(message + " ${data?.entries?.joinToString().orEmpty()}")
+            }
         }
-//        Sentry.captureMessage(
-//            if (data != null) message + " Data: ${data.entries.joinToString()}" else message,
-//        )
     }
 
     fun warning(message: String, data: Map<String, Any>? = null) {
         if (printLogs) {
-            println(message + " ${data?.entries?.joinToString().orEmpty()}")
+            if (level == LogLevel.WARNING || level == LogLevel.VERBOSE) {
+                log(message + " ${data?.entries?.joinToString().orEmpty()}")
+            }
         }
-//        Sentry.captureMessage(
-//            if (data != null) message + " Data: ${data.entries.joinToString()}" else message,
-//        )
     }
 
-    fun critical(message: String, data: Map<String, Any>? = null) {
+    fun error(error: Throwable, message: String? = null) {
         if (printLogs) {
-            println(message + " ${data?.entries?.joinToString().orEmpty()}")
+            if (level == LogLevel.ERROR || level == LogLevel.VERBOSE) {
+                if (message != null) {
+                    log(message)
+                }
+                log(error.stackTraceToString())
+            }
         }
-//        Sentry.captureMessage(
-//            if (data != null) message + " Data: ${data.entries.joinToString()}" else message,
-//        )
+    }
+
+    fun error(message: String, data: Map<String, Any>? = null) {
+        if (printLogs) {
+            if (level == LogLevel.ERROR || level == LogLevel.VERBOSE) {
+                log(message + " ${data?.entries?.joinToString().orEmpty()}")
+            }
+        }
     }
 }

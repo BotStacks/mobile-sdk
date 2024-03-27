@@ -5,7 +5,8 @@
 package ai.botstacks.sdk.internal.utils
 
 import ai.botstacks.sdk.BotStacksChat
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
+
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -25,10 +26,10 @@ internal fun op(
     try {
         block()
     } catch (err: Exception) {
-        Monitoring.error(err)
+        Monitor.error(err)
         onError.invoke()
     } catch (err: Error) {
-        Monitoring.error(err)
+        Monitor.error(err)
         onError.invoke()
     }
 }
@@ -58,7 +59,7 @@ internal suspend fun <T> retryIO(
         } catch (e: Exception) {
             // you can log an error here and/or make a more finer-grained
             // analysis of the cause to see if retry is needed
-            Monitoring.error(e)
+            Monitor.error(e)
         }
         delay(currentDelay)
         currentDelay = (currentDelay * factor).toLong().coerceAtMost(maxDelay)

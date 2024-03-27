@@ -4,7 +4,7 @@
 
 package ai.botstacks.sdk.ui.components
 
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.ui.components.OnlineStatusIndicator
 import ai.botstacks.sdk.state.User
 import ai.botstacks.sdk.ui.BotStacks
@@ -203,7 +203,7 @@ fun Avatar(
 /**
  * Avatar
  *
- * Renders the display image for a user in a bordered circle at the specified size.
+ * Renders the display image in a bordered circle at the specified size.
  *
  * @param modifier the Modifier to be applied to this Avatar
  * @param backgroundColor Background color to render behind images (will show in empty state depending on what empty state is).
@@ -250,7 +250,7 @@ fun Avatar(
                                             .crossfade(true)
                                             .build(),
                                         onError = {
-                                            Monitoring.error(error = it.result.throwable, "failed to load user avatar")
+                                            Monitor.error(error = it.result.throwable, "failed to load user avatar")
                                         },
                                         fallback = type.emptyState,
                                         contentDescription = "user profile picture",
@@ -295,7 +295,7 @@ fun Avatar(
                             .build(),
                         fallback = type.emptyState,
                         onError = {
-                            Monitoring.error(error = it.result.throwable, "failed to load user avatar")
+                            Monitor.error(error = it.result.throwable, "failed to load user avatar")
                         },
                         contentDescription = "user profile picture",
                         contentScale = ContentScale.Crop,

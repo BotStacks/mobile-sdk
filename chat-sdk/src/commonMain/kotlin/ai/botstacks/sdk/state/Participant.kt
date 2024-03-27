@@ -2,6 +2,7 @@ package ai.botstacks.sdk.state
 
 import androidx.compose.runtime.Stable
 import ai.botstacks.sdk.fragment.FMember
+import ai.botstacks.sdk.internal.state.BotStacksChatStore
 import ai.botstacks.sdk.internal.state.toRole
 import kotlinx.datetime.Instant
 
@@ -44,6 +45,13 @@ data class Participant(
      */
     val chat: Chat
         get() = Chat.get(chat_id)!!
+
+    init {
+        val memberships = BotStacksChatStore.current.memberships
+        if (!memberships.contains(this)) {
+            memberships.add(this)
+        }
+    }
 
     companion object {
         internal fun get(props: FMember): Participant {

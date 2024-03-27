@@ -44,7 +44,17 @@ internal actual fun rememberCameraManager(onResult: (KmpFile?) -> Unit): CameraM
             imagePicker.setAllowsEditing(true)
             imagePicker.setCameraCaptureMode(UIImagePickerControllerCameraCaptureMode.UIImagePickerControllerCameraCaptureModePhoto)
             imagePicker.setDelegate(cameraDelegate)
-            UIApplication.rootViewController()?.presentViewController(imagePicker, true, null)
+
+            val rootViewController = UIApplication.rootViewController()
+            if (rootViewController?.presentedViewController != null) {
+                rootViewController.presentedViewController?.dismissViewControllerAnimated(true, null)
+
+            }
+            rootViewController?.presentViewController(
+                imagePicker,
+                true,
+                null
+            )
         }
     }
 }

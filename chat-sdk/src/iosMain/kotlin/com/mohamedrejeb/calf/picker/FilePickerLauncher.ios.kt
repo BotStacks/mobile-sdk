@@ -1,6 +1,7 @@
 package com.mohamedrejeb.calf.picker
 
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
+import ai.botstacks.sdk.internal.ui.utils.rootViewController
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -98,11 +99,20 @@ private fun rememberDocumentPickerLauncher(
                     selectionMode = selectionMode,
                 )
 
-                UIApplication.sharedApplication.keyWindow?.rootViewController?.presentViewController(
-                    pickerController,
-                    true,
-                    null
-                )
+                val rootViewController = UIApplication.rootViewController()
+                if (rootViewController?.presentedViewController != null) {
+                    rootViewController.presentedViewController?.presentViewController(
+                        pickerController,
+                        true,
+                        null
+                    )
+                } else {
+                    rootViewController?.presentViewController(
+                        pickerController,
+                        true,
+                        null
+                    )
+                }
             }
         )
     }
@@ -120,7 +130,7 @@ private fun rememberImagePickerLauncher(
         object : NSObject(), PHPickerViewControllerDelegateProtocol {
             override fun picker(picker: PHPickerViewController, didFinishPicking: List<*>) {
                 picker.dismissViewControllerAnimated(true, null)
-                Monitoring.log("didFinishPicking: $didFinishPicking")
+                Monitor.debug("didFinishPicking: $didFinishPicking")
 
                 coroutineScope.launch {
                     val results = didFinishPicking.mapNotNull {
@@ -143,7 +153,12 @@ private fun rememberImagePickerLauncher(
                     delegate = pickerDelegate,
                     selectionMode = selectionMode,
                 )
-                UIApplication.sharedApplication.keyWindow?.rootViewController?.presentViewController(
+                val rootViewController = UIApplication.rootViewController()
+                if (rootViewController?.presentedViewController != null) {
+                    rootViewController.presentedViewController?.dismissViewControllerAnimated(true, null)
+
+                }
+                rootViewController?.presentViewController(
                     imagePicker,
                     true,
                     null
@@ -159,10 +174,10 @@ private suspend fun NSItemProvider.loadFileRepresentationForTypeIdentifier(): NS
             typeIdentifier = UTTypeImage.identifier,
         ) { url, error ->
             if (error != null) {
-                Monitoring.error("Error: $error")
+                Monitor.error("Error: $error")
                 cont.resume(null)
             } else {
-                Monitoring.log("url=$url, ext=${url?.pathExtension}")
+                Monitor.debug("url=$url, ext=${url?.pathExtension}")
                 val tmpUrl = url?.let { TemporaryImageURL(it) }
                 val contentUrl = runCatching { tmpUrl?.contentURL }.getOrNull()
                 cont.resume(contentUrl)

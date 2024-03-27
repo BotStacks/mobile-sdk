@@ -68,6 +68,10 @@ abstract class Pager<T : Identifiable>(
             hasMore = items.size >= pageSize
             loading = false
             refreshing = false
+        }, onError = {
+            hasMore = false
+            loading = false
+            refreshing = false
         })
     }
 
@@ -79,6 +83,9 @@ abstract class Pager<T : Identifiable>(
             val items = bg { load(items.size, pageSize) }
             pager.items.addAll(items)
             hasMore = items.size >= pageSize
+            loading = false
+        }, onError = {
+            hasMore = false
             loading = false
         })
     }

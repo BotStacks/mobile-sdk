@@ -30,28 +30,26 @@ internal fun ActionItem(text: String, icon: ImageResource, action: () -> Unit) {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ActionItem(text: String, icon: Painter, action: () -> Unit) {
-    Column {
-        ListItem(
-            text = {
-                Text(
-                    text = text,
-                    fontStyle = BotStacks.fonts.body2,
-                    color = BotStacks.colorScheme.onBackground
-                )
-            },
-            icon = {
-                Icon(
-                    painter = icon,
-                    contentDescription = text,
-                    tint = BotStacks.colorScheme.onBackground,
-                    modifier = Modifier.size(25.dp)
-                )
-            },
-            modifier = Modifier.clickable {
-                action()
-            }
-        )
-    }
+    ListItem(
+        text = {
+            Text(
+                text = text,
+                fontStyle = BotStacks.fonts.body2,
+                color = BotStacks.colorScheme.onBackground
+            )
+        },
+        icon = {
+            Icon(
+                painter = icon,
+                contentDescription = text,
+                tint = BotStacks.colorScheme.onBackground,
+                modifier = Modifier.size(25.dp)
+            )
+        },
+        modifier = Modifier.clickable {
+            action()
+        }
+    )
 }
 
 internal object ActionItemDefaults {

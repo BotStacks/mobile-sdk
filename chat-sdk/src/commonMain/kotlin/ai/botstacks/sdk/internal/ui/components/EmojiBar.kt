@@ -4,7 +4,6 @@
 
 package ai.botstacks.sdk.internal.ui.components
 
-import ai.botstacks.sdk.internal.Monitoring
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +25,7 @@ import ai.botstacks.sdk.ui.BotStacksThemeEngine
 import ai.botstacks.sdk.internal.utils.IPreviews
 import ai.botstacks.sdk.internal.utils.ift
 import ai.botstacks.`chat-sdk`.generated.resources.Res
+import ai.botstacks.sdk.internal.Monitor
 import dev.icerock.moko.resources.compose.painterResource
 
 @Composable
@@ -41,7 +41,7 @@ internal fun EmojiKeyboard(onEmoji: (String) -> Unit = {}) {
 @Composable
 internal fun EmojiBar(
     current: String? = null,
-    onEmoji: (String) -> Unit = { Monitoring.log("Got Emoji $it") }
+    onEmoji: (String) -> Unit = { Monitor.debug("Got Emoji $it") }
 ) {
     var keyboard = remember {
         false

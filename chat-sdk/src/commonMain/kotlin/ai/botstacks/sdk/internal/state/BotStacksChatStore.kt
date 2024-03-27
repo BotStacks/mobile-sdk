@@ -6,7 +6,7 @@ package ai.botstacks.sdk.internal.state
 
 import ai.botstacks.sdk.internal.API
 import ai.botstacks.sdk.BotStacksChat
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.utils.uuid
 import ai.botstacks.sdk.state.ChannelsPager
 import ai.botstacks.sdk.state.Chat
@@ -25,16 +25,16 @@ import androidx.compose.runtime.setValue
 import kotlin.properties.Delegates
 
 @Stable
-internal data class BotStacksChatStore(val id: String = uuid()) {
+data class BotStacksChatStore(val id: String = uuid()) {
 
     //    val messages = ThreadPager()
     val favorites = FavoritesPager()
-    val settings = Settings()
+    internal val settings = Settings()
     val network = ChannelsPager()
     val contacts = ContactsPager()
     val users = UsersPager()
     val invites = mutableStateMapOf<String, MutableList<User>>()
-    val cache = Caches()
+    internal val cache = Caches()
     val memberships = mutableStateListOf<Participant>()
     val chats: List<Chat>
         get() = memberships.filter { it.isMember }
@@ -61,15 +61,17 @@ internal data class BotStacksChatStore(val id: String = uuid()) {
     var user by mutableStateOf<User?>(null)
 
     fun init() {
-        Monitoring.setup()
         API.init()
         settings.init()
     }
 
+    fun userWith(id: String) = cache.users[id]
+    fun chatWith(id: String) = cache.chats[id]
+
     suspend fun loadAsync() {
         currentUserID ?: return
         val user = API.me()
-        Monitoring.log("user id ${user.id}")
+        Monitor.debug("user id ${user.id}")
         User.current = user
         val fcmToken = this.fcmToken
         if (fcmToken != null) {
@@ -108,13 +110,13 @@ internal data class BotStacksChatStore(val id: String = uuid()) {
         when (list) {
             ChatList.dms -> {
                 val it = dms.sumOf { it.unreadCount }
-                Monitoring.log("Dms unread count $it")
+                Monitor.debug("Dms unread count $it")
                 it
             }
 
             ChatList.groups -> {
                 val it = groups.sumOf { it.unreadCount }
-                Monitoring.log("groups unread count $it")
+                Monitor.debug("groups unread count $it")
                 it
             }
         }

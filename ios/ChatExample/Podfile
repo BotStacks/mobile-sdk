@@ -1,0 +1,11 @@
+source 'https://cdn.cocoapods.org'
+
+target 'ChatExample' do
+#   use_frameworks!
+  platform :ios, '15.0'
+
+  pod 'BotStacks_ChatSDK', :path => "../../chat-sdk"
+  pod 'BotStacksChatSDK', :path => "../BotStacksChatSDK"
+
+  pod 'Fakery'
+end

@@ -30,23 +30,31 @@ data class Message(
     internal val userID: String,
     internal val parentID: String?,
     internal val chatID: String,
-    internal val attachments: SnapshotStateList<MessageAttachment> = mutableStateListOf(),
-    internal val reactions: Reactions = mutableStateListOf()
+    private val _attachments: List<MessageAttachment> = emptyList(),
+    internal val _reactions: List<Pair<String, List<String>>> = emptyList()
 ) : Identifiable {
     var text by mutableStateOf("")
+        internal set
     var markdown by mutableStateOf("")
+        internal set
     var replyCount by mutableStateOf(0)
     var favorite by mutableStateOf(false)
     var currentReaction by mutableStateOf<String?>(null)
     var parent by mutableStateOf<Message?>(null)
 
+    internal val attachments: SnapshotStateList<MessageAttachment> = _attachments.toMutableStateList()
+    internal val reactions: Reactions = _reactions.map { it.first to it.second.toMutableStateList() }.toMutableStateList()
+
     val isGroup = Chat.get(chatID)?.isGroup ?: false
 
     val replies by lazy { RepliesPager(this) }
     val user: User
-        get() = User.get(userID)!!
+        get() = User.get(userID) ?: throw IllegalStateException()
+
+    val userOrNull: User?
+        get() = User.get(userID)
     val chat: Chat
-        get() = Chat.get(chatID)!!
+        get() = Chat.get(chatID)  ?: throw IllegalStateException()
     val path: String get() = "message/$id"
 
     internal constructor(msg: FMessage) : this(
