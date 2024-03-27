@@ -10,3 +10,12 @@ fun MediaActionSheet(
         MediaActionSheetContent(onSelection)
     }
 }
+
+@Composable
+fun MessageActionSheet(
+    state: MessageActionSheetState,
+) {
+    MessageActionSheetContainer(state) { onSelection ->
+        MessageActionSheetContent(onSelection)
+    }
+}

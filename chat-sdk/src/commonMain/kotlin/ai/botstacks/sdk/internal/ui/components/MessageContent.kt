@@ -54,7 +54,10 @@ internal fun MessageTextContent(
             ).clip(shape)
             .combinedClickable(
                 onClick = { onClick?.invoke() },
-                onLongClick = onLongClick,
+                onLongClick = {
+                    println("long click")
+                    onLongClick()
+                },
             ).padding(horizontal = dimens.grid.x2, vertical = dimens.grid.x1),
     ) {
         if (showOwner) {
@@ -161,21 +164,23 @@ internal fun MessageMapContent(
                 userAvatar = avatar
             )
         } else {
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(dimens.imagePreviewSize.height.dp)
-                .background(
-                    color = ift(
-                        isCurrentUser,
-                        colorScheme.primary,
-                        colorScheme.message
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(dimens.imagePreviewSize.height.dp)
+                    .background(
+                        color = ift(
+                            isCurrentUser,
+                            colorScheme.primary,
+                            colorScheme.message
+                        ),
+                        shape = shape
+                    ).clip(shape)
+                    .combinedClickable(
+                        onClick = { onClick?.invoke() },
+                        onLongClick = onLongClick,
                     ),
-                    shape = shape
-                ).clip(shape)
-                .combinedClickable(
-                    onClick = { onClick?.invoke() },
-                    onLongClick = onLongClick,
-                ),)
+            )
         }
     }
 }

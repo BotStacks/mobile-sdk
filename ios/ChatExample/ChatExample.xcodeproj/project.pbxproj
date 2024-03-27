@@ -35,6 +35,8 @@
 		06B42D2A2BB3156700A02CFF /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D292BB3156700A02CFF /* EditProfileView.swift */; };
 		06B42D2C2BB3165800A02CFF /* UserDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D2B2BB3165800A02CFF /* UserDetailsView.swift */; };
 		06B42D2E2BB31E0500A02CFF /* MediaActionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D2D2BB31E0500A02CFF /* MediaActionSheet.swift */; };
+		06B42D302BB478BB00A02CFF /* MessageActionSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D2F2BB478BB00A02CFF /* MessageActionSheet.swift */; };
+		06B42D322BB478D800A02CFF /* WrapContentHeightSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B42D312BB478D800A02CFF /* WrapContentHeightSheet.swift */; };
 		06EA28722B9E66F0000FE324 /* ChatExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28712B9E66F0000FE324 /* ChatExampleApp.swift */; };
 		06EA28742B9E66F0000FE324 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06EA28732B9E66F0000FE324 /* ContentView.swift */; };
 		06EA28762B9E66F1000FE324 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 06EA28752B9E66F1000FE324 /* Assets.xcassets */; };
@@ -75,6 +77,8 @@
 		06B42D292BB3156700A02CFF /* EditProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileView.swift; sourceTree = "<group>"; };
 		06B42D2B2BB3165800A02CFF /* UserDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsView.swift; sourceTree = "<group>"; };
 		06B42D2D2BB31E0500A02CFF /* MediaActionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaActionSheet.swift; sourceTree = "<group>"; };
+		06B42D2F2BB478BB00A02CFF /* MessageActionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionSheet.swift; sourceTree = "<group>"; };
+		06B42D312BB478D800A02CFF /* WrapContentHeightSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapContentHeightSheet.swift; sourceTree = "<group>"; };
 		06EA286E2B9E66F0000FE324 /* ChatExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06EA28712B9E66F0000FE324 /* ChatExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatExampleApp.swift; sourceTree = "<group>"; };
 		06EA28732B9E66F0000FE324 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -110,6 +114,7 @@
 				06B42D022BA501D400A02CFF /* SampleData.swift */,
 				06B42D192BA8060E00A02CFF /* Debug.swift */,
 				06B42D252BB2106900A02CFF /* ProgressOverlay.swift */,
+				06B42D312BB478D800A02CFF /* WrapContentHeightSheet.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -131,6 +136,7 @@
 				06B42D172BA7FBD800A02CFF /* UserSelect.swift */,
 				06B42D1C2BACA4CC00A02CFF /* MessageList.swift */,
 				06B42D2D2BB31E0500A02CFF /* MediaActionSheet.swift */,
+				06B42D2F2BB478BB00A02CFF /* MessageActionSheet.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -361,6 +367,7 @@
 				06B42D142BA7FBAC00A02CFF /* ChatMessage.swift in Sources */,
 				06B42D012BA5009A00A02CFF /* ChannelGroup.swift in Sources */,
 				06B42D032BA501D400A02CFF /* SampleData.swift in Sources */,
+				06B42D302BB478BB00A02CFF /* MessageActionSheet.swift in Sources */,
 				06B42D202BAE40B300A02CFF /* SelectChannelUsersView.swift in Sources */,
 				06B42CF22BA34BAC00A02CFF /* ComponentViews.swift in Sources */,
 				06B42D162BA7FBC700A02CFF /* ChatMessagePreview.swift in Sources */,
@@ -391,6 +398,7 @@
 				06EA288B2BA09B88000FE324 /* Header.swift in Sources */,
 				06EA28722B9E66F0000FE324 /* ChatExampleApp.swift in Sources */,
 				06B42CFE2BA4B78A00A02CFF /* UserProfile.swift in Sources */,
+				06B42D322BB478D800A02CFF /* WrapContentHeightSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

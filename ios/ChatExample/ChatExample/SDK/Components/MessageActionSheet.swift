@@ -1,24 +1,24 @@
 //
-//  MediaActionSheet.swift
+//  MessageActionSheet.swift
 //  ChatExample
 //
-//  Created by Brandon McAnsh on 3/26/24.
+//  Created by Brandon McAnsh on 3/27/24.
 //
 
 import Foundation
 import SwiftUI
 import BotStacks_ChatSDK
 
-/// The VC representable that abstracts away our KMP Compose MediaActionSheet component.
-private struct MediaActionSheetViewControllerRepresentable : VCRepresentable {
+/// The VC representable that abstracts away our KMP Compose MessageActionSheet component.
+private struct MessageActionSheetViewControllerRepresentable : VCRepresentable {
     
-    @ObservedObject var state: BSCSDKMediaActionSheetState
+    @ObservedObject var state: BSCSDKMessageActionSheetState
     
     @Binding var measuredWidth: CGFloat
     @Binding var measuredHeight: CGFloat
     
     public func makeViewController(context: Context) -> UIViewController {
-        ComponentsKt._MediaActionSheet(state: state._state) { w, h in
+        ComponentsKt._MessageActionSheet(state: state._state) { w, h in
             measuredWidth = CGFloat(truncating: w)
             measuredHeight = CGFloat(truncating: h)
         }
@@ -26,21 +26,23 @@ private struct MediaActionSheetViewControllerRepresentable : VCRepresentable {
 }
 
 ///
-/// MediaActionSheet
+/// MessageActionSheet
 ///
-/// A modal bottom sheet that displays attachments that can be sent in a chat.
+///  A modal bottom sheet that allows contextual actions for a given message.
+///
+///  This can be utilized in conjunction with ``MessageList`` to show contextual actions for the `MessageListView.onLongPress` callback
 ///
 ///  - Parameters:
 ///    - state: the state for this action sheet.
 ///
-public struct MediaActionSheet : View {
+public struct MessageActionSheet : View {
     
-    @ObservedObject var state: BSCSDKMediaActionSheetState
-        
+    @ObservedObject var state: BSCSDKMessageActionSheetState
+    
     public var body: some View {
         WrapContentHeightSheet {
             MeasuredView(useFullWidth: true) { w, h in
-                MediaActionSheetViewControllerRepresentable(
+                MessageActionSheetViewControllerRepresentable(
                     state: state,
                     measuredWidth: w,
                     measuredHeight: h
@@ -51,33 +53,39 @@ public struct MediaActionSheet : View {
 }
 
 ///
-/// BSCSDKMediaActionSheetState
+/// BSCSDKMessageActionSheetState
 ///
-/// Wrapper observable holder around `MediaActionSheetState` that allows binding
+/// Wrapper observable holder around `MessageActionSheetState` that allows binding
 /// presentation to sheet() ViewModifier.
 ///
 ///  ```
 ///     [...]
 ///     ).sheet(isPresented: state.isShowing) {
-///         MediaActionSheet(state: state)
+///         MessageActionSheet(state: state)
 ///     }
 ///  ```
 ///
-class BSCSDKMediaActionSheetState : ObservableObject {
+class BSCSDKMessageActionSheetState : ObservableObject {
 
-    
-    private var chat: Chat
-    @Published internal var _state : MediaActionSheetState
+    @Published internal var _state: MessageActionSheetState = MessageActionSheetState(sheetState: nil)
     
     private var showing: Bool = false
     
-    init(chat: Chat) {
-        self.chat = chat
-        self._state = MediaActionSheetState(chat: chat, sheetState: nil)
-        
-        let stateUpdateClosure: (KotlinBoolean) -> Void = { state in
+    var messageForAction: Message? {
+        didSet {
+            _state.messageForAction = messageForAction
             self.objectWillChange.send()
-            self.showing = Bool(booleanLiteral: state.boolValue)
+            showing = messageForAction != nil
+        }
+    }
+    
+    init() {
+       let stateUpdateClosure: (KotlinBoolean) -> Void = { state in
+           self.objectWillChange.send()
+           self.showing = Bool(booleanLiteral: state.boolValue)
+           if !self.showing {
+               self.messageForAction = nil
+           }
         }
         
         _state.onStateChange = stateUpdateClosure
