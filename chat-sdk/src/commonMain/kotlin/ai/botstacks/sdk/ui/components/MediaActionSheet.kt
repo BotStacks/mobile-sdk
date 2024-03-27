@@ -84,7 +84,7 @@ internal enum class Media {
  *
  * A state that drives visibility of the [MediaActionSheet].
  */
-class MediaActionSheetState(internal val chat: Chat, sheetState: ModalBottomSheetState) :
+class MediaActionSheetState(internal val chat: Chat, sheetState: ModalBottomSheetState? = null) :
     ActionSheetState(sheetState)
 
 /**
@@ -93,11 +93,9 @@ class MediaActionSheetState(internal val chat: Chat, sheetState: ModalBottomShee
 @Composable
 fun rememberMediaActionSheetState(chat: Chat): MediaActionSheetState {
 
-    val state = rememberModalBottomSheetState(
-        ModalBottomSheetValue.Hidden, skipHalfExpanded = true
-    )
+    val state = ActionSheetDefaults.SheetState
 
-    return remember(chat, state) { MediaActionSheetState(chat, state) }
+    return remember(chat) { MediaActionSheetState(chat, state) }
 }
 
 /**
@@ -107,7 +105,6 @@ fun rememberMediaActionSheetState(chat: Chat): MediaActionSheetState {
  * scaffold that is designed to wrap your screen content.
  *
  * @param state the state for this action sheet.
- * @param chat The chat the selected attachments will be sent to.
  * @param content your screen content.
  *
  */
@@ -116,6 +113,25 @@ fun rememberMediaActionSheetState(chat: Chat): MediaActionSheetState {
 fun MediaActionSheet(
     state: MediaActionSheetState,
     content: @Composable () -> Unit
+) {
+    MediaActionSheetContainer(state) { onSelection ->
+        ModalBottomSheetLayout(
+            sheetState = state.sheetState ?: ActionSheetDefaults.SheetState,
+            sheetBackgroundColor = BotStacks.colorScheme.background,
+            sheetContentColor = BotStacks.colorScheme.onBackground,
+            scrimColor = BotStacks.colorScheme.scrim,
+            sheetContent = {
+                MediaActionSheetContent(onSelection)
+            },
+            content = content
+        )
+    }
+}
+
+@Composable
+internal fun MediaActionSheetContainer(
+    state: MediaActionSheetState,
+    content: @Composable (onSelection: (Media) -> Unit) -> Unit
 ) {
     var media by remember { mutableStateOf<Media?>(null) }
     val scope = rememberCoroutineScope()
@@ -133,28 +149,8 @@ fun MediaActionSheet(
         })
         media = null
     }
-
-
     Box {
-        ModalBottomSheetLayout(
-            sheetState = state.sheetState,
-            sheetBackgroundColor = BotStacks.colorScheme.background,
-            sheetContentColor = BotStacks.colorScheme.onBackground,
-            scrimColor = BotStacks.colorScheme.scrim,
-            sheetContent = {
-                Column(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
-                    Spacer(Modifier.height(8.dp))
-                    val items = ActionItemDefaults.mediaItems { media = it }
-                    items.onEachIndexed { index, item ->
-                        item()
-                        if (index != items.lastIndex) {
-                            Divider(color = BotStacks.colorScheme.caption)
-                        }
-                    }
-                }
-            },
-            content = content
-        )
+        content { media = it }
 
         if (media != null) {
             when (media) {
@@ -227,6 +223,19 @@ fun MediaActionSheet(
         ProgressOverlay(loading)
     }
 }
+@Composable
+internal fun MediaActionSheetContent(onSelection: (Media) -> Unit) {
+    Column(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
+        Spacer(Modifier.height(8.dp))
+        val items = ActionItemDefaults.mediaItems(onSelection)
+        items.onEachIndexed { index, item ->
+            item()
+            if (index != items.lastIndex) {
+                Divider(color = BotStacks.colorScheme.caption)
+            }
+        }
+    }
+}
 
 @IPreviews
 @Composable
@@ -243,7 +252,7 @@ private fun MediaActionSheetPreview() {
 }
 
 @Composable
-private fun AssetPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
+internal fun AssetPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
     val pickerLauncher = rememberFilePickerLauncher(
         type = if (video) FilePickerFileType.Video else FilePickerFileType.Image,
         selectionMode = FilePickerSelectionMode.Single,
@@ -260,7 +269,7 @@ private fun AssetPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () -
 }
 
 @Composable
-private fun FilePicker(onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
+internal fun FilePicker(onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
     val pickerLauncher = rememberFilePickerLauncher(
         type = FilePickerFileType.Custom(
             listOf(
@@ -278,7 +287,7 @@ private fun FilePicker(onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
 }
 
 @Composable
-private fun CameraPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
+internal fun CameraPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
     val cameraManager = rememberCameraManager { result ->
         if (result != null) {
             onUri(result)
@@ -308,7 +317,7 @@ private fun CameraPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () 
 }
 
 @Composable
-private fun LocationPicker(
+internal fun LocationPicker(
     onLoading: () -> Unit,
     onLocation: (Location) -> Unit,
     onCancel: () -> Unit
@@ -354,7 +363,7 @@ private fun LocationPicker(
 //}
 
 @Composable
-private fun GifPicker(onUri: (String) -> Unit, onCancel: () -> Unit) {
+internal fun GifPicker(onUri: (String) -> Unit, onCancel: () -> Unit) {
     GiphyModalSheet(onSelection = onUri, onCancel = onCancel)
     BackHandler(enabled = true) { onCancel() }
 }

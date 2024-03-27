@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.interop.UIKitView
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.uikit.ComposeUIViewControllerDelegate
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ComposeUIViewController
@@ -21,6 +22,7 @@ import kotlinx.cinterop.useContents
 import platform.CoreGraphics.CGSizeZero
 import platform.UIKit.UIView
 import platform.UIKit.UIViewController
+import platform.darwin.NSObject
 
 internal fun measuredThemedViewController(
     onMeasured: (Double, Double) -> Unit,

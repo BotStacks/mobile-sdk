@@ -70,19 +70,26 @@ internal struct ChannelGroups: View {
 }
 
 internal struct ChatInputExample : View {
+        
+    private var chat: Chat
+    @StateObject private var state: BSCSDKMediaActionSheetState
     
-    private let chat: Chat = generateChannel()
+    init(chat: Chat = generateChannel()) {
+        self.chat = chat
+        self._state = StateObject(wrappedValue: BSCSDKMediaActionSheetState(chat: chat))
+    }
     
     var body: some View {
-        
         VStack {
             Spacer()
-            ChatInput(chat: chat, onMedia: {}).padding()
+            ChatInput(chat: chat, onMedia: { state.show() }).padding()
         }.frame(
             maxWidth: .infinity,
             maxHeight: .infinity,
             alignment: .topLeading
-        )
+        ).sheet(isPresented: state.isShowing) {
+            MediaActionSheet(state: state)
+        }
     }
 }
 

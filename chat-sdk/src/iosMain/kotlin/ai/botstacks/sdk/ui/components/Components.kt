@@ -253,6 +253,20 @@ fun _Header(
     )
 }
 
+fun _MediaActionSheet(
+    state: MediaActionSheetState,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured) {
+    MediaActionSheet(state = state)
+}
+
+fun _MessageActionSheet(
+    state: MessageActionSheetState,
+    onMeasured: (Double, Double) -> Unit,
+): UIViewController = measuredThemedViewController(onMeasured) {
+    MessageActionSheet(state = state) { }
+}
+
 fun _MessageList(
     chat: Chat,
     header: (() -> UIView)? = null,

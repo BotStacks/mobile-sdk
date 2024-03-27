@@ -38,12 +38,9 @@ class MessageActionSheetState(sheetState: ModalBottomSheetState) : ActionSheetSt
 @Composable
 fun rememberMessageActionSheetState(message: Message? = null): MessageActionSheetState {
 
-    val state = rememberModalBottomSheetState(
-        ModalBottomSheetValue.Hidden,
-        skipHalfExpanded = true,
-    )
+    val state = ActionSheetDefaults.SheetState
 
-    return remember(message, state) {
+    return remember(message) {
         MessageActionSheetState(state).apply {
             messageForAction = message
         }
@@ -82,7 +79,7 @@ fun MessageActionSheet(
 
     ModalBottomSheetLayout(
         modifier = Modifier.fillMaxSize(),
-        sheetState = state.sheetState,
+        sheetState = state.sheetState ?: ActionSheetDefaults.SheetState,
         sheetBackgroundColor = colorScheme.background,
         sheetContentColor = colorScheme.onBackground,
         scrimColor = colorScheme.scrim,
