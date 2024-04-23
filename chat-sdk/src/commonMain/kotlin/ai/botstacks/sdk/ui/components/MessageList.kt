@@ -146,6 +146,12 @@ fun MessageList(
     )
 }
 
+internal data class MessageRenderInfo(
+    val isPrevClose: Boolean,
+    val isNextClose: Boolean,
+    val arrangement: PaddingValues
+)
+
 @Composable
 internal fun MessageList(
     modifier: Modifier = Modifier,
@@ -159,6 +165,25 @@ internal fun MessageList(
     openThread: ((Message) -> Unit)? = null,
     onPressUser: (User) -> Unit,
     onLongPress: (Message) -> Unit,
+    content: @Composable (MessageRenderInfo, Message, (MessageAttachment?) -> Unit) -> Unit = { info, item, onClick ->
+
+        val (isPrevClose, isNextClose, arrangement) = info
+
+        ChatMessage(
+            modifier = Modifier.padding(arrangement),
+            message = item,
+            shape = shapeForMessage(item.userOrNull?.isCurrent == true, isPrevClose, isNextClose),
+            showTimestamp = !isNextClose,
+            showAvatar = !isNextClose,
+            onPressUser = onPressUser,
+            onClick = onClick,
+            onLongPress = {
+                onLongPress(item)
+            },
+            showReplies = showReplies,
+            openThread = { openThread?.invoke(item) },
+        )
+    },
 ) {
     var attachmentToView by remember {
         mutableStateOf<MessageAttachment?>(null)
@@ -242,34 +267,32 @@ internal fun MessageList(
             else -> PaddingValues(vertical = dimens.grid.x2)
         }
 
-        ChatMessage(
-            modifier = Modifier.padding(arrangement),
-            message = item,
-            shape = shapeForMessage(item.userOrNull?.isCurrent == true, isPrevClose, isNextClose),
-            showTimestamp = !isNextClose,
-            showAvatar = !isNextClose,
-            onPressUser = onPressUser,
-            onClick = { attachmentToView = it },
-            onLongPress = {
-                onLongPress(item)
-            },
-            showReplies = showReplies,
-            openThread = { openThread?.invoke(item) },
-        )
+        content(
+            MessageRenderInfo(isPrevClose, isNextClose, arrangement),
+            item
+        ) { attachmentToView = it }
     }
 
+    AttachmentViewer(attachmentToView) { attachmentToView = null }
+}
+
+@Composable
+internal fun AttachmentViewer(
+    attachmentToView: MessageAttachment?,
+    onDismiss: () -> Unit,
+) {
     AnimatedVisibility(attachmentToView != null) {
         attachmentToView?.let { attachment ->
             when (attachment.type) {
                 AttachmentType.Image -> {
-                    Popup(Alignment.Center, onDismissRequest = { attachmentToView = null }) {
+                    Popup(Alignment.Center, onDismissRequest = onDismiss) {
                         Box {
                             ImageRenderer(
                                 url = attachment.url,
                                 contentDescription = "shared image",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize(),
-                                onClick = { attachmentToView = null },
+                                onClick = { onDismiss() },
                             )
 
                             HeaderButton(
@@ -277,7 +300,7 @@ internal fun MessageList(
                                     .padding(dimens.inset)
                                     .background(colorScheme.surface, CircleShape)
                                     .padding(dimens.grid.x2),
-                                onClick = { attachmentToView = null },
+                                onClick = { onDismiss() },
                                 icon = {
                                     Icon(
                                         Icons.Rounded.Close,
@@ -290,7 +313,7 @@ internal fun MessageList(
                     }
 
                     BackHandler(true) {
-                        attachmentToView = null
+                        onDismiss()
                     }
                 }
 
@@ -301,7 +324,7 @@ internal fun MessageList(
 }
 
 @Composable
-private fun shapeForMessage(
+internal fun shapeForMessage(
     isCurrentUser: Boolean,
     isPrevClose: Boolean,
     isNextClose: Boolean

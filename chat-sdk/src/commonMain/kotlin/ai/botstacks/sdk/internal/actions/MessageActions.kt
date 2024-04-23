@@ -42,9 +42,11 @@ internal fun Message.toggleFavorite() {
             API.favorite(id, !favorite)
         }
         favoriting = false
+        BotStacksChatStore.current.favorites.refresh()
     }) {
         favorite = !favorite
         favoriting = false
+        BotStacksChatStore.current.favorites.refresh()
     }
 }
 

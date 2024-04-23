@@ -88,7 +88,7 @@ data class Message(
             updateText(msg.text.orEmpty())
         }
         this.replyCount = msg.reply_count
-//        this.favorite = msg ?: this.favorite
+        this.favorite = msg.favorite ?: this.favorite
         msg.reactions?.let { parseReactions(it) }?.let {
             this.reactions.removeAll { true }
             this.reactions.addAll(it)

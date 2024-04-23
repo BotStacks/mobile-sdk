@@ -37,6 +37,7 @@ fragment FMessage on Message {
   updated_at
   text
   parent_id
+  favorite
   reply_count
   reactions
   chat_id

@@ -4,6 +4,7 @@
 
 package ai.botstacks.sdk.ui.components
 
+import ai.botstacks.sdk.internal.actions.toggleFavorite
 import ai.botstacks.sdk.internal.ui.components.ActionItemDefaults
 import ai.botstacks.sdk.internal.ui.components.Text
 import ai.botstacks.sdk.internal.utils.IPreviews
@@ -46,6 +47,7 @@ enum class MessageAction {
 
     internal companion object {
         val supportedActions = listOf(
+            favorite,
             reply,
             copy,
         )
@@ -111,7 +113,7 @@ fun MessageActionSheet(
             sheetContentColor = colorScheme.onBackground,
             scrimColor = colorScheme.scrim,
             sheetContent = {
-                MessageActionSheetContent(onAction)
+                MessageActionSheetContent(state.messageForAction, onAction)
             },
             content = content
         )
@@ -145,7 +147,9 @@ internal fun MessageActionSheetContainer(
                 }
 
                 MessageAction.reply -> Unit
-                MessageAction.favorite -> Unit
+                MessageAction.favorite -> {
+                    state.messageForAction?.toggleFavorite()
+                }
                 MessageAction.forward -> Unit
                 MessageAction.edit -> Unit
                 MessageAction.delete -> Unit
@@ -157,6 +161,7 @@ internal fun MessageActionSheetContainer(
 
 @Composable
 internal fun MessageActionSheetContent(
+    message: Message?,
     onSelection: (MessageAction) -> Unit
 ) {
     Column(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
@@ -169,7 +174,7 @@ internal fun MessageActionSheetContent(
 //                        hide()
 //                    }
 //                )
-        val items = ActionItemDefaults.messageItems(onSelection)
+        val items = ActionItemDefaults.messageItems(message, onSelection)
         items.forEach { it() }
     }
 }

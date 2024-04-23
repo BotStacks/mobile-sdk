@@ -73,7 +73,7 @@ internal fun ActionItem(
 
 internal object ActionItemDefaults {
     @Composable
-    fun messageItems(onItemSelected: (MessageAction) -> Unit): List<@Composable () -> Unit> =
+    fun messageItems(message: Message?, onItemSelected: (MessageAction) -> Unit): List<@Composable () -> Unit> =
         MessageAction.supportedActions
             .filter {
                 if (it == MessageAction.reply && LocalThreaded.current) {
@@ -88,7 +88,7 @@ internal object ActionItemDefaults {
                 when (it) {
                     MessageAction.favorite -> {
                         ActionItem(
-                            text = "Favorite",
+                            text = if (message?.favorite == true) "Remove from favorites" else "Favorite",
                             icon = Res.images.star_outline,
                             action = action
                         )

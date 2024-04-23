@@ -16,6 +16,6 @@ fun MessageActionSheet(
     state: MessageActionSheetState,
 ) {
     MessageActionSheetContainer(state) { onSelection ->
-        MessageActionSheetContent(onSelection)
+        MessageActionSheetContent(state.messageForAction, onSelection)
     }
 }
