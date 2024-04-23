@@ -201,10 +201,6 @@ private fun ChatMessage(
                     }
                 }
 
-                if (alignment == Alignment.End) {
-                    ReplyCount(replies, openThread)
-                }
-
                 when (attachment?.type) {
                     AttachmentType.Image -> {
                         MessageImageContent(
@@ -251,20 +247,23 @@ private fun ChatMessage(
                         onLongClick = onLongPress,
                     )
                 }
-
-                if (alignment == Alignment.Start) {
-                    ReplyCount(replies, openThread)
-                }
             }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(dimens.grid.x2, alignment = alignment),
             ) {
-                if (alignment == Alignment.Start && isGroup && !LocalThreaded.current) {
-                    Spacer(Modifier.requiredWidth(AvatarSize.Small.value))
+                if (alignment == Alignment.Start) {
+                    if (isGroup && !LocalThreaded.current) {
+                        Spacer(Modifier.requiredWidth(AvatarSize.Small.value))
+                    }
                 }
-                if (showTimestamp) {
+
+                if (alignment == Alignment.End) {
+                    ReplyCount(replies, openThread)
+                }
+
+                if (showTimestamp || replies > 0) {
                     when {
                         isSending -> {
                             Text(
@@ -288,6 +287,10 @@ private fun ChatMessage(
                             )
                         }
                     }
+                }
+
+                if (alignment == Alignment.Start) {
+                    ReplyCount(replies, openThread)
                 }
             }
         }
