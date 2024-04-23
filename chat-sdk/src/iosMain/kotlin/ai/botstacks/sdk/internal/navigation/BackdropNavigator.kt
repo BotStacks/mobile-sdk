@@ -113,6 +113,10 @@ internal class BackdropNavigator internal constructor(
     private val coroutineScope: CoroutineScope
 ) : Stack<Screen> by navigator {
 
+    @OptIn(InternalVoyagerApi::class)
+    val key: String
+        get() = navigator.key
+
     val isOpen: Boolean
         get() = scaffoldState.isConcealed
 

@@ -66,14 +66,15 @@ public struct MediaActionSheet : View {
 class BSCSDKMediaActionSheetState : ObservableObject {
 
     
-    private var chat: Chat
+    private var chat: Chat? = nil
+    private var parentMessage: Message? = nil
     @Published internal var _state : MediaActionSheetState
     
     private var showing: Bool = false
     
     init(chat: Chat) {
         self.chat = chat
-        self._state = MediaActionSheetState(chat: chat, sheetState: nil)
+        self._state = MediaActionSheetState(chat: chat, parentMessageId: nil, sheetState: nil)
         
         let stateUpdateClosure: (KotlinBoolean) -> Void = { state in
             self.objectWillChange.send()
@@ -81,6 +82,19 @@ class BSCSDKMediaActionSheetState : ObservableObject {
         }
         
         _state.onStateChange = stateUpdateClosure
+    }
+    
+    init(message: Message) {
+        self.parentMessage = message
+        self._state = MediaActionSheetState(message: message, sheetState: nil)
+        
+        let stateUpdateClosure: (KotlinBoolean) -> Void = { state in
+            self.objectWillChange.send()
+            self.showing = Bool(booleanLiteral: state.boolValue)
+        }
+        
+        _state.onStateChange = stateUpdateClosure
+        
     }
     
     var isShowing: Binding<Bool> {

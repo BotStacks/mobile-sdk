@@ -15,7 +15,6 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,13 +23,12 @@ import ai.botstacks.sdk.state.Pager
 import ai.botstacks.sdk.ui.BotStacks.colorScheme
 import ai.botstacks.sdk.internal.utils.ui.addIfNonNull
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
 internal object PagerListDefaults {
@@ -40,6 +38,14 @@ internal object PagerListDefaults {
     }
 }
 
+enum class ScrollStartPosition {
+    BeginningAnimated,
+    Beginning,
+    EndAnimated,
+    End,
+    None
+}
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun <T : Identifiable> BotStacksLazyList(
@@ -47,13 +53,14 @@ internal fun <T : Identifiable> BotStacksLazyList(
     items: List<T> = listOf(),
     invert: Boolean = false,
     header: @Composable (() -> Unit)? = null,
+    contentHeader: @Composable (() -> Unit)? = null,
     footer: @Composable (() -> Unit)? = null,
     empty: @Composable () -> Unit = {},
     separator: @Composable (T?, T?) -> Unit = { _, _ -> },
     contentPadding: PaddingValues = PaddingValues(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    scrollToTop: String? = null,
+    listState: LazyListState = rememberLazyListState(),
     hasMore: Boolean = false,
     loadMore: (() -> Unit)? = null,
     refresh: (() -> Unit)? = null,
@@ -65,96 +72,69 @@ internal fun <T : Identifiable> BotStacksLazyList(
         rememberPullRefreshState(refreshing, { refresh() })
     }
 
-    if (items.isEmpty() && !hasMore) {
-        Box(
-            modifier = modifier
-                .addIfNonNull(pullRefreshState) { Modifier.pullRefresh(it) }
-                .fillMaxSize()
-        ) {
-            Column(
-                modifier = modifier.fillMaxSize()
+    Box(
+        modifier = modifier
+            .addIfNonNull(pullRefreshState) { Modifier.pullRefresh(it) }
+            .fillMaxSize()
+    ) {
+        Column {
+            header?.invoke()
+            LazyColumn(
+                contentPadding = contentPadding,
+                state = listState,
+                reverseLayout = invert,
+                modifier = Modifier.weight(1f),
+                verticalArrangement = verticalArrangement,
+                horizontalAlignment = horizontalAlignment,
             ) {
-                header?.invoke()
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    empty()
+                if (!invert) {
+                    if (contentHeader != null) {
+                        item {
+                            contentHeader.invoke()
+                        }
+                    }
                 }
-                footer?.invoke()
-            }
 
-            pullRefreshState?.let {
-                PullRefreshIndicator(
-                    refreshing,
-                    it,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
+                if (items.isEmpty() && !hasMore) {
+                    item { empty() }
+                } else {
+                    content(this)
+                }
+
+                // add last separator
+                // this isn't handled by paging separators due to no `beforeItem` to reference against
+                // at end of list due to reverseLayout
+                if (invert) {
+                    (items.getOrNull(items.count() - 1))?.let {
+                        item {
+                            separator(it, null)
+                        }
+                    }
+                }
+
+                if (invert) {
+                    if (contentHeader != null) {
+                        item {
+                            contentHeader.invoke()
+                        }
+                    }
+                }
             }
+            footer?.invoke()
         }
 
-    } else {
-        Box(
-            modifier = modifier
-                .addIfNonNull(pullRefreshState) { Modifier.pullRefresh(it) }
-                .fillMaxSize()
-        ) {
-            val listState = rememberLazyListState()
-            val coroutineScope = rememberCoroutineScope()
-            Column {
-                header?.invoke()
-                LazyColumn(
-                    contentPadding = contentPadding,
-                    state = listState,
-                    reverseLayout = invert,
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = verticalArrangement,
-                    horizontalAlignment = horizontalAlignment,
-                ) {
-                    if (items.isEmpty()) {
-                        item {
-                            Box(
-                                modifier = Modifier.fillParentMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator(color = colorScheme.primary)
-                            }
-                        }
-                    }
+        pullRefreshState?.let {
+            PullRefreshIndicator(
+                refreshing,
+                it,
+                modifier = Modifier.align(Alignment.TopCenter)
+            )
+        }
 
-                    content(this)
-
-                    // add last separator
-                    // this isn't handled by paging separators due to no `beforeItem` to reference against
-                    // at end of list due to reverseLayout
-                    if (invert) {
-                        (items.getOrNull(items.count() - 1))?.let {
-                            item {
-                                separator(it, null)
-                            }
-                        }
-                    }
-                }
-            }
-
-            pullRefreshState?.let {
-                PullRefreshIndicator(
-                    refreshing,
-                    it,
-                    modifier = Modifier.align(Alignment.TopCenter)
-                )
-            }
-
+        if (!(items.isEmpty() && !hasMore)) {
             InfiniteListHandler(listState = listState) {
                 loadMore?.invoke()
             }
-
-            LaunchedEffect(key1 = scrollToTop, block = {
-                delay(300)
-                coroutineScope.launch { listState.animateScrollToItem(0) }
-            })
         }
     }
 }
@@ -163,15 +143,16 @@ internal fun <T : Identifiable> BotStacksLazyList(
 internal fun <T : Identifiable> IACList(
     modifier: Modifier = Modifier,
     items: List<T> = listOf(),
+    listState: LazyListState = rememberLazyListState(),
     invert: Boolean = false,
     header: @Composable (() -> Unit)? = null,
+    contentHeader: @Composable (() -> Unit)? = null,
     footer: @Composable (() -> Unit)? = null,
     empty: @Composable () -> Unit = {},
     separator: @Composable (T?, T?) -> Unit = { _, _ -> },
     contentPadding: PaddingValues = PaddingValues(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    scrollToTop: String? = null,
     hasMore: Boolean = false,
     loadMore: (() -> Unit)? = null,
     refresh: (() -> Unit)? = null,
@@ -181,15 +162,16 @@ internal fun <T : Identifiable> IACList(
     BotStacksLazyList(
         modifier = modifier,
         items = items,
+        listState = listState,
         invert = invert,
         header = header,
+        contentHeader = contentHeader,
         footer = footer,
         empty = empty,
         separator = separator,
         contentPadding = contentPadding,
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment,
-        scrollToTop = scrollToTop,
         hasMore = hasMore,
         loadMore = loadMore,
         refresh = refresh,
@@ -213,15 +195,16 @@ internal fun <T : Identifiable> IACList(
 internal fun <T : Identifiable> IACListIndexed(
     modifier: Modifier = Modifier,
     items: List<T> = listOf(),
+    listState: LazyListState = rememberLazyListState(),
     invert: Boolean = false,
     header: @Composable (() -> Unit)? = null,
+    contentHeader: @Composable (() -> Unit)? = null,
     footer: @Composable (() -> Unit)? = null,
     empty: @Composable () -> Unit = {},
     separator: @Composable (T?, T?) -> Unit = { _, _ -> },
     contentPadding: PaddingValues = PaddingValues(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    scrollToTop: String? = null,
     hasMore: Boolean = false,
     loadMore: (() -> Unit)? = null,
     refresh: (() -> Unit)? = null,
@@ -231,15 +214,16 @@ internal fun <T : Identifiable> IACListIndexed(
     BotStacksLazyList(
         modifier = modifier,
         items = items,
+        listState = listState,
         invert = invert,
         header = header,
+        contentHeader = contentHeader,
         footer = footer,
         empty = empty,
         separator = separator,
         contentPadding = contentPadding,
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment,
-        scrollToTop = scrollToTop,
         hasMore = hasMore,
         loadMore = loadMore,
         refresh = refresh,
@@ -273,7 +257,6 @@ internal fun <T : Identifiable> PagerList(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    scrollToTop: String? = null,
     canRefresh: Boolean = true,
     content: @Composable LazyItemScope.(T) -> Unit
 ) {
@@ -302,7 +285,6 @@ internal fun <T : Identifiable> PagerList(
         contentPadding = contentPadding,
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment,
-        scrollToTop = scrollToTop,
         hasMore = pager.hasMore,
         loadMore = pager::loadMore,
         refresh = if (canRefresh) {
@@ -318,19 +300,23 @@ internal fun <T : Identifiable> PagerListIndexed(
     pager: Pager<T>,
     modifier: Modifier = Modifier,
     prefix: List<T> = listOf(),
+    listState: LazyListState = rememberLazyListState(),
     invert: Boolean = false,
     header: @Composable (() -> Unit)? = null,
+    contentHeader: @Composable (() -> Unit)? = null,
     footer: @Composable (() -> Unit)? = null,
     empty: @Composable () -> Unit = {},
     separator: @Composable (T?, T?) -> Unit = { _, _ -> },
     contentPadding: PaddingValues = PaddingValues(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
-    scrollToTop: String? = null,
     canRefresh: Boolean = true,
     content: @Composable LazyItemScope.(Int, T) -> Unit
 ) {
-    val array = prefix + pager.items
+    val array by remember(prefix, pager.items) {
+        derivedStateOf { prefix + pager.items }
+    }
+
     LaunchedEffect(pager.id) {
         pager.loadMoreIfEmpty()
     }
@@ -338,15 +324,16 @@ internal fun <T : Identifiable> PagerListIndexed(
     IACListIndexed(
         modifier = modifier,
         items = array,
+        listState = listState,
         invert = invert,
         header = header,
+        contentHeader = contentHeader,
         footer = footer,
         empty = empty,
         separator = separator,
         contentPadding = contentPadding,
         verticalArrangement = verticalArrangement,
         horizontalAlignment = horizontalAlignment,
-        scrollToTop = scrollToTop,
         hasMore = pager.hasMore,
         loadMore = pager::loadMore,
         refresh = if (canRefresh) {

@@ -6,6 +6,7 @@ package ai.botstacks.sdk.internal.state
 
 import ai.botstacks.sdk.internal.API
 import ai.botstacks.sdk.BotStacksChat
+import ai.botstacks.sdk.CoreSubscription
 import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.utils.uuid
 import ai.botstacks.sdk.state.ChannelsPager
@@ -13,7 +14,9 @@ import ai.botstacks.sdk.state.Chat
 import ai.botstacks.sdk.state.ChatType
 import ai.botstacks.sdk.state.ContactsPager
 import ai.botstacks.sdk.state.FavoritesPager
+import ai.botstacks.sdk.state.Message
 import ai.botstacks.sdk.state.Participant
+import ai.botstacks.sdk.state.RepliesPager
 import ai.botstacks.sdk.state.User
 import ai.botstacks.sdk.state.UsersPager
 import androidx.compose.runtime.Stable
@@ -39,6 +42,9 @@ data class BotStacksChatStore(val id: String = uuid()) {
     val chats: List<Chat>
         get() = memberships.filter { it.isMember }
             .map { it.chat }
+
+    fun repliesFor(parentMessageId: String) = cache.repliesPagers[parentMessageId] ?: RepliesPager(parentMessageId)
+
     val dms: List<Chat>
         get() = chats.filter { it.kind == ChatType.DirectMessage }
     val groups: List<Chat>
@@ -46,7 +52,7 @@ data class BotStacksChatStore(val id: String = uuid()) {
 
     var fcmToken: String? = null
 
-    var loading by mutableStateOf(false)
+    internal val receivedEvents = mutableStateListOf<CoreSubscription.Core>()
 
     var currentUserID: String? by Delegates.observable(
         BotStacksChat.shared.prefs.getStringOrNull(

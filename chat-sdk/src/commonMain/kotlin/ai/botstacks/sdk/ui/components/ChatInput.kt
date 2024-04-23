@@ -39,9 +39,39 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import ai.botstacks.`chat-sdk`.generated.resources.Res
+import ai.botstacks.sdk.state.Message
 import dev.icerock.moko.resources.compose.painterResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
+/**
+ * ChatInput
+ *
+ * Text input that handles the sending of messages to a given [Chat] when the send button is pressed.
+ * This is generally used for [MessageList] as there is handling for an attachment sheet that will present
+ * from the callback [onMedia].
+ *
+ * @param modifier The modifier for this ChatInput
+ * @param chat The chat associated with this input
+ * @param onMedia when the media button is pressed.
+ *@param focusRequester An optional focus requester if you need to react to changes in focus of the
+ * TextInput.
+ */
+@Composable
+fun ChatInput(
+    modifier: Modifier = Modifier,
+    message: Message,
+    onMedia: () -> Unit,
+    focusRequester: FocusRequester = remember { FocusRequester() }
+) {
+    ChatInput(
+        modifier = modifier,
+        chat = message.chat,
+        inReplyTo = message.id,
+        onMedia = onMedia,
+        focusRequester = focusRequester
+    )
+}
 
 /**
  * ChatInput
@@ -63,6 +93,23 @@ fun ChatInput(
     onMedia: () -> Unit,
     focusRequester: FocusRequester = remember { FocusRequester() }
 ) {
+    ChatInput(
+        modifier = modifier,
+        chat = chat,
+        inReplyTo = null,
+        onMedia = onMedia,
+        focusRequester = focusRequester
+    )
+}
+
+@Composable
+internal fun ChatInput(
+    modifier: Modifier = Modifier,
+    chat: Chat,
+    inReplyTo: String?,
+    onMedia: () -> Unit,
+    focusRequester: FocusRequester = remember { FocusRequester() }
+) {
     val composeScope = rememberCoroutineScope()
     var state by remember { mutableStateOf(TextFieldValue()) }
     val keyboardVisible by keyboardAsState()
@@ -76,7 +123,7 @@ fun ChatInput(
                     delay(300)
                 }
                 state = TextFieldValue()
-                chat.send(inReplyTo = null, text)
+                chat.send(inReplyTo = inReplyTo, text)
             }
         }
     }

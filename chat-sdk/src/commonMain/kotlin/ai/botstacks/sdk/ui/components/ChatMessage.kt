@@ -23,10 +23,12 @@ import ai.botstacks.sdk.internal.utils.genCurrentUser
 import ai.botstacks.sdk.internal.utils.genU
 import ai.botstacks.sdk.internal.utils.location
 import ai.botstacks.sdk.internal.utils.ui.debugBounds
+import ai.botstacks.sdk.internal.utils.ui.unboundedClickable
 import ai.botstacks.sdk.state.AttachmentType
 import ai.botstacks.sdk.state.MessageAttachment
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -63,7 +65,9 @@ import kotlinx.datetime.Instant
  * @param shape corner-based shaped to render the "bubble" in. This defaults to [ai.botstacks.sdk.ui.theme.ShapeDefinitions.medium].
  * @param showAvatar Whether to show the associated user's avatar along with this message.
  * @param showTimestamp Whether to show the timestamp this message was sent or received.
+ * @param showReplies Whether to display an interactive label for replies to this message.
  * @param onPressUser callback for when a user's avatar (when visible) is clicked.
+ * @param openThread callback for when the replies label shown when showReplies is true.
  * @param onLongPress callback for when a message "bubble" is clicked.
  * @param onClick callback for when an attachment is clicked. This is utlized by [MessageList] to show
  * images for full screen viewing.
@@ -76,7 +80,9 @@ fun ChatMessage(
     shape: CornerBasedShape = shapes.medium,
     showAvatar: Boolean = false,
     showTimestamp: Boolean = true,
+    showReplies: Boolean = message.replyCount > 0,
     onPressUser: (User) -> Unit,
+    openThread: () -> Unit = { },
     onLongPress: () -> Unit,
     onClick: ((MessageAttachment?) -> Unit)? = null
 ) {
@@ -85,8 +91,14 @@ fun ChatMessage(
     if (user.blocked) {
         return
     }
-    val current = user.isCurrent
-    val align = if (current) Alignment.End else Alignment.Start
+    val isThreaded = LocalThreaded.current
+    val current = user.isCurrent && !isThreaded
+
+    val align = when {
+        isThreaded -> Alignment.Start
+        current -> Alignment.End
+        else -> Alignment.Start
+    }
 
     Column(
         modifier = modifier,
@@ -109,14 +121,16 @@ fun ChatMessage(
                 attachment = attachment,
                 date = message.createdAt,
                 isCurrentUser = current,
-                isGroup = message.isGroup,
+                isGroup = message.isGroup && !isThreaded,
                 shape = shape,
                 alignment = align,
                 showAvatar = showAvatarForThis,
                 showTimestamp = showTimestampForThis,
+                replies = message.replyCount.takeIf { message.markdown.isEmpty() && showReplies } ?: 0,
                 isSending = message.isSending,
                 hasError = message.failed,
                 onPressUser = { onPressUser(user) },
+                openThread = openThread,
                 onLongPress = onLongPress,
                 onClick = onClick
             )
@@ -129,15 +143,17 @@ fun ChatMessage(
                 content = message.markdown,
                 attachment = null,
                 date = message.createdAt,
+                replies = message.replyCount.takeIf { showReplies } ?: 0,
                 isCurrentUser = current,
-                isGroup = message.isGroup,
+                isGroup = message.isGroup && !isThreaded,
                 shape = shape,
                 alignment = align,
                 showAvatar = (message.attachments.isNotEmpty() && showAvatar) || message.attachments.isEmpty() && showAvatar,
-                showTimestamp = (message.attachments.isNotEmpty() && showAvatar) || message.attachments.isEmpty() && showAvatar,
+                showTimestamp = (message.attachments.isNotEmpty() && showTimestamp) || message.attachments.isEmpty() && showTimestamp,
                 isSending = message.isSending,
                 hasError = message.failed,
                 onPressUser = { onPressUser(user) },
+                openThread = openThread,
                 onLongPress = onLongPress,
                 onClick = null
             )
@@ -159,9 +175,11 @@ private fun ChatMessage(
     alignment: Alignment.Horizontal,
     showAvatar: Boolean = false,
     showTimestamp: Boolean = true,
+    replies: Int = 0,
     isSending: Boolean = false,
     hasError: Boolean = false,
     onPressUser: () -> Unit,
+    openThread: () -> Unit,
     onLongPress: () -> Unit,
     onClick: ((MessageAttachment?) -> Unit)? = null
 ) {
@@ -237,10 +255,17 @@ private fun ChatMessage(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(dimens.grid.x2, alignment = alignment),
             ) {
-                if (alignment == Alignment.Start && isGroup) {
-                    Spacer(Modifier.requiredWidth(AvatarSize.Small.value))
+                if (alignment == Alignment.Start) {
+                    if (isGroup && !LocalThreaded.current) {
+                        Spacer(Modifier.requiredWidth(AvatarSize.Small.value))
+                    }
                 }
-                if (showTimestamp) {
+
+                if (alignment == Alignment.End) {
+                    ReplyCount(replies, openThread)
+                }
+
+                if (showTimestamp || replies > 0) {
                     when {
                         isSending -> {
                             Text(
@@ -265,6 +290,10 @@ private fun ChatMessage(
                         }
                     }
                 }
+
+                if (alignment == Alignment.Start) {
+                    ReplyCount(replies, openThread)
+                }
             }
         }
     }
@@ -278,23 +307,26 @@ private fun MessageViewPreview() {
             ChatMessage(
                 message = genChatextMessage(genU()),
                 onPressUser = {},
+                openThread = {},
                 onLongPress = {})
             ChatMessage(
                 message = genChatextMessage(genCurrentUser()),
                 onPressUser = {},
+                openThread = {},
                 onLongPress = {})
         }
     }
 }
 
 @Composable
-private fun ReplyCount(count: Int) {
+private fun ReplyCount(count: Int, openThread: () -> Unit) {
     if (count > 0) {
+        val suffix = if (count == 1) "reply" else "replies"
         Text(
-            text = "$count replies",
-            fontStyle = fonts.body1,
-            color = colorScheme.primary,
-            modifier = Modifier.padding(4.dp)
+            modifier = Modifier.unboundedClickable { openThread() },
+            text = "$count $suffix",
+            fontStyle = fonts.caption2,
+            color = colorScheme.primary
         )
     }
 }

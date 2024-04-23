@@ -25,13 +25,13 @@ internal actual fun BotstacksRouter(content: @Composable () -> Unit) {
     BottomSheetNavigator(
         modifier = Modifier.fillMaxSize(),
         sheetContent = {
-            val navigator = remember(it) { PlatformNavigator(it) }
+            val navigator = remember(it) { AndroidPlatformNavigator(it) }
             CompositionLocalProvider(LocalPlatformNavigator provides navigator) {
                 CurrentScreen()
             }
         }
     ) {
-        val navigator = remember(it) { PlatformNavigator(it) }
+        val navigator = remember(it) { AndroidPlatformNavigator(it) }
         CompositionLocalProvider(LocalPlatformNavigator provides navigator) {
             content()
         }
@@ -48,61 +48,61 @@ internal actual fun BotstacksRouter(content: @Composable () -> Unit) {
     }
 }
 
-internal actual class PlatformNavigator(
+internal class AndroidPlatformNavigator(
     private val navigator: BottomSheetNavigator
-) {
+) : PlatformNavigator {
 
-    actual val lastItem: Screen?
+    override val lastItem: Screen?
         get() = navigator.lastItemOrNull
 
-    actual val isVisible: Boolean
+    override val isVisible: Boolean
         get() = navigator.isVisible
 
-    actual val progress: Float
+    override val progress: Float
         get() = navigator.progress
 
-    actual var screensNavigator: Navigator? = null
+    override var screensNavigator: Navigator? = null
 
-    actual val supportsGestureNavigation: Boolean
+    override val supportsGestureNavigation: Boolean
         get() = Platform.shouldUseSwipeBack
 
-    actual fun show(screen: Screen) {
+    override fun show(screen: Screen) {
         navigator.show(screen)
     }
 
-    actual fun hide() {
+    override fun hide() {
         navigator.hide()
     }
 
-    actual fun push(item: Screen) {
+    override fun push(item: Screen) {
         screensNavigator?.push(item)
     }
 
-    actual fun push(items: List<Screen>) {
+    override fun push(items: List<Screen>) {
         screensNavigator?.push(items)
     }
 
-    actual fun replace(item: Screen) {
+    override fun replace(item: Screen) {
         screensNavigator?.replace(item)
     }
 
-    actual fun replaceAll(item: Screen) {
+    override fun replaceAll(item: Screen) {
         screensNavigator?.replaceAll(item)
     }
 
-    actual fun replaceAll(items: List<Screen>) {
+    override fun replaceAll(items: List<Screen>) {
         screensNavigator?.replaceAll(items)
     }
 
-    actual fun pop(): Boolean {
+    override fun pop(): Boolean {
         return screensNavigator?.pop() ?: false
     }
 
-    actual fun popAll() {
+    override fun popAll() {
         screensNavigator?.popAll()
     }
 
-    actual fun popUntil(predicate: (Screen) -> Boolean): Boolean {
+    override fun popUntil(predicate: (Screen) -> Boolean): Boolean {
         return screensNavigator?.popUntil(predicate) ?: false
     }
 }

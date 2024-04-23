@@ -14,11 +14,13 @@ private struct MessageActionSheetViewControllerRepresentable : VCRepresentable {
     
     @ObservedObject var state: BSCSDKMessageActionSheetState
     
+    @State var openThread: (Message) -> Void
+    
     @Binding var measuredWidth: CGFloat
     @Binding var measuredHeight: CGFloat
     
     public func makeViewController(context: Context) -> UIViewController {
-        ComponentsKt._MessageActionSheet(state: state._state) { w, h in
+        ComponentsKt._MessageActionSheet(state: state._state, openThread: openThread) { w, h in
             measuredWidth = CGFloat(truncating: w)
             measuredHeight = CGFloat(truncating: h)
         }
@@ -38,12 +40,15 @@ private struct MessageActionSheetViewControllerRepresentable : VCRepresentable {
 public struct MessageActionSheet : View {
     
     @ObservedObject var state: BSCSDKMessageActionSheetState
+
+    @State var openThread: (Message) -> Void
     
     public var body: some View {
         WrapContentHeightSheet {
             MeasuredView(useFullWidth: true) { w, h in
                 MessageActionSheetViewControllerRepresentable(
                     state: state,
+                    openThread: openThread,
                     measuredWidth: w,
                     measuredHeight: h
                 )

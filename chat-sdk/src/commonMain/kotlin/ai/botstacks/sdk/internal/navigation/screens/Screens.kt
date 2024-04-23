@@ -2,15 +2,17 @@ package ai.botstacks.sdk.internal.navigation.screens
 
 import ai.botstacks.sdk.BotStacksChat
 import ai.botstacks.sdk.internal.navigation.LocalPlatformNavigator
-import ai.botstacks.sdk.state.Chat
-import ai.botstacks.sdk.state.User
 import ai.botstacks.sdk.internal.navigation.ui.channels.ChannelDetailsScreen
 import ai.botstacks.sdk.internal.navigation.ui.channels.CreateChannelScreen
 import ai.botstacks.sdk.internal.navigation.ui.channels.SelectChannelUsersScreen
 import ai.botstacks.sdk.internal.navigation.ui.chats.ChatsListScreen
 import ai.botstacks.sdk.internal.navigation.ui.chats.ConversationRouter
 import ai.botstacks.sdk.internal.navigation.ui.chats.FavoritesMessagesScreen
+import ai.botstacks.sdk.internal.navigation.ui.chats.ThreadedRepliesScreen
 import ai.botstacks.sdk.internal.navigation.ui.profile.ProfileView
+import ai.botstacks.sdk.state.Chat
+import ai.botstacks.sdk.state.Message
+import ai.botstacks.sdk.state.User
 import ai.botstacks.sdk.ui.views.ChannelSettingsState
 import ai.botstacks.sdk.ui.views.ChannelUserSelectionState
 import ai.botstacks.sdk.ui.views.CreateChannelState
@@ -54,7 +56,7 @@ internal data class ChatScreen(val chatId: String) : Screen {
             },
             openInvite = {},
             openProfile = { navigator.push(UserDetailsScreen(it)) },
-            openReply = {}
+            openReply = { navigator.push(ThreadScreen(it)) }
         )
     }
 }
@@ -130,7 +132,7 @@ private data class SelectUsersScreen(
 
         val state = remember {
             if (chat != null) {
-                ChannelUserSelectionState(chat = chat,)
+                ChannelUserSelectionState(chat = chat)
             } else {
                 ChannelUserSelectionState(initialSelections = users.toMutableStateList())
             }
@@ -177,7 +179,22 @@ internal data object FavoriteMessagesScreen : Screen {
             back = { navigator.pop() },
             openReplies = { },
             openProfile = { navigator.push(UserDetailsScreen(it)) },
-            scrollToTop = 0
+        )
+    }
+}
+
+internal data class ThreadScreen(val message: Message) : Screen {
+
+    override val key = uniqueScreenKey
+
+    @Composable
+    override fun Content() {
+        val navigator = LocalPlatformNavigator.current
+
+        ThreadedRepliesScreen(
+            message = message,
+            onBackClicked = { navigator.pop() },
+            openProfile = { navigator.push(UserDetailsScreen(it)) },
         )
     }
 }

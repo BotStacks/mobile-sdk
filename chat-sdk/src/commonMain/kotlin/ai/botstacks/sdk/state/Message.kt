@@ -84,8 +84,8 @@ data class Message(
     }
 
     internal fun update(msg: FMessage) {
-        if (this.text != (msg.text ?: "")) {
-            updateText(msg.text ?: "")
+        if (this.text != (msg.text.orEmpty())) {
+            updateText(msg.text.orEmpty())
         }
         this.replyCount = msg.reply_count
 //        this.favorite = msg ?: this.favorite

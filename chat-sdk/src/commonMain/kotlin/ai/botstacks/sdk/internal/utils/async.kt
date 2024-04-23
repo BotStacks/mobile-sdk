@@ -20,26 +20,26 @@ internal fun launch(
 
 internal fun op(
     block: suspend CoroutineScope.() -> Unit,
-    onError: () -> Unit = {  },
+    onError: (Throwable) -> Unit = {  },
     context: CoroutineContext = Dispatchers.Main
 ) = launch(context) {
     try {
         block()
     } catch (err: Exception) {
         Monitor.error(err)
-        onError.invoke()
+        onError.invoke(err)
     } catch (err: Error) {
         Monitor.error(err)
-        onError.invoke()
+        onError.invoke(err)
     }
 }
 
-internal fun op(block: suspend CoroutineScope.() -> Unit, onError: () -> Unit = { }) =
+internal fun op(block: suspend CoroutineScope.() -> Unit, onError: (Throwable) -> Unit = { }) =
     op(block, onError, Dispatchers.Main)
 
 
 internal suspend fun <T> bg(block: suspend CoroutineScope.() -> T) = withContext(Dispatchers.IO, block)
-internal fun opbg(onError: () -> Unit = { }, block: suspend CoroutineScope.() -> Unit) =
+internal fun opbg(onError: (Throwable) -> Unit = { }, block: suspend CoroutineScope.() -> Unit) =
     op(block, onError, Dispatchers.IO)
 
 internal fun <T : Unit> async(block: suspend CoroutineScope.() -> T) =

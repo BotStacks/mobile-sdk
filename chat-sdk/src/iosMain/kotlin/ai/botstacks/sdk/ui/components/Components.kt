@@ -2,7 +2,6 @@ package ai.botstacks.sdk.ui.components
 
 import ai.botstacks.sdk.internal.ui.components.EmptyListView
 import ai.botstacks.sdk.internal.utils.ui.composeColor
-import ai.botstacks.sdk.internal.utils.ui.debugBounds
 import ai.botstacks.sdk.state.Chat
 import ai.botstacks.sdk.state.Message
 import ai.botstacks.sdk.state.MessageAttachment
@@ -159,8 +158,10 @@ fun _ChatMessage(
     shapeDefinition: ShapeDefinition,
     showAvatar: Boolean = false,
     showTimestamp: Boolean = true,
+    showReplies: Boolean = message.replyCount > 0,
     onPressUser: (User) -> Unit,
     onLongPress: () -> Unit,
+    openThread: () -> Unit,
     onClick: ((MessageAttachment?) -> Unit)? = null,
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured) {
@@ -175,8 +176,10 @@ fun _ChatMessage(
         shape = shape,
         showAvatar = showAvatar,
         showTimestamp = showTimestamp,
+        showReplies = showReplies,
         onPressUser = onPressUser,
         onLongPress = onLongPress,
+        openThread = openThread,
         onClick = onClick
     )
 }
@@ -262,16 +265,22 @@ fun _MediaActionSheet(
 
 fun _MessageActionSheet(
     state: MessageActionSheetState,
+    openThread: (Message) -> Unit,
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured) {
-    MessageActionSheet(state = state)
+    MessageActionSheet(
+        state = state,
+        openThread = openThread
+    )
 }
 
 fun _MessageList(
     chat: Chat,
     header: (() -> UIView)? = null,
+    contentHeader: (() -> UIView)? = null,
     emptyState: (() -> UIView)? = null,
     onPressUser: (User) -> Unit,
+    openThread: (Message) -> Unit,
     onLongPress: (Message) -> Unit,
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured) {
@@ -281,8 +290,16 @@ fun _MessageList(
         header = {
             if (header != null) {
                 IntrinsicUIKitView(
-                    modifier = Modifier.height(HeaderHeight).debugBounds(),
+                    modifier = Modifier.height(HeaderHeight),
                     uiView = header
+                )
+            }
+        },
+        contentHeader = {
+            if (contentHeader != null) {
+                IntrinsicUIKitView(
+                    modifier = Modifier.height(HeaderHeight),
+                    uiView = contentHeader
                 )
             }
         },
@@ -294,7 +311,47 @@ fun _MessageList(
             }
         },
         onLongPress = onLongPress,
-        onPressUser = onPressUser
+        onPressUser = onPressUser,
+        openThread = openThread
+    )
+}
+
+fun _MessageList(
+    message: Message,
+    header: (() -> UIView)? = null,
+    contentHeader: (() -> UIView)? = null,
+    emptyState: (() -> UIView)? = null,
+    onPressUser: (User) -> Unit,
+    onLongPress: (Message) -> Unit,
+    onMeasured: (Double, Double) -> Unit
+): UIViewController = measuredThemedViewController(onMeasured) {
+    MessageList(
+        message = message,
+        header = {
+            if (header != null) {
+                IntrinsicUIKitView(
+                    modifier = Modifier.height(HeaderHeight),
+                    uiView = header
+                )
+            }
+        },
+        contentHeader = {
+            if (contentHeader != null) {
+                IntrinsicUIKitView(
+                    modifier = Modifier.height(HeaderHeight),
+                    uiView = contentHeader
+                )
+            }
+        },
+        emptyState = {
+            if (emptyState != null) {
+                IntrinsicUIKitView(modifier = Modifier.fillMaxSize(), uiView = emptyState)
+            } else {
+                EmptyListView(config = BotStacks.assets.emptyChat)
+            }
+        },
+        onLongPress = onLongPress,
+        onPressUser = onPressUser,
     )
 }
 

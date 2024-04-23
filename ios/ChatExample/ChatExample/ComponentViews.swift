@@ -152,7 +152,9 @@ internal struct ChatMessages: View {
                 maxHeight: .infinity,
                 alignment: .topLeading
             ).sheet(isPresented: state.isShowing) {
-                MessageActionSheet(state: state)
+                MessageActionSheet(state: state) { message in
+                    
+                }
             }.padding(
                 EdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 0)
             )
@@ -263,13 +265,11 @@ internal struct MessageListExample: View {
     var body: some View {
         // uses own internal scroll handling
         ComponentView(title: "MessageList", canScroll: false) {
-            MessageList(
+            ChatMessageList(
                 chat: chat,
-                onPressUser: { _ in 
-                    
-                },
-                onLongPress: { _ in
-                }
+                onPressUser: { _ in },
+                onLongPress: { _ in },
+                openThread: { _ in }
         
             )
         }

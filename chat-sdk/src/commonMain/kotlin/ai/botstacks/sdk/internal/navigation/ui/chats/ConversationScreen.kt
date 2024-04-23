@@ -43,7 +43,6 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun ConversationScreen(
     chat: Chat,
-    message: Message? = null,
     openProfile: (User) -> Unit,
     openInvite: (Chat) -> Unit,
     openReply: (Message) -> Unit,
@@ -67,7 +66,10 @@ internal fun ConversationScreen(
     val messageActionSheetState = rememberMessageActionSheetState()
 
     MediaActionSheet(state = mediaSheetState,) {
-        MessageActionSheet(state = messageActionSheetState) {
+        MessageActionSheet(
+            state = messageActionSheetState,
+            openThread = openReply
+        ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 MessageList(
                     chat = chat,
@@ -100,6 +102,7 @@ internal fun ConversationScreen(
                     modifier = Modifier.weight(1f),
                     onPressUser = { openProfile(it) },
                     onLongPress = { messageActionSheetState.messageForAction = it },
+                    openThread = openReply,
                 )
                 ChatInput(
                     modifier = Modifier.padding(dimens.grid.x4)

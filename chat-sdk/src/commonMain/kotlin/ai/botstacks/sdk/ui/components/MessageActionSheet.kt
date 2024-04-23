@@ -29,7 +29,8 @@ internal enum class MessageAction {
 
     companion object {
         val supportedActions = listOf(
-            copy
+            copy,
+            reply
         )
     }
 }
@@ -75,9 +76,10 @@ fun rememberMessageActionSheetState(message: Message? = null): MessageActionShee
 @OptIn(ExperimentalMaterialApi::class)
 fun MessageActionSheet(
     state: MessageActionSheetState,
+    openThread: (Message) -> Unit,
     content: @Composable () -> Unit
 ) {
-    MessageActionSheetContainer(state) { onAction ->
+    MessageActionSheetContainer(state, openThread) { onAction ->
         ModalBottomSheetLayout(
             modifier = Modifier.fillMaxSize(),
             sheetState = state.sheetState ?: ActionSheetDefaults.SheetState,
@@ -95,6 +97,7 @@ fun MessageActionSheet(
 @Composable
 internal fun MessageActionSheetContainer(
     state: MessageActionSheetState,
+    openThread: (Message) -> Unit,
     content: @Composable (onSelection: (MessageAction) -> Unit) -> Unit,
 ) {
 
@@ -118,7 +121,11 @@ internal fun MessageActionSheetContainer(
                     clipboardManager.setText(annotatedString)
                     state.messageForAction = null
                 }
-                MessageAction.reply -> Unit
+                MessageAction.reply -> {
+                    val message = state.messageForAction!!
+                    state.messageForAction = null
+                    openThread(message)
+                }
                 MessageAction.favorite -> Unit
             }
         }
@@ -138,14 +145,15 @@ internal fun MessageActionSheetContent(
 //                        hide()
 //                    }
 //                )
-//                ActionItem(
-//                    text = "Reply in Chat",
-//                    icon = Res.drawable.chat_dots,
-//                ) {
-//                    message?.let(onReply)
-//                    hide()
-//                }
+        if (LocalThreaded.current.not()) {
+            ActionItem(
+                text = "Reply in thread",
+                icon = Res.images.thread_reply_outline,
+            ) {
+                onSelection(MessageAction.reply)
+            }
 
+        }
 //                ActionItem(
 //                    text = if (message?.favorite == true) "Remove from Favorites" else "Save to Favorites",
 //                    icon = Res.drawable.star_fill,
@@ -156,7 +164,7 @@ internal fun MessageActionSheetContent(
 //                }
 
         ActionItem(
-            text = "Copy message text",
+            text = "Copy",
             icon = Res.images.copy,
         ) {
             onSelection(MessageAction.copy)
@@ -164,13 +172,15 @@ internal fun MessageActionSheetContent(
     }
 }
 
+internal val LocalThreaded = staticCompositionLocalOf { false }
+
 @IPreviews
 @Composable
 private fun MessageActionSheetPreview() {
     BotStacksThemeEngine {
         val state = rememberMessageActionSheetState()
 
-        MessageActionSheet(state) {
+        MessageActionSheet(state, {}) {
             Button(onClick = {state.messageForAction = genChatextMessage() }) {
                 Text(text = "Open Sheet", fontStyle = fonts.body2)
             }
