@@ -1,6 +1,5 @@
 package ai.botstacks.sdk.ui.components
 
-import ai.botstacks.sdk.state.Message
 import androidx.compose.runtime.Composable
 
 @Composable
@@ -15,9 +14,8 @@ fun MediaActionSheet(
 @Composable
 fun MessageActionSheet(
     state: MessageActionSheetState,
-    openThread: (Message) -> Unit,
 ) {
-    MessageActionSheetContainer(state, openThread) { onSelection ->
+    MessageActionSheetContainer(state) { onSelection ->
         MessageActionSheetContent(onSelection)
     }
 }

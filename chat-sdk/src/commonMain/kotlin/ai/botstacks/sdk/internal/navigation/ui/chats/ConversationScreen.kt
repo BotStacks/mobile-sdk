@@ -22,6 +22,7 @@ import ai.botstacks.sdk.ui.components.ChatInput
 import ai.botstacks.sdk.ui.components.Header
 import ai.botstacks.sdk.ui.components.HeaderDefaults
 import ai.botstacks.sdk.ui.components.MediaActionSheet
+import ai.botstacks.sdk.ui.components.MessageAction
 import ai.botstacks.sdk.ui.components.MessageActionSheet
 import ai.botstacks.sdk.ui.components.MessageList
 import ai.botstacks.sdk.ui.components.rememberMediaActionSheetState
@@ -63,12 +64,16 @@ internal fun ConversationScreen(
     }
 
     val mediaSheetState = rememberMediaActionSheetState(chat = chat)
-    val messageActionSheetState = rememberMessageActionSheetState()
+    val messageActionSheetState = rememberMessageActionSheetState { message, action ->
+        when (action) {
+            MessageAction.reply -> openReply(message)
+            else -> Unit
+        }
+    }
 
     MediaActionSheet(state = mediaSheetState,) {
         MessageActionSheet(
             state = messageActionSheetState,
-            openThread = openReply
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 MessageList(
