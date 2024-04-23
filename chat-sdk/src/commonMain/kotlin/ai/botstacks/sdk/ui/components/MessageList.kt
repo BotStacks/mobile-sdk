@@ -72,6 +72,7 @@ fun MessageList(
     contentHeader: (@Composable () -> Unit)? = null,
     initialPosition: ScrollStartPosition = ScrollStartPosition.None,
     emptyState: @Composable () -> Unit = { EmptyListView(config = assets.emptyChat) },
+    openThread: (Message) -> Unit,
     onPressUser: (User) -> Unit,
     onLongPress: (Message) -> Unit,
 ) {
@@ -88,6 +89,7 @@ fun MessageList(
         emptyState = emptyState,
         onPressUser = onPressUser,
         onLongPress = onLongPress,
+        openThread = openThread,
     )
 }
 
@@ -118,6 +120,7 @@ fun ThreadMessageList(
         emptyState = emptyState,
         onPressUser = onPressUser,
         onLongPress = onLongPress,
+        showReplies = false,
     )
 }
 
@@ -130,6 +133,8 @@ internal fun MessageList(
     contentHeader: (@Composable () -> Unit)? = null,
     initialPosition: ScrollStartPosition = ScrollStartPosition.None,
     emptyState: @Composable () -> Unit = { EmptyListView(config = assets.emptyChat) },
+    showReplies: Boolean = true,
+    openThread: ((Message) -> Unit)? = null,
     onPressUser: (User) -> Unit,
     onLongPress: (Message) -> Unit,
 ) {
@@ -226,6 +231,8 @@ internal fun MessageList(
             onLongPress = {
                 onLongPress(item)
             },
+            showReplies = showReplies,
+            openThread = { openThread?.invoke(item) },
         )
     }
 

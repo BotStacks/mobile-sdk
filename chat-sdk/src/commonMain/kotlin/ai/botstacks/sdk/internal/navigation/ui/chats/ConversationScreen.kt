@@ -102,6 +102,7 @@ internal fun ConversationScreen(
                     modifier = Modifier.weight(1f),
                     onPressUser = { openProfile(it) },
                     onLongPress = { messageActionSheetState.messageForAction = it },
+                    openThread = openReply,
                 )
                 ChatInput(
                     modifier = Modifier.padding(dimens.grid.x4)

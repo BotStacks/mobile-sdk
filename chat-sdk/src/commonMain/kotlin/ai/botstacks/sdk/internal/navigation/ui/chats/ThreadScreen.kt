@@ -63,6 +63,7 @@ internal fun ThreadedRepliesScreen(
                                             modifier = Modifier.padding(horizontal = BotStacks.dimens.inset),
                                             message = message,
                                             showAvatar = false,
+                                            showReplies = false,
                                             onLongPress = {
                                                 messageActionSheetState.messageForAction = message
                                             },

@@ -262,21 +262,22 @@ fun _MediaActionSheet(
 
 fun _MessageActionSheet(
     state: MessageActionSheetState,
+    openThread: (Message) -> Unit,
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured) {
     MessageActionSheet(
         state = state,
-        openThread = {
-
-        }
+        openThread = openThread
     )
 }
 
 fun _MessageList(
     chat: Chat,
     header: (() -> UIView)? = null,
+    contentHeader: (() -> UIView)? = null,
     emptyState: (() -> UIView)? = null,
     onPressUser: (User) -> Unit,
+    openThread: (Message) -> Unit,
     onLongPress: (Message) -> Unit,
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured) {
@@ -286,8 +287,16 @@ fun _MessageList(
         header = {
             if (header != null) {
                 IntrinsicUIKitView(
-                    modifier = Modifier.height(HeaderHeight).debugBounds(),
+                    modifier = Modifier.height(HeaderHeight),
                     uiView = header
+                )
+            }
+        },
+        contentHeader = {
+            if (contentHeader != null) {
+                IntrinsicUIKitView(
+                    modifier = Modifier.height(HeaderHeight),
+                    uiView = contentHeader
                 )
             }
         },
@@ -299,7 +308,8 @@ fun _MessageList(
             }
         },
         onLongPress = onLongPress,
-        onPressUser = onPressUser
+        onPressUser = onPressUser,
+        openThread = openThread
     )
 }
 
@@ -307,6 +317,45 @@ fun _Spinner(
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured) {
     Spinner()
+}
+
+fun _ThreadMessageList(
+    message: Message,
+    header: (() -> UIView)? = null,
+    contentHeader: (() -> UIView)? = null,
+    emptyState: (() -> UIView)? = null,
+    onPressUser: (User) -> Unit,
+    onLongPress: (Message) -> Unit,
+    onMeasured: (Double, Double) -> Unit
+): UIViewController = measuredThemedViewController(onMeasured) {
+    ThreadMessageList(
+        message = message,
+        header = {
+            if (header != null) {
+                IntrinsicUIKitView(
+                    modifier = Modifier.height(HeaderHeight),
+                    uiView = header
+                )
+            }
+        },
+        contentHeader = {
+            if (contentHeader != null) {
+                IntrinsicUIKitView(
+                    modifier = Modifier.height(HeaderHeight),
+                    uiView = contentHeader
+                )
+            }
+        },
+        emptyState = {
+            if (emptyState != null) {
+                IntrinsicUIKitView(modifier = Modifier.fillMaxSize(), uiView = emptyState)
+            } else {
+                EmptyListView(config = BotStacks.assets.emptyChat)
+            }
+        },
+        onLongPress = onLongPress,
+        onPressUser = onPressUser,
+    )
 }
 
 fun _UserProfile(

@@ -23,10 +23,12 @@ import ai.botstacks.sdk.internal.utils.genCurrentUser
 import ai.botstacks.sdk.internal.utils.genU
 import ai.botstacks.sdk.internal.utils.location
 import ai.botstacks.sdk.internal.utils.ui.debugBounds
+import ai.botstacks.sdk.internal.utils.ui.unboundedClickable
 import ai.botstacks.sdk.state.AttachmentType
 import ai.botstacks.sdk.state.MessageAttachment
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -76,7 +78,9 @@ fun ChatMessage(
     shape: CornerBasedShape = shapes.medium,
     showAvatar: Boolean = false,
     showTimestamp: Boolean = true,
+    showReplies: Boolean = message.replyCount > 0,
     onPressUser: (User) -> Unit,
+    openThread: () -> Unit = { },
     onLongPress: () -> Unit,
     onClick: ((MessageAttachment?) -> Unit)? = null
 ) {
@@ -120,9 +124,11 @@ fun ChatMessage(
                 alignment = align,
                 showAvatar = showAvatarForThis,
                 showTimestamp = showTimestampForThis,
+                replies = message.replyCount.takeIf { message.markdown.isEmpty() && showReplies } ?: 0,
                 isSending = message.isSending,
                 hasError = message.failed,
                 onPressUser = { onPressUser(user) },
+                openThread = openThread,
                 onLongPress = onLongPress,
                 onClick = onClick
             )
@@ -135,6 +141,7 @@ fun ChatMessage(
                 content = message.markdown,
                 attachment = null,
                 date = message.createdAt,
+                replies = message.replyCount.takeIf { showReplies } ?: 0,
                 isCurrentUser = current,
                 isGroup = message.isGroup && !isThreaded,
                 shape = shape,
@@ -144,6 +151,7 @@ fun ChatMessage(
                 isSending = message.isSending,
                 hasError = message.failed,
                 onPressUser = { onPressUser(user) },
+                openThread = openThread,
                 onLongPress = onLongPress,
                 onClick = null
             )
@@ -165,9 +173,11 @@ private fun ChatMessage(
     alignment: Alignment.Horizontal,
     showAvatar: Boolean = false,
     showTimestamp: Boolean = true,
+    replies: Int = 0,
     isSending: Boolean = false,
     hasError: Boolean = false,
     onPressUser: () -> Unit,
+    openThread: () -> Unit,
     onLongPress: () -> Unit,
     onClick: ((MessageAttachment?) -> Unit)? = null
 ) {
@@ -189,6 +199,10 @@ private fun ChatMessage(
                     } else {
                         Spacer(Modifier.requiredWidth(AvatarSize.Small.value))
                     }
+                }
+
+                if (alignment == Alignment.End) {
+                    ReplyCount(replies, openThread)
                 }
 
                 when (attachment?.type) {
@@ -237,6 +251,10 @@ private fun ChatMessage(
                         onLongClick = onLongPress,
                     )
                 }
+
+                if (alignment == Alignment.Start) {
+                    ReplyCount(replies, openThread)
+                }
             }
 
             Row(
@@ -284,23 +302,26 @@ private fun MessageViewPreview() {
             ChatMessage(
                 message = genChatextMessage(genU()),
                 onPressUser = {},
+                openThread = {},
                 onLongPress = {})
             ChatMessage(
                 message = genChatextMessage(genCurrentUser()),
                 onPressUser = {},
+                openThread = {},
                 onLongPress = {})
         }
     }
 }
 
 @Composable
-private fun ReplyCount(count: Int) {
+private fun ReplyCount(count: Int, openThread: () -> Unit) {
     if (count > 0) {
+        val suffix = if (count == 1) "reply" else "replies"
         Text(
-            text = "$count replies",
-            fontStyle = fonts.body1,
-            color = colorScheme.primary,
-            modifier = Modifier.padding(4.dp)
+            modifier = Modifier.unboundedClickable { openThread() },
+            text = "$count $suffix",
+            fontStyle = fonts.caption2,
+            color = colorScheme.primary
         )
     }
 }
