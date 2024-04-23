@@ -40,6 +40,7 @@ private struct MessageActionSheetViewControllerRepresentable : VCRepresentable {
 public struct MessageActionSheet : View {
     
     @ObservedObject var state: BSCSDKMessageActionSheetState
+
     @State var openThread: (Message) -> Void
     
     public var body: some View {
