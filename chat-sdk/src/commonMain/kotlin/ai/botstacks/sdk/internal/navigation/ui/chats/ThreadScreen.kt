@@ -10,7 +10,7 @@ import ai.botstacks.sdk.ui.components.Header
 import ai.botstacks.sdk.ui.components.LocalThreaded
 import ai.botstacks.sdk.ui.components.MediaActionSheet
 import ai.botstacks.sdk.ui.components.MessageActionSheet
-import ai.botstacks.sdk.ui.components.ThreadMessageList
+import ai.botstacks.sdk.ui.components.MessageList
 import ai.botstacks.sdk.ui.components.rememberMediaActionSheetState
 import ai.botstacks.sdk.ui.components.rememberMessageActionSheetState
 import androidx.compose.foundation.layout.Arrangement
@@ -43,7 +43,7 @@ internal fun ThreadedRepliesScreen(
             MessageActionSheet(state = messageActionSheetState, {}) {
                 Column(modifier = modifier.fillMaxSize()) {
                     CompositionLocalProvider(LocalThreaded provides false) {
-                        ThreadMessageList(
+                        MessageList(
                             modifier = Modifier.weight(1f),
                             message = message,
                             header = {

@@ -65,7 +65,9 @@ import kotlinx.datetime.Instant
  * @param shape corner-based shaped to render the "bubble" in. This defaults to [ai.botstacks.sdk.ui.theme.ShapeDefinitions.medium].
  * @param showAvatar Whether to show the associated user's avatar along with this message.
  * @param showTimestamp Whether to show the timestamp this message was sent or received.
+ * @param showReplies Whether to display an interactive label for replies to this message.
  * @param onPressUser callback for when a user's avatar (when visible) is clicked.
+ * @param openThread callback for when the replies label shown when showReplies is true.
  * @param onLongPress callback for when a message "bubble" is clicked.
  * @param onClick callback for when an attachment is clicked. This is utlized by [MessageList] to show
  * images for full screen viewing.

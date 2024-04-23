@@ -59,6 +59,12 @@ import androidx.compose.ui.window.Popup
  *
  * @param modifier the Modifier to be applied to this list.
  * @param chat The chat to render messages for.
+ * @param header "Sticky" header shown at top of message list always.
+ * @param contentHeader Header that is shown below [header] but above messages. This content header scrolls
+ * with the content.
+ * @param initialPosition The initial position/transition to run once content is loaded.
+ * @param emptyState Content to render when this MessageList has nothing to load.
+ * @param openThread callback for when a user requests to reply to a message or view a thread.
  * @param onPressUser callback when a user's avatar is pressed when visible next to a given message.
  * (only applicable in multi user based chats).
  * @param onLongPress callback when a message is long pressed. This can be utilized with [MessageActionSheet] to show contextual actions.
@@ -93,8 +99,25 @@ fun MessageList(
     )
 }
 
+/**
+ * MessageList
+ *
+ * A conversational component displaying the replies for a given [Message] in an infinite scrolling list.
+ *
+ * @param modifier the Modifier to be applied to this list.
+ * @param message The message to render replies for.
+ * @param header "Sticky" header shown at top of message list always.
+ * @param contentHeader Header that is shown below [header] but above messages. This content header scrolls
+ * with the content.
+ * @param initialPosition The initial position/transition to run once content is loaded.
+ * @param emptyState Content to render when this MessageList has nothing to load.
+ * @param onPressUser callback when a user's avatar is pressed when visible next to a given message.
+ * (only applicable in multi user based chats).
+ * @param onLongPress callback when a message is long pressed. This can be utilized with [MessageActionSheet] to show contextual actions.
+ *
+ */
 @Composable
-fun ThreadMessageList(
+fun MessageList(
     modifier: Modifier = Modifier,
     message: Message,
     header: @Composable () -> Unit = { },
@@ -109,7 +132,6 @@ fun ThreadMessageList(
         BotStacksChatStore.current.repliesFor(message.id)
     }
 
-    println("c=${message.chat.sending.count()}")
     MessageList(
         modifier = modifier,
         pager = pager,

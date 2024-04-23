@@ -265,7 +265,7 @@ internal struct MessageListExample: View {
     var body: some View {
         // uses own internal scroll handling
         ComponentView(title: "MessageList", canScroll: false) {
-            MessageList(
+            ChatMessageList(
                 chat: chat,
                 onPressUser: { _ in },
                 onLongPress: { _ in },
