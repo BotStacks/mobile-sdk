@@ -86,7 +86,6 @@ class Chat(id: String, val kind: ChatType) : Pager<Message>(id), Identifiable {
 
     fun addMessage(message: Message): Boolean {
         return if (message.parentID == null) {
-            println("addMessage non thread")
             val index = items.indexOfFirst { it.id == message.id }
             if (index >= 0) {
                 items[index] = message
@@ -97,15 +96,21 @@ class Chat(id: String, val kind: ChatType) : Pager<Message>(id), Identifiable {
                 true
             }
         } else {
-            println("addMessage thread")
             // reply
             val pager = BotStacksChatStore.current.repliesFor(message.parentID)
             val index = pager.items.indexOfFirst { it.id == message.id }
-            println("addMessage thread index $index")
             if (index >= 0) {
                 pager.items[index] = message
             } else {
                 pager.items.add(0, message)
+            }
+
+            // find parent message and increase reply count
+            val parentIndex = items.indexOfFirst { it.id == message.parentID }
+            if (parentIndex >= 0) {
+                val m = items[parentIndex]
+                m.replyCount = (Message.get(message.parentID)?.replyCount ?: 0) + 1
+                items[parentIndex] = m
             }
             false
         }

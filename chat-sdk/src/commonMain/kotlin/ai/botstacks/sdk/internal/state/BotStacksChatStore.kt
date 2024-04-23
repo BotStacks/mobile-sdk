@@ -6,6 +6,7 @@ package ai.botstacks.sdk.internal.state
 
 import ai.botstacks.sdk.internal.API
 import ai.botstacks.sdk.BotStacksChat
+import ai.botstacks.sdk.CoreSubscription
 import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.utils.uuid
 import ai.botstacks.sdk.state.ChannelsPager
@@ -51,7 +52,7 @@ data class BotStacksChatStore(val id: String = uuid()) {
 
     var fcmToken: String? = null
 
-    var loading by mutableStateOf(false)
+    internal val receivedEvents = mutableStateListOf<CoreSubscription.Core>()
 
     var currentUserID: String? by Delegates.observable(
         BotStacksChat.shared.prefs.getStringOrNull(
