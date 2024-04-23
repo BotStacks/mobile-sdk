@@ -85,8 +85,14 @@ fun ChatMessage(
     if (user.blocked) {
         return
     }
-    val current = user.isCurrent
-    val align = if (current) Alignment.End else Alignment.Start
+    val isThreaded = LocalThreaded.current
+    val current = user.isCurrent && !isThreaded
+
+    val align = when {
+        isThreaded -> Alignment.Start
+        current -> Alignment.End
+        else -> Alignment.Start
+    }
 
     Column(
         modifier = modifier,
@@ -109,7 +115,7 @@ fun ChatMessage(
                 attachment = attachment,
                 date = message.createdAt,
                 isCurrentUser = current,
-                isGroup = message.isGroup,
+                isGroup = message.isGroup && !isThreaded,
                 shape = shape,
                 alignment = align,
                 showAvatar = showAvatarForThis,
@@ -130,11 +136,11 @@ fun ChatMessage(
                 attachment = null,
                 date = message.createdAt,
                 isCurrentUser = current,
-                isGroup = message.isGroup,
+                isGroup = message.isGroup && !isThreaded,
                 shape = shape,
                 alignment = align,
                 showAvatar = (message.attachments.isNotEmpty() && showAvatar) || message.attachments.isEmpty() && showAvatar,
-                showTimestamp = (message.attachments.isNotEmpty() && showAvatar) || message.attachments.isEmpty() && showAvatar,
+                showTimestamp = (message.attachments.isNotEmpty() && showTimestamp) || message.attachments.isEmpty() && showTimestamp,
                 isSending = message.isSending,
                 hasError = message.failed,
                 onPressUser = { onPressUser(user) },
@@ -237,7 +243,7 @@ private fun ChatMessage(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(dimens.grid.x2, alignment = alignment),
             ) {
-                if (alignment == Alignment.Start && isGroup) {
+                if (alignment == Alignment.Start && isGroup && !LocalThreaded.current) {
                     Spacer(Modifier.requiredWidth(AvatarSize.Small.value))
                 }
                 if (showTimestamp) {

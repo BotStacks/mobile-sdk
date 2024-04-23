@@ -264,7 +264,12 @@ fun _MessageActionSheet(
     state: MessageActionSheetState,
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured) {
-    MessageActionSheet(state = state)
+    MessageActionSheet(
+        state = state,
+        openThread = {
+
+        }
+    )
 }
 
 fun _MessageList(

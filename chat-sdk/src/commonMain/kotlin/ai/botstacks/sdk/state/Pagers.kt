@@ -68,21 +68,21 @@ data class FavoritesPager(val list: String = "favorites") : Pager<Message>() {
 }
 
 @Stable
-data class RepliesPager(val message: Message) : Pager<Message>(message.id) {
+data class RepliesPager(val messageId: String) : Pager<Message>(messageId) {
+
+    constructor(message: Message): this(message.id)
+
     init {
-        BotStacksChatStore.current.cache.repliesPagers[message.id] = this
+        BotStacksChatStore.current.cache.repliesPagers[messageId] = this
     }
 
-    fun setReplies(list: List<Message>) {
-        items.removeAll { true }
-        items.addAll(list)
-        hasMore = false
+    fun add(message: Message) {
+        items.add(0, message)
     }
 
     override suspend fun load(skip: Int, limit: Int): List<Message> {
-        return API.getReplies(message.id, skip, limit)
+        return API.getReplies(messageId, skip, limit)
     }
-
 }
 
 //@Stable

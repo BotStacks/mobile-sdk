@@ -14,6 +14,7 @@ import ai.botstacks.sdk.ui.BotStacksThemeEngine
 import ai.botstacks.sdk.ui.components.Header
 import ai.botstacks.sdk.ui.components.ChatMessage
 import ai.botstacks.sdk.internal.ui.components.PagerList
+import ai.botstacks.sdk.internal.ui.components.ScrollStartPosition
 import ai.botstacks.sdk.internal.utils.IPreviews
 import ai.botstacks.sdk.internal.utils.genM
 import ai.botstacks.sdk.internal.utils.random
@@ -23,7 +24,6 @@ internal fun FavoritesMessagesScreen(
     back: () -> Unit,
     openReplies: (Message) -> Unit,
     openProfile: (User) -> Unit,
-    scrollToTop: Int
 ) {
     LaunchedEffect(key1 = true, block = {
         BotStacksChatStore.current.favorites.loadMoreIfEmpty()
@@ -32,7 +32,7 @@ internal fun FavoritesMessagesScreen(
         Header(title = "Favorite Messages", onBackClicked = back)
         PagerList(
             pager = BotStacksChatStore.current.favorites,
-            scrollToTop = scrollToTop.toString()
+            scrollAtStart = ScrollStartPosition.None
         ) { message ->
             ChatMessage(
                 message = message,
@@ -48,6 +48,6 @@ internal fun FavoritesMessagesScreen(
 private fun FavoritesViewPreview() {
     BotStacksChatStore.current.favorites.items.addAll(random(50, { genM() }))
     BotStacksThemeEngine {
-        FavoritesMessagesScreen(back = {}, openReplies = {}, openProfile = {}, scrollToTop = 0)
+        FavoritesMessagesScreen(back = {}, openReplies = {}, openProfile = {})
     }
 }

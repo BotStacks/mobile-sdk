@@ -14,7 +14,6 @@ struct ChatControllerExample: View {
     
     var body: some View {
         BotStacksChatController { router.navigateToRoot() }
-            .ignoresSafeArea()
             .navigationBarTitle(Text(""), displayMode: .inline) // Hide navigation bar title
             .navigationBarBackButtonHidden()
     }

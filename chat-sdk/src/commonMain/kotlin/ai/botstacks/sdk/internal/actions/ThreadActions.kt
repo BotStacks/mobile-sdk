@@ -8,6 +8,7 @@ import androidx.compose.runtime.toMutableStateList
 import ai.botstacks.sdk.internal.API
 import ai.botstacks.sdk.fragment.FMessage
 import ai.botstacks.sdk.internal.Monitor
+import ai.botstacks.sdk.internal.state.BotStacksChatStore
 import ai.botstacks.sdk.internal.state.Upload
 import ai.botstacks.sdk.internal.state.toApolloType
 import ai.botstacks.sdk.internal.state.toAttachment
@@ -81,7 +82,9 @@ internal fun Chat.send(sendingMessage: Message) {
         sending.add(0, sendingMessage)
         sendingMessage.isSending = true
     }
-    latest = sendingMessage
+    if (sendingMessage.parentID == null) {
+        latest = sendingMessage
+    }
 
     Monitor.debug("Sending Message")
     op({
@@ -112,18 +115,24 @@ internal fun Chat.send(sendingMessage: Message) {
             )
         }
         sm?.let {
-            latest = it
+            if (sendingMessage.parentID == null) {
+                latest = it
+            }
             sendingMessage.isSending = false
             sending.remove(sendingMessage)
         } ?: {
             sendingMessage.failed = true
             sendingMessage.isSending = false
-            latest = sendingMessage
+            if (sendingMessage.parentID == null) {
+                latest = sendingMessage
+            }
         }
     }) {
         sendingMessage.failed = true
         sendingMessage.isSending = false
-        latest = sendingMessage
+        if (sendingMessage.parentID == null) {
+            latest = sendingMessage
+        }
     }
 }
 

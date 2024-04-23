@@ -29,6 +29,7 @@ import ai.botstacks.sdk.internal.utils.attachment
 import ai.botstacks.sdk.internal.utils.genChat
 import ai.botstacks.sdk.internal.utils.imageAttachment
 import ai.botstacks.sdk.internal.utils.op
+import ai.botstacks.sdk.state.Message
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -84,8 +85,13 @@ internal enum class Media {
  *
  * A state that drives visibility of the [MediaActionSheet].
  */
-class MediaActionSheetState(internal val chat: Chat, sheetState: ModalBottomSheetState? = null) :
-    ActionSheetState(sheetState)
+class MediaActionSheetState(
+    internal val chat: Chat,
+    val parentMessageId: String? = null,
+    sheetState: ModalBottomSheetState? = null
+) : ActionSheetState(sheetState) {
+    constructor(message: Message,  sheetState: ModalBottomSheetState? = null) : this(message.chat, parentMessageId = message.id, sheetState)
+}
 
 /**
  * Creates a [MediaActionSheetState] and remembers it.
@@ -95,7 +101,18 @@ fun rememberMediaActionSheetState(chat: Chat): MediaActionSheetState {
 
     val state = ActionSheetDefaults.SheetState
 
-    return remember(chat) { MediaActionSheetState(chat, state) }
+    return remember(chat) { MediaActionSheetState(chat, null, state) }
+}
+
+/**
+ * Creates a [MediaActionSheetState] and remembers it.
+ */
+@Composable
+fun rememberMediaActionSheetState(message: Message): MediaActionSheetState {
+
+    val state = ActionSheetDefaults.SheetState
+
+    return remember(message) { MediaActionSheetState(message, state) }
 }
 
 /**
@@ -145,7 +162,7 @@ internal fun MediaActionSheetContainer(
 
     val onFile = { file: KmpFile ->
         op({
-            state.chat.send(null, upload = Upload(file = file))
+            state.chat.send(state.parentMessageId, upload = Upload(file = file))
         })
         media = null
     }
@@ -178,7 +195,7 @@ internal fun MediaActionSheetContainer(
                     GifPicker(
                         onUri = {
                             hide()
-                            state.chat.send(null, attachments = listOf(it.imageAttachment()))
+                            state.chat.send(state.parentMessageId, attachments = listOf(it.imageAttachment()))
                         },
                         onCancel = hide
                     )
@@ -208,7 +225,7 @@ internal fun MediaActionSheetContainer(
                         onLoading = { loading = true },
                         onLocation = {
                             if (loading) {
-                                state.chat.send(null, attachments = listOf(it.attachment()))
+                                state.chat.send(state.parentMessageId, attachments = listOf(it.attachment()))
                                 hide()
                             }
                         },

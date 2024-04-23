@@ -18,7 +18,8 @@ interface Identifiable {
 abstract class Pager<T : Identifiable>(
     val id: String = uuid(),
     val items: SnapshotStateList<T> = mutableStateListOf(),
-    val pageSize: Int = 20
+    private val pageSize: Int = 20,
+    private val isSinglePage: Boolean = false
 ) {
     var loading by mutableStateOf(false)
     var refreshing by mutableStateOf(false)
@@ -29,8 +30,6 @@ abstract class Pager<T : Identifiable>(
             hasMore = false
         }
     }
-
-    open val isSinglePage: Boolean get() = false
 
     fun loadMoreIfEmpty() {
         if (items.isEmpty()) {
@@ -77,14 +76,17 @@ abstract class Pager<T : Identifiable>(
 
     fun loadMore() {
         if (isSinglePage || !hasMore || refreshing || loading) return
+        println("loadMore")
         loading = true
         val pager = this
         op({
             val items = bg { load(items.size, pageSize) }
+            println("loadMore:: adding items=${items.count()}")
             pager.items.addAll(items)
             hasMore = items.size >= pageSize
             loading = false
         }, onError = {
+            println("loadMore: error : ${it.printStackTrace()}")
             hasMore = false
             loading = false
         })

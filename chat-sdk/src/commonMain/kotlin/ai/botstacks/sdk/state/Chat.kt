@@ -85,14 +85,29 @@ class Chat(id: String, val kind: ChatType) : Pager<Message>(id), Identifiable {
         get() = kind == ChatType.DirectMessage
 
     fun addMessage(message: Message): Boolean {
-        val index = items.indexOfFirst { it.id == message.id }
-        return if (index >= 0) {
-            items[index] = message
-            false
+        return if (message.parentID == null) {
+            println("addMessage non thread")
+            val index = items.indexOfFirst { it.id == message.id }
+            if (index >= 0) {
+                items[index] = message
+                false
+            } else {
+                items.add(0, message)
+                latest = message
+                true
+            }
         } else {
-            items.add(0, message)
-            latest = message
-            true
+            println("addMessage thread")
+            // reply
+            val pager = BotStacksChatStore.current.repliesFor(message.parentID)
+            val index = pager.items.indexOfFirst { it.id == message.id }
+            println("addMessage thread index $index")
+            if (index >= 0) {
+                pager.items[index] = message
+            } else {
+                pager.items.add(0, message)
+            }
+            false
         }
     }
 

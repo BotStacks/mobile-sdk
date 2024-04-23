@@ -29,5 +29,6 @@ public struct BotStacksChatController: View {
     
     public var body: some View {
         ChatControllerRepresentable(onLogout: onLogout)
+            .ignoresSafeArea(.all)
     }
 }

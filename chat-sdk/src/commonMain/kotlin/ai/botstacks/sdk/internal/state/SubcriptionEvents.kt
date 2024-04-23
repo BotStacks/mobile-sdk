@@ -102,8 +102,10 @@ internal fun BotStacksChatStore.onCoreEvent(event: CoreSubscription.Core) {
                         chat.unreadCount += 1
                     }
                 }
-                if (!isUpdate && (chat.latest == null || chat.latest!!.createdAt < message.createdAt)) {
-                    chat.latest = message
+                if (message.parentID == null) {
+                    if (!isUpdate && (chat.latest == null || chat.latest!!.createdAt < message.createdAt)) {
+                        chat.latest = message
+                    }
                 }
             }
         }
