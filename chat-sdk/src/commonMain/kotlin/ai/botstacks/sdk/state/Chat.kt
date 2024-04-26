@@ -23,9 +23,7 @@ import ai.botstacks.sdk.internal.utils.op
 class Chat(id: String, val kind: ChatType) : Pager<Message>(id), Identifiable {
 
     var name by mutableStateOf<String?>(null)
-        internal set
     var image by mutableStateOf<String?>(null)
-        internal set
     var description by mutableStateOf<String?>(null)
         internal set
     val members = mutableStateListOf<Participant>()
@@ -87,13 +85,34 @@ class Chat(id: String, val kind: ChatType) : Pager<Message>(id), Identifiable {
         get() = kind == ChatType.DirectMessage
 
     fun addMessage(message: Message): Boolean {
-        val index = items.indexOfFirst { it.id == message.id }
-        return if (index >= 0) {
-            items[index] = message
-            false
+        return if (message.parentID == null) {
+            val index = items.indexOfFirst { it.id == message.id }
+            if (index >= 0) {
+                items[index] = message
+                false
+            } else {
+                items.add(0, message)
+                latest = message
+                true
+            }
         } else {
-            items.add(0, message)
-            true
+            // reply
+            val pager = BotStacksChatStore.current.repliesFor(message.parentID)
+            val index = pager.items.indexOfFirst { it.id == message.id }
+            if (index >= 0) {
+                pager.items[index] = message
+            } else {
+                pager.items.add(0, message)
+            }
+
+            // find parent message and increase reply count
+            val parentIndex = items.indexOfFirst { it.id == message.parentID }
+            if (parentIndex >= 0) {
+                val m = items[parentIndex]
+                m.replyCount = (Message.get(message.parentID)?.replyCount ?: 0) + 1
+                items[parentIndex] = m
+            }
+            false
         }
     }
 

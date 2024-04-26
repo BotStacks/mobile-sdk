@@ -32,6 +32,9 @@ import dev.icerock.moko.resources.compose.painterResource
  *
  */
 class UserDetailsState(internal val user: User) {
+
+    constructor(id: String): this(User.get(id)!!)
+
     internal val channelsInCommon
         get() = user.channelsInCommon
 

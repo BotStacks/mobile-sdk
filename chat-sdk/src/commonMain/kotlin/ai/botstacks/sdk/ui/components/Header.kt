@@ -62,7 +62,7 @@ import ai.botstacks.`chat-sdk`.generated.resources.Res
 import ai.botstacks.sdk.ui.theme.logoPainter
 import dev.icerock.moko.resources.compose.painterResource
 
-private val HeaderHeight = 56.dp
+internal val HeaderHeight = 56.dp
 
 /**
  * Default constraints and actions for [Header] provided as convenience. These each come with preset styling.
@@ -170,6 +170,8 @@ class HeaderState(
     val showSearchClear: Boolean = false,
     isSearchActive: Boolean = false,
 ) {
+    constructor(showSearch: Boolean = false, showSearchClear: Boolean = false) : this(showSearch, showSearchClear, false)
+
     var searchQuery: TextFieldValue by mutableStateOf(TextFieldValue())
     var searchActive by mutableStateOf(isSearchActive)
 }

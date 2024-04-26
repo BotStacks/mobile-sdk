@@ -22,6 +22,7 @@ import ai.botstacks.sdk.ui.components.ChatInput
 import ai.botstacks.sdk.ui.components.Header
 import ai.botstacks.sdk.ui.components.HeaderDefaults
 import ai.botstacks.sdk.ui.components.MediaActionSheet
+import ai.botstacks.sdk.ui.components.MessageAction
 import ai.botstacks.sdk.ui.components.MessageActionSheet
 import ai.botstacks.sdk.ui.components.MessageList
 import ai.botstacks.sdk.ui.components.rememberMediaActionSheetState
@@ -43,7 +44,6 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun ConversationScreen(
     chat: Chat,
-    message: Message? = null,
     openProfile: (User) -> Unit,
     openInvite: (Chat) -> Unit,
     openReply: (Message) -> Unit,
@@ -64,10 +64,17 @@ internal fun ConversationScreen(
     }
 
     val mediaSheetState = rememberMediaActionSheetState(chat = chat)
-    val messageActionSheetState = rememberMessageActionSheetState()
+    val messageActionSheetState = rememberMessageActionSheetState { message, action ->
+        when (action) {
+            MessageAction.reply -> openReply(message)
+            else -> Unit
+        }
+    }
 
     MediaActionSheet(state = mediaSheetState,) {
-        MessageActionSheet(state = messageActionSheetState) {
+        MessageActionSheet(
+            state = messageActionSheetState,
+        ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 MessageList(
                     chat = chat,
@@ -100,6 +107,7 @@ internal fun ConversationScreen(
                     modifier = Modifier.weight(1f),
                     onPressUser = { openProfile(it) },
                     onLongPress = { messageActionSheetState.messageForAction = it },
+                    openThread = openReply,
                 )
                 ChatInput(
                     modifier = Modifier.padding(dimens.grid.x4)

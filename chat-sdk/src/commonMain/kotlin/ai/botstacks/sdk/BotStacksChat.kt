@@ -20,18 +20,29 @@ abstract class BotStacksChat {
      * Whether or not the SDK has loaded initial data
      */
     var loaded by mutableStateOf(false)
+        internal set
 
     /**
      * If currently logging in a user
      */
     var loggingIn by mutableStateOf(false)
+        internal set
 
     /**
      * If a user is currently logged in.
      */
     var isUserLoggedIn by mutableStateOf(false)
+        internal set
 
     internal abstract val prefs: Settings
+
+    fun setupLogging(level: LogLevel, log: (String) -> Unit) {
+        monitoring = Monitoring(level, log)
+    }
+
+    fun disableLogging() {
+        monitoring = Monitoring(level = LogLevel.NONE)
+    }
 
     /**
      * Register a callback for handling log out events
@@ -43,9 +54,11 @@ abstract class BotStacksChat {
     internal var hasLocationSupport by mutableStateOf(false)
     internal var hasCameraSupport by mutableStateOf(false)
 
-
     companion object {
         val shared = BotStacksChatPlatform()
+
+        internal var monitoring = Monitoring()
+            private set
 
         /**
          * logout from BotStacks
@@ -55,7 +68,7 @@ abstract class BotStacksChat {
                 try {
                     API.logout()
                 } catch (err: Error) {
-                    Monitoring.error(err)
+                    monitoring.error(err)
                 }
             }
         }

@@ -1,6 +1,6 @@
 package ai.botstacks.sdk.internal.ui.components.location
 
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.state.Location
 import ai.botstacks.sdk.internal.utils.launch
 import androidx.compose.runtime.Composable
@@ -65,21 +65,21 @@ private class LocationDelegate : NSObject(), CLLocationManagerDelegateProtocol {
     }
 
     override fun locationManager(manager: CLLocationManager, didFailWithError: NSError) {
-        Monitoring.log("Error: ${didFailWithError.localizedFailureReason} ${didFailWithError.localizedDescription}, ${didFailWithError.localizedRecoverySuggestion}")
-        Monitoring.log("Error: ${didFailWithError.userInfo["timestamp"]}")
+        Monitor.error("Error: ${didFailWithError.localizedFailureReason} ${didFailWithError.localizedDescription}, ${didFailWithError.localizedRecoverySuggestion}")
+        Monitor.error("Error: ${didFailWithError.userInfo["timestamp"]}")
         onLocationUpdate?.invoke(null)
     }
 
     override fun locationManager(manager: CLLocationManager, didChangeAuthorizationStatus: Int) {
-        Monitoring.log("Authorization status changed to: $didChangeAuthorizationStatus")
+        Monitor.debug("Authorization status changed to: $didChangeAuthorizationStatus")
     }
 
     override fun locationManagerDidPauseLocationUpdates(manager: CLLocationManager) {
-        Monitoring.log("locationManagerDidPauseLocationUpdates")
+        Monitor.debug("locationManagerDidPauseLocationUpdates")
     }
 
     override fun locationManagerDidResumeLocationUpdates(manager: CLLocationManager) {
-        Monitoring.log("locationManagerDidResumeLocationUpdates")
+        Monitor.debug("locationManagerDidResumeLocationUpdates")
     }
 
 }

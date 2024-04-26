@@ -6,6 +6,8 @@ import ai.botstacks.sdk.state.User
 import ai.botstacks.sdk.ui.BotStacks
 import ai.botstacks.sdk.internal.ui.components.TextInput
 import ai.botstacks.sdk.internal.state.Upload
+import ai.botstacks.sdk.internal.utils.opbg
+import ai.botstacks.sdk.state.Chat
 import ai.botstacks.sdk.type.UpdateProfileInput
 import ai.botstacks.sdk.ui.components.Avatar
 import ai.botstacks.sdk.ui.components.AvatarSize
@@ -79,6 +81,14 @@ class EditProfileState {
                 username = textState.text
             }
         }.onFailure { saving = false }.onSuccess { saving = false }
+    }
+
+    fun update(onSuccess: (User?) -> Unit, onError: (Throwable) -> Unit) {
+        opbg {
+            update()
+                .onSuccess(onSuccess)
+                .onFailure(onError)
+        }
     }
 }
 

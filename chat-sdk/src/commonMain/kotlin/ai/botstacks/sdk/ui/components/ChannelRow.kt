@@ -83,7 +83,7 @@ fun ChannelRow(
  */
 @Composable
 fun ChannelRow(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     imageUrls: List<String?>,
     title: String,
     titleFontStyle: FontStyle = BotStacks.fonts.body1,

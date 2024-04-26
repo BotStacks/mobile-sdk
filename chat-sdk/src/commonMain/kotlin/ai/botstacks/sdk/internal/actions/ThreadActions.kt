@@ -7,7 +7,8 @@ package ai.botstacks.sdk.internal.actions
 import androidx.compose.runtime.toMutableStateList
 import ai.botstacks.sdk.internal.API
 import ai.botstacks.sdk.fragment.FMessage
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
+import ai.botstacks.sdk.internal.state.BotStacksChatStore
 import ai.botstacks.sdk.internal.state.Upload
 import ai.botstacks.sdk.internal.state.toApolloType
 import ai.botstacks.sdk.internal.state.toAttachment
@@ -69,7 +70,7 @@ internal fun Chat.send(
         userID = User.current!!.id,
         parentID = inReplyTo,
         chatID = id,
-        attachments = atts.map { it.toAttachment().toAttachment() }.toMutableStateList(),
+        _attachments = atts.map { it.toAttachment().toAttachment() },
     )
     m.updateText(text.orEmpty())
     m.upload = upload
@@ -81,9 +82,11 @@ internal fun Chat.send(sendingMessage: Message) {
         sending.add(0, sendingMessage)
         sendingMessage.isSending = true
     }
-    latest = sendingMessage
+    if (sendingMessage.parentID == null) {
+        latest = sendingMessage
+    }
 
-    Monitoring.log("Sending Message")
+    Monitor.debug("Sending Message")
     op({
         val sm = bg {
             var attachments = sendingMessage.attachments
@@ -91,10 +94,10 @@ internal fun Chat.send(sendingMessage: Message) {
                 .toMutableList()
 
             if (sendingMessage.upload != null) {
-                Monitoring.log("Awaiting upload")
+                Monitor.debug("Awaiting upload")
                 sendingMessage.upload?.let { upload ->
                     upload.awaitAttachment()?.let { attachment ->
-                        Monitoring.log("Got Upload " + attachment.url)
+                        Monitor.debug("Got Upload " + attachment.url)
                         val map = attachments.associateBy { it.id }.toMutableMap()
                         map[attachment.id] = attachment.copy(type = upload.attachmentType())
 
@@ -112,18 +115,24 @@ internal fun Chat.send(sendingMessage: Message) {
             )
         }
         sm?.let {
-            latest = it
+            if (sendingMessage.parentID == null) {
+                latest = it
+            }
             sendingMessage.isSending = false
             sending.remove(sendingMessage)
         } ?: {
             sendingMessage.failed = true
             sendingMessage.isSending = false
-            latest = sendingMessage
+            if (sendingMessage.parentID == null) {
+                latest = sendingMessage
+            }
         }
     }) {
         sendingMessage.failed = true
         sendingMessage.isSending = false
-        latest = sendingMessage
+        if (sendingMessage.parentID == null) {
+            latest = sendingMessage
+        }
     }
 }
 

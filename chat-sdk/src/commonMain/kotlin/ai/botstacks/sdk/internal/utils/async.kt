@@ -5,7 +5,8 @@
 package ai.botstacks.sdk.internal.utils
 
 import ai.botstacks.sdk.BotStacksChat
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
+
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
@@ -19,26 +20,26 @@ internal fun launch(
 
 internal fun op(
     block: suspend CoroutineScope.() -> Unit,
-    onError: () -> Unit = {  },
+    onError: (Throwable) -> Unit = {  },
     context: CoroutineContext = Dispatchers.Main
 ) = launch(context) {
     try {
         block()
     } catch (err: Exception) {
-        Monitoring.error(err)
-        onError.invoke()
+        Monitor.error(err)
+        onError.invoke(err)
     } catch (err: Error) {
-        Monitoring.error(err)
-        onError.invoke()
+        Monitor.error(err)
+        onError.invoke(err)
     }
 }
 
-internal fun op(block: suspend CoroutineScope.() -> Unit, onError: () -> Unit = { }) =
+internal fun op(block: suspend CoroutineScope.() -> Unit, onError: (Throwable) -> Unit = { }) =
     op(block, onError, Dispatchers.Main)
 
 
 internal suspend fun <T> bg(block: suspend CoroutineScope.() -> T) = withContext(Dispatchers.IO, block)
-internal fun opbg(onError: () -> Unit = { }, block: suspend CoroutineScope.() -> Unit) =
+internal fun opbg(onError: (Throwable) -> Unit = { }, block: suspend CoroutineScope.() -> Unit) =
     op(block, onError, Dispatchers.IO)
 
 internal fun <T : Unit> async(block: suspend CoroutineScope.() -> T) =
@@ -58,7 +59,7 @@ internal suspend fun <T> retryIO(
         } catch (e: Exception) {
             // you can log an error here and/or make a more finer-grained
             // analysis of the cause to see if retry is needed
-            Monitoring.error(e)
+            Monitor.error(e)
         }
         delay(currentDelay)
         currentDelay = (currentDelay * factor).toLong().coerceAtMost(maxDelay)

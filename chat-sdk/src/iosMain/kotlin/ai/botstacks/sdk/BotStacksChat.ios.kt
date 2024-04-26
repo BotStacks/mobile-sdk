@@ -1,7 +1,7 @@
 package ai.botstacks.sdk
 
 import ai.botstacks.sdk.internal.API
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.state.BotStacksChatStore
 import ai.botstacks.sdk.internal.utils.bg
 import ai.botstacks.sdk.internal.utils.op
@@ -9,6 +9,7 @@ import ai.botstacks.sdk.internal.utils.readPlist
 import ai.botstacks.sdk.internal.utils.retryIO
 import androidx.compose.runtime.Stable
 import cocoapods.Giphy.Giphy
+import cocoapods.GoogleMaps.GMSServices
 import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.Settings
 import kotlinx.coroutines.CoroutineScope
@@ -64,6 +65,7 @@ actual class BotStacksChatPlatform : BotStacksChat() {
         this._apiKey = apiKey
         this.bundleIdentifier = NSBundle.mainBundle.bundleIdentifier().orEmpty()
 
+        Monitor.debug("apikey=$_apiKey, app=$bundleIdentifier")
         BotStacksChatStore.current.init()
         BotStacksChatStore.current.contacts.requestContacts = false
 
@@ -73,6 +75,8 @@ actual class BotStacksChatPlatform : BotStacksChat() {
         }
 
         if (!googleMapsApiKey.isNullOrEmpty()) {
+            Monitor.debug("Enabling maps support")
+            GMSServices.provideAPIKey(googleMapsApiKey)
             hasMapsSupport = true
         }
 
@@ -111,6 +115,7 @@ actual class BotStacksChatPlatform : BotStacksChat() {
     ) {
         if (loggingIn) return
         loggingIn = true
+        Monitor.debug("Logging in")
         runCatching {
             API.login(
                 accessToken = apiKey,
@@ -122,8 +127,9 @@ actual class BotStacksChatPlatform : BotStacksChat() {
         }.onSuccess {
             isUserLoggedIn = BotStacksChatStore.current.currentUserID != null
             loggingIn = false
+            Monitor.debug("Logged in successfully")
         }.onFailure { err ->
-            Monitoring.error(err)
+            Monitor.error(err)
             loggingIn = false
         }
     }

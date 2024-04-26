@@ -22,34 +22,34 @@ import ai.botstacks.sdk.internal.utils.genChatextMessage
 import ai.botstacks.sdk.internal.utils.genCurrentUser
 import ai.botstacks.sdk.internal.utils.genU
 import ai.botstacks.sdk.internal.utils.location
+import ai.botstacks.sdk.internal.utils.ui.debugBounds
+import ai.botstacks.sdk.internal.utils.ui.unboundedClickable
 import ai.botstacks.sdk.state.AttachmentType
 import ai.botstacks.sdk.state.MessageAttachment
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ai.botstacks.`chat-sdk`.generated.resources.Res
-import dev.icerock.moko.resources.compose.painterResource
 import kotlinx.datetime.Instant
 
 /**
@@ -65,7 +65,9 @@ import kotlinx.datetime.Instant
  * @param shape corner-based shaped to render the "bubble" in. This defaults to [ai.botstacks.sdk.ui.theme.ShapeDefinitions.medium].
  * @param showAvatar Whether to show the associated user's avatar along with this message.
  * @param showTimestamp Whether to show the timestamp this message was sent or received.
+ * @param showReplies Whether to display an interactive label for replies to this message.
  * @param onPressUser callback for when a user's avatar (when visible) is clicked.
+ * @param openThread callback for when the replies label shown when showReplies is true.
  * @param onLongPress callback for when a message "bubble" is clicked.
  * @param onClick callback for when an attachment is clicked. This is utlized by [MessageList] to show
  * images for full screen viewing.
@@ -78,67 +80,84 @@ fun ChatMessage(
     shape: CornerBasedShape = shapes.medium,
     showAvatar: Boolean = false,
     showTimestamp: Boolean = true,
+    showReplies: Boolean = message.replyCount > 0,
     onPressUser: (User) -> Unit,
+    openThread: () -> Unit = { },
     onLongPress: () -> Unit,
     onClick: ((MessageAttachment?) -> Unit)? = null
 ) {
-    if (message.user.blocked) {
+    val user = message.userOrNull ?: return
+
+    if (user.blocked) {
         return
     }
-    val current = message.user.isCurrent
-    val align = if (current) Alignment.End else Alignment.Start
+    val isThreaded = LocalThreaded.current
+    val current = user.isCurrent && !isThreaded
 
-    message.attachments.onEachIndexed { index, attachment ->
-
-        val showAvatarForThis = showAvatar &&
-                index == message.attachments.lastIndex &&
-                message.markdown.isEmpty()
-
-        val showTimestampForThis = showTimestamp &&
-                index == message.attachments.lastIndex &&
-                message.markdown.isEmpty()
-
-        ChatMessage(
-            modifier = modifier,
-            avatar = message.user.avatar,
-            username = message.user.displayNameFb,
-            content = null,
-            attachment = attachment,
-            date = message.createdAt,
-            isCurrentUser = current,
-            isGroup = message.isGroup,
-            shape = shape,
-            alignment = align,
-            showAvatar = showAvatarForThis,
-            showTimestamp = showTimestampForThis,
-            isSending = message.isSending,
-            hasError = message.failed,
-            onPressUser = { onPressUser(message.user) },
-            onLongPress = onLongPress,
-            onClick = onClick
-        )
+    val align = when {
+        isThreaded -> Alignment.Start
+        current -> Alignment.End
+        else -> Alignment.Start
     }
 
-    if (message.markdown.isNotEmpty()) {
-        ChatMessage(
-            modifier = modifier,
-            avatar = message.user.avatar,
-            username = message.user.displayNameFb,
-            content = message.markdown,
-            attachment = null,
-            date = message.createdAt,
-            isCurrentUser = current,
-            isGroup = message.isGroup,
-            shape = shape,
-            alignment = align,
-            showAvatar = message.attachments.isEmpty() && showAvatar,
-            showTimestamp = message.attachments.isEmpty() && showTimestamp,
-            isSending = message.isSending,
-            hasError = message.failed,
-            onPressUser = { onPressUser(message.user) },
-            onLongPress = onLongPress,
-            onClick = null
-        )
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(dimens.grid.x2),
+    ) {
+        message.attachments.onEachIndexed { index, attachment ->
+
+            val showAvatarForThis = showAvatar &&
+                    index == message.attachments.lastIndex &&
+                    message.markdown.isEmpty()
+
+            val showTimestampForThis = showTimestamp &&
+                    index == message.attachments.lastIndex &&
+                    message.markdown.isEmpty()
+
+            ChatMessage(
+                avatar = user.avatar,
+                username = user.displayNameFb,
+                content = null,
+                attachment = attachment,
+                date = message.createdAt,
+                isCurrentUser = current,
+                isGroup = message.isGroup && !isThreaded,
+                shape = shape,
+                alignment = align,
+                showAvatar = showAvatarForThis,
+                showTimestamp = showTimestampForThis,
+                replies = message.replyCount.takeIf { message.markdown.isEmpty() && showReplies } ?: 0,
+                isSending = message.isSending,
+                hasError = message.failed,
+                onPressUser = { onPressUser(user) },
+                openThread = openThread,
+                onLongPress = onLongPress,
+                onClick = onClick
+            )
+        }
+
+        if (message.markdown.isNotEmpty()) {
+            ChatMessage(
+                avatar = user.avatar,
+                username = user.displayNameFb,
+                content = message.markdown,
+                attachment = null,
+                date = message.createdAt,
+                replies = message.replyCount.takeIf { showReplies } ?: 0,
+                isCurrentUser = current,
+                isGroup = message.isGroup && !isThreaded,
+                shape = shape,
+                alignment = align,
+                showAvatar = (message.attachments.isNotEmpty() && showAvatar) || message.attachments.isEmpty() && showAvatar,
+                showTimestamp = (message.attachments.isNotEmpty() && showTimestamp) || message.attachments.isEmpty() && showTimestamp,
+                isSending = message.isSending,
+                hasError = message.failed,
+                onPressUser = { onPressUser(user) },
+                openThread = openThread,
+                onLongPress = onLongPress,
+                onClick = null
+            )
+        }
     }
 }
 
@@ -156,9 +175,11 @@ private fun ChatMessage(
     alignment: Alignment.Horizontal,
     showAvatar: Boolean = false,
     showTimestamp: Boolean = true,
+    replies: Int = 0,
     isSending: Boolean = false,
     hasError: Boolean = false,
     onPressUser: () -> Unit,
+    openThread: () -> Unit,
     onLongPress: () -> Unit,
     onClick: ((MessageAttachment?) -> Unit)? = null
 ) {
@@ -167,11 +188,10 @@ private fun ChatMessage(
     ) {
         val maxWidth = maxWidth
         Column(
-            modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.Bottom,
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                 horizontalArrangement = Arrangement.spacedBy(dimens.grid.x2, alignment),
                 verticalAlignment = Alignment.Bottom,
             ) {
@@ -184,18 +204,20 @@ private fun ChatMessage(
                 }
 
                 when (attachment?.type) {
-                    AttachmentType.Image -> MessageImageContent(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .widthIn(max = maxWidth * 0.67f),
-                        isCurrentUser = isCurrentUser,
-                        image = attachment,
-                        username = username,
-                        shape = shape,
-                        showOwner = isGroup && !isCurrentUser && showTimestamp,
-                        onClick = { onClick?.invoke(attachment) },
-                        onLongClick = onLongPress,
-                    )
+                    AttachmentType.Image -> {
+                        MessageImageContent(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .widthIn(max = maxWidth * 0.67f),
+                            isCurrentUser = isCurrentUser,
+                            url = attachment.url,
+                            username = username,
+                            shape = shape,
+                            showOwner = isGroup && !isCurrentUser && showTimestamp,
+                            onClick = { onClick?.invoke(attachment) },
+                            onLongClick = onLongPress,
+                        )
+                    }
 
                     AttachmentType.Location -> MessageMapContent(
                         modifier = Modifier
@@ -233,8 +255,17 @@ private fun ChatMessage(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(dimens.grid.x2, alignment = alignment),
             ) {
-                Spacer(Modifier.requiredWidth(AvatarSize.Small.value))
-                if (showTimestamp) {
+                if (alignment == Alignment.Start) {
+                    if (isGroup && !LocalThreaded.current) {
+                        Spacer(Modifier.requiredWidth(AvatarSize.Small.value))
+                    }
+                }
+
+                if (alignment == Alignment.End) {
+                    ReplyCount(replies, openThread)
+                }
+
+                if (showTimestamp || replies > 0) {
                     when {
                         isSending -> {
                             Text(
@@ -259,6 +290,10 @@ private fun ChatMessage(
                         }
                     }
                 }
+
+                if (alignment == Alignment.Start) {
+                    ReplyCount(replies, openThread)
+                }
             }
         }
     }
@@ -272,23 +307,26 @@ private fun MessageViewPreview() {
             ChatMessage(
                 message = genChatextMessage(genU()),
                 onPressUser = {},
+                openThread = {},
                 onLongPress = {})
             ChatMessage(
                 message = genChatextMessage(genCurrentUser()),
                 onPressUser = {},
+                openThread = {},
                 onLongPress = {})
         }
     }
 }
 
 @Composable
-private fun ReplyCount(count: Int) {
+private fun ReplyCount(count: Int, openThread: () -> Unit) {
     if (count > 0) {
+        val suffix = if (count == 1) "reply" else "replies"
         Text(
-            text = "$count replies",
-            fontStyle = fonts.body1,
-            color = colorScheme.primary,
-            modifier = Modifier.padding(4.dp)
+            modifier = Modifier.unboundedClickable { openThread() },
+            text = "$count $suffix",
+            fontStyle = fonts.caption2,
+            color = colorScheme.primary
         )
     }
 }

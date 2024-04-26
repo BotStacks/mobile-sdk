@@ -6,7 +6,7 @@
 
 package ai.botstacks.sdk.ui.components
 
-import ai.botstacks.sdk.internal.Monitoring
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.actions.send
 import ai.botstacks.sdk.internal.navigation.BackHandler
 import ai.botstacks.sdk.state.Chat
@@ -29,6 +29,7 @@ import ai.botstacks.sdk.internal.utils.attachment
 import ai.botstacks.sdk.internal.utils.genChat
 import ai.botstacks.sdk.internal.utils.imageAttachment
 import ai.botstacks.sdk.internal.utils.op
+import ai.botstacks.sdk.state.Message
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -84,8 +85,13 @@ internal enum class Media {
  *
  * A state that drives visibility of the [MediaActionSheet].
  */
-class MediaActionSheetState(internal val chat: Chat, sheetState: ModalBottomSheetState) :
-    ActionSheetState(sheetState)
+class MediaActionSheetState(
+    internal val chat: Chat,
+    val parentMessageId: String? = null,
+    sheetState: ModalBottomSheetState? = null
+) : ActionSheetState(sheetState) {
+    constructor(message: Message,  sheetState: ModalBottomSheetState? = null) : this(message.chat, parentMessageId = message.id, sheetState)
+}
 
 /**
  * Creates a [MediaActionSheetState] and remembers it.
@@ -93,11 +99,20 @@ class MediaActionSheetState(internal val chat: Chat, sheetState: ModalBottomShee
 @Composable
 fun rememberMediaActionSheetState(chat: Chat): MediaActionSheetState {
 
-    val state = rememberModalBottomSheetState(
-        ModalBottomSheetValue.Hidden, skipHalfExpanded = true
-    )
+    val state = ActionSheetDefaults.SheetState
 
-    return remember(chat, state) { MediaActionSheetState(chat, state) }
+    return remember(chat) { MediaActionSheetState(chat, null, state) }
+}
+
+/**
+ * Creates a [MediaActionSheetState] and remembers it.
+ */
+@Composable
+fun rememberMediaActionSheetState(message: Message): MediaActionSheetState {
+
+    val state = ActionSheetDefaults.SheetState
+
+    return remember(message) { MediaActionSheetState(message, state) }
 }
 
 /**
@@ -107,7 +122,6 @@ fun rememberMediaActionSheetState(chat: Chat): MediaActionSheetState {
  * scaffold that is designed to wrap your screen content.
  *
  * @param state the state for this action sheet.
- * @param chat The chat the selected attachments will be sent to.
  * @param content your screen content.
  *
  */
@@ -116,6 +130,25 @@ fun rememberMediaActionSheetState(chat: Chat): MediaActionSheetState {
 fun MediaActionSheet(
     state: MediaActionSheetState,
     content: @Composable () -> Unit
+) {
+    MediaActionSheetContainer(state) { onSelection ->
+        ModalBottomSheetLayout(
+            sheetState = state.sheetState ?: ActionSheetDefaults.SheetState,
+            sheetBackgroundColor = BotStacks.colorScheme.background,
+            sheetContentColor = BotStacks.colorScheme.onBackground,
+            scrimColor = BotStacks.colorScheme.scrim,
+            sheetContent = {
+                MediaActionSheetContent(onSelection)
+            },
+            content = content
+        )
+    }
+}
+
+@Composable
+internal fun MediaActionSheetContainer(
+    state: MediaActionSheetState,
+    content: @Composable (onSelection: (Media) -> Unit) -> Unit
 ) {
     var media by remember { mutableStateOf<Media?>(null) }
     val scope = rememberCoroutineScope()
@@ -129,32 +162,12 @@ fun MediaActionSheet(
 
     val onFile = { file: KmpFile ->
         op({
-            state.chat.send(null, upload = Upload(file = file))
+            state.chat.send(state.parentMessageId, upload = Upload(file = file))
         })
         media = null
     }
-
-
     Box {
-        ModalBottomSheetLayout(
-            sheetState = state.sheetState,
-            sheetBackgroundColor = BotStacks.colorScheme.background,
-            sheetContentColor = BotStacks.colorScheme.onBackground,
-            scrimColor = BotStacks.colorScheme.scrim,
-            sheetContent = {
-                Column(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
-                    Spacer(Modifier.height(8.dp))
-                    val items = ActionItemDefaults.mediaItems { media = it }
-                    items.onEachIndexed { index, item ->
-                        item()
-                        if (index != items.lastIndex) {
-                            Divider(color = BotStacks.colorScheme.caption)
-                        }
-                    }
-                }
-            },
-            content = content
-        )
+        content { media = it }
 
         if (media != null) {
             when (media) {
@@ -182,7 +195,7 @@ fun MediaActionSheet(
                     GifPicker(
                         onUri = {
                             hide()
-                            state.chat.send(null, attachments = listOf(it.imageAttachment()))
+                            state.chat.send(state.parentMessageId, attachments = listOf(it.imageAttachment()))
                         },
                         onCancel = hide
                     )
@@ -212,7 +225,7 @@ fun MediaActionSheet(
                         onLoading = { loading = true },
                         onLocation = {
                             if (loading) {
-                                state.chat.send(null, attachments = listOf(it.attachment()))
+                                state.chat.send(state.parentMessageId, attachments = listOf(it.attachment()))
                                 hide()
                             }
                         },
@@ -220,11 +233,24 @@ fun MediaActionSheet(
                     )
                 }
 
-                else -> Monitoring.log("empty media")
+                else -> Monitor.error("empty media")
             }
         }
 
         ProgressOverlay(loading)
+    }
+}
+@Composable
+internal fun MediaActionSheetContent(onSelection: (Media) -> Unit) {
+    Column(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
+        Spacer(Modifier.height(8.dp))
+        val items = ActionItemDefaults.mediaItems(onSelection)
+        items.onEachIndexed { index, item ->
+            item()
+            if (index != items.lastIndex) {
+                Divider(color = BotStacks.colorScheme.caption)
+            }
+        }
     }
 }
 
@@ -243,13 +269,13 @@ private fun MediaActionSheetPreview() {
 }
 
 @Composable
-private fun AssetPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
+internal fun AssetPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
     val pickerLauncher = rememberFilePickerLauncher(
         type = if (video) FilePickerFileType.Video else FilePickerFileType.Image,
         selectionMode = FilePickerSelectionMode.Single,
         onResult = { files ->
             val file = files.firstOrNull()
-            Monitoring.log("selected $file")
+            Monitor.debug("selected $file")
             file?.let(onUri) ?: onCancel()
         }
     )
@@ -260,7 +286,7 @@ private fun AssetPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () -
 }
 
 @Composable
-private fun FilePicker(onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
+internal fun FilePicker(onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
     val pickerLauncher = rememberFilePickerLauncher(
         type = FilePickerFileType.Custom(
             listOf(
@@ -278,7 +304,7 @@ private fun FilePicker(onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
 }
 
 @Composable
-private fun CameraPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
+internal fun CameraPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () -> Unit) {
     val cameraManager = rememberCameraManager { result ->
         if (result != null) {
             onUri(result)
@@ -294,7 +320,7 @@ private fun CameraPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () 
                     if (status == PermissionStatus.GRANTED) {
                         cameraManager.launch()
                     } else {
-                        Monitoring.log("camera permission not granted")
+                        Monitor.error("camera permission not granted")
                         onCancel()
                     }
                 }
@@ -308,7 +334,7 @@ private fun CameraPicker(video: Boolean, onUri: (KmpFile) -> Unit, onCancel: () 
 }
 
 @Composable
-private fun LocationPicker(
+internal fun LocationPicker(
     onLoading: () -> Unit,
     onLocation: (Location) -> Unit,
     onCancel: () -> Unit
@@ -329,7 +355,7 @@ private fun LocationPicker(
                     if (status == PermissionStatus.GRANTED) {
                         fetchLocation()
                     } else {
-                        Monitoring.log("location permission not granted")
+                        Monitor.error("location permission not granted")
                         onCancel()
                     }
                 }
@@ -354,7 +380,7 @@ private fun LocationPicker(
 //}
 
 @Composable
-private fun GifPicker(onUri: (String) -> Unit, onCancel: () -> Unit) {
+internal fun GifPicker(onUri: (String) -> Unit, onCancel: () -> Unit) {
     GiphyModalSheet(onSelection = onUri, onCancel = onCancel)
     BackHandler(enabled = true) { onCancel() }
 }

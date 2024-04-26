@@ -3,7 +3,6 @@
 package ai.botstacks.sdk.ui.views
 
 import ai.botstacks.sdk.internal.API
-import ai.botstacks.sdk.internal.Monitoring
 import ai.botstacks.sdk.state.Chat
 import ai.botstacks.sdk.internal.state.Upload
 import ai.botstacks.sdk.state.User
@@ -51,6 +50,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.TextFieldValue
 import ai.botstacks.`chat-sdk`.generated.resources.Res
+import ai.botstacks.sdk.internal.Monitor
+import ai.botstacks.sdk.internal.utils.async
+import ai.botstacks.sdk.internal.utils.op
+import ai.botstacks.sdk.internal.utils.opbg
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.referentialEqualityPolicy
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import com.mohamedrejeb.calf.io.KmpFile
 import com.mohamedrejeb.calf.picker.FilePickerFileType
 import com.mohamedrejeb.calf.picker.FilePickerSelectionMode
@@ -71,8 +78,10 @@ import dev.icerock.moko.resources.compose.painterResource
  * Resulting changes are persisted internally and do not need to be saved manually.
  *
  */
-@Stable
 class ChannelSettingsState(private val chat: Chat) {
+
+    constructor(id: String) : this(Chat.get(id = id)!!)
+
     internal var selectedImage by mutableStateOf<KmpFile?>(null)
 
     internal val channelImage: Any?
@@ -85,7 +94,7 @@ class ChannelSettingsState(private val chat: Chat) {
 
     internal var private by mutableStateOf(chat._private)
 
-    internal var participants = mutableStateListOf<User>()
+    var participants by mutableStateOf<MutableList<User>>(value = mutableListOf(), policy = referentialEqualityPolicy())
     internal val participantCount get() = participants.count()
 
     internal val sortedParticipants
@@ -116,7 +125,7 @@ class ChannelSettingsState(private val chat: Chat) {
                     val invites = participants.filterNot { existingUsers.contains(it) }
                         .map { it.id }
 
-                    Monitoring.log("inviting ${invites.count()} users to channel")
+                    Monitor.debug("inviting ${invites.count()} users to channel")
                     if (invites.isNotEmpty()) {
                         val inviteResult = runCatching { API.inviteUsers(chat.id, invites) }
                         inviteResult.exceptionOrNull()?.let { throw it }
@@ -130,11 +139,19 @@ class ChannelSettingsState(private val chat: Chat) {
                     image = imageUrl,
                 )
             }.onFailure {
-                Monitoring.error(it)
+                Monitor.error(it)
                 saving = false
             }.onSuccess {
                 saving = false
             }
+        }
+    }
+
+    fun update(onSuccess: (Chat?) -> Unit, onError: (Throwable) -> Unit) {
+        opbg {
+            update()
+                .onSuccess(onSuccess)
+                .onFailure(onError)
         }
     }
 }

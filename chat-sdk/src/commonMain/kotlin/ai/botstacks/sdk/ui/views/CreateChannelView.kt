@@ -11,6 +11,7 @@ import ai.botstacks.sdk.internal.ui.components.TextInput
 import ai.botstacks.sdk.internal.ui.components.ToggleSwitch
 import ai.botstacks.sdk.internal.ui.components.settings.SettingsSection
 import ai.botstacks.sdk.internal.utils.bg
+import ai.botstacks.sdk.internal.utils.opbg
 import ai.botstacks.sdk.ui.components.Avatar
 import ai.botstacks.sdk.ui.components.AvatarSize
 import ai.botstacks.sdk.ui.components.AvatarType
@@ -84,6 +85,14 @@ class CreateChannelState {
             }
         }
     }
+
+    fun create(onSuccess: (Chat?) -> Unit, onError: (Throwable) -> Unit) {
+        opbg {
+            create()
+                .onSuccess(onSuccess)
+                .onFailure(onError)
+        }
+    }
 }
 
 /**
@@ -95,7 +104,7 @@ class CreateChannelState {
  * @param onSelectUsers Callback when the add users icon button is clicked within the User select component. Use this to navigate to a new screen
  * where a user will select participants for this new channel
  *
- * @see [SelectChannelUsersConnectingView]
+ * @see [SelectChannelUsersView]
  *
  */
 @Composable

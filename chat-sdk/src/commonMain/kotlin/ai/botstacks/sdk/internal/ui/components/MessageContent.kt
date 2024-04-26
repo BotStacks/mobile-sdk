@@ -5,6 +5,7 @@
 package ai.botstacks.sdk.internal.ui.components
 
 import ai.botstacks.sdk.BotStacksChat
+import ai.botstacks.sdk.internal.Monitor
 import ai.botstacks.sdk.internal.state.Location
 import ai.botstacks.sdk.ui.BotStacks
 import ai.botstacks.sdk.ui.BotStacks.colorScheme
@@ -53,7 +54,10 @@ internal fun MessageTextContent(
             ).clip(shape)
             .combinedClickable(
                 onClick = { onClick?.invoke() },
-                onLongClick = onLongClick,
+                onLongClick = {
+                    println("long click")
+                    onLongClick()
+                },
             ).padding(horizontal = dimens.grid.x2, vertical = dimens.grid.x1),
     ) {
         if (showOwner) {
@@ -75,7 +79,7 @@ internal fun MessageTextContent(
 @Composable
 internal fun MessageImageContent(
     username: String,
-    image: MessageAttachment,
+    url: String,
     isCurrentUser: Boolean,
     modifier: Modifier = Modifier,
     shape: CornerBasedShape = BotStacks.shapes.medium,
@@ -95,7 +99,7 @@ internal fun MessageImageContent(
         }
 
         ImageRenderer(
-            url = image.url,
+            url = url,
             contentDescription = "shared image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -160,21 +164,23 @@ internal fun MessageMapContent(
                 userAvatar = avatar
             )
         } else {
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .height(dimens.imagePreviewSize.height.dp)
-                .background(
-                    color = ift(
-                        isCurrentUser,
-                        colorScheme.primary,
-                        colorScheme.message
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(dimens.imagePreviewSize.height.dp)
+                    .background(
+                        color = ift(
+                            isCurrentUser,
+                            colorScheme.primary,
+                            colorScheme.message
+                        ),
+                        shape = shape
+                    ).clip(shape)
+                    .combinedClickable(
+                        onClick = { onClick?.invoke() },
+                        onLongClick = onLongClick,
                     ),
-                    shape = shape
-                ).clip(shape)
-                .combinedClickable(
-                    onClick = { onClick?.invoke() },
-                    onLongClick = onLongClick,
-                ),)
+            )
         }
     }
 }

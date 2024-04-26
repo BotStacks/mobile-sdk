@@ -24,10 +24,10 @@ fun Project.addAllMultiplatformTargets() {
             val iosTargets = listOf(iosX64(), iosArm64(), iosSimulatorArm64())
             iosTargets.forEach {
                 it.binaries.framework {
+                    baseName = "BotStacks_ChatSDK"
                     xcf.add(this)
                 }
             }
-
         }
     }
 }
