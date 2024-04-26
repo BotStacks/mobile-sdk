@@ -4,44 +4,67 @@
 
 package ai.botstacks.sdk.ui.components
 
-import ai.botstacks.sdk.internal.ui.components.ActionItem
+import ai.botstacks.sdk.internal.actions.toggleFavorite
+import ai.botstacks.sdk.internal.ui.components.ActionItemDefaults
 import ai.botstacks.sdk.internal.ui.components.Text
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
+import ai.botstacks.sdk.internal.utils.IPreviews
+import ai.botstacks.sdk.internal.utils.annotated
+import ai.botstacks.sdk.internal.utils.genChatextMessage
 import ai.botstacks.sdk.state.Message
 import ai.botstacks.sdk.ui.BotStacks.colorScheme
 import ai.botstacks.sdk.ui.BotStacks.fonts
 import ai.botstacks.sdk.ui.BotStacksThemeEngine
-import ai.botstacks.sdk.internal.utils.IPreviews
-import ai.botstacks.sdk.internal.utils.annotated
-import ai.botstacks.sdk.internal.utils.genChatextMessage
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material.Button
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.unit.dp
-import ai.botstacks.`chat-sdk`.generated.resources.Res
 
-internal enum class MessageAction {
-    react,
-    copy,
+enum class MessageAction {
+    favorite,
+    forward,
     reply,
-    favorite;
+    edit,
+    copy,
+    delete;
 
-    companion object {
+    internal companion object {
         val supportedActions = listOf(
+            favorite,
+            reply,
             copy,
-            reply
         )
     }
 }
+
 /**
  * MediaActionSheetState
  *
  * A state that drives visibility of the [MessageActionSheet].
  */
 @OptIn(ExperimentalMaterialApi::class)
-class MessageActionSheetState(sheetState: ModalBottomSheetState? = null) : ActionSheetState(sheetState) {
+class MessageActionSheetState(
+    sheetState: ModalBottomSheetState? = null,
+) : ActionSheetState(sheetState) {
     var messageForAction by mutableStateOf<Message?>(null)
+    var onAction by mutableStateOf<((Message, MessageAction) -> Unit)?>(null)
 }
 
 /**
@@ -49,13 +72,17 @@ class MessageActionSheetState(sheetState: ModalBottomSheetState? = null) : Actio
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun rememberMessageActionSheetState(message: Message? = null): MessageActionSheetState {
+fun rememberMessageActionSheetState(
+    message: Message? = null,
+    onAction: (message: Message, MessageAction) -> Unit = { _, _ -> },
+): MessageActionSheetState {
 
     val state = ActionSheetDefaults.SheetState
 
     return remember(message) {
         MessageActionSheetState(state).apply {
             messageForAction = message
+            this.onAction = onAction
         }
     }
 }
@@ -76,10 +103,9 @@ fun rememberMessageActionSheetState(message: Message? = null): MessageActionShee
 @OptIn(ExperimentalMaterialApi::class)
 fun MessageActionSheet(
     state: MessageActionSheetState,
-    openThread: (Message) -> Unit,
     content: @Composable () -> Unit
 ) {
-    MessageActionSheetContainer(state, openThread) { onAction ->
+    MessageActionSheetContainer(state) { onAction ->
         ModalBottomSheetLayout(
             modifier = Modifier.fillMaxSize(),
             sheetState = state.sheetState ?: ActionSheetDefaults.SheetState,
@@ -87,7 +113,7 @@ fun MessageActionSheet(
             sheetContentColor = colorScheme.onBackground,
             scrimColor = colorScheme.scrim,
             sheetContent = {
-                MessageActionSheetContent(onAction)
+                MessageActionSheetContent(state.messageForAction, onAction)
             },
             content = content
         )
@@ -97,7 +123,6 @@ fun MessageActionSheet(
 @Composable
 internal fun MessageActionSheetContainer(
     state: MessageActionSheetState,
-    openThread: (Message) -> Unit,
     content: @Composable (onSelection: (MessageAction) -> Unit) -> Unit,
 ) {
 
@@ -115,24 +140,28 @@ internal fun MessageActionSheetContainer(
 
     Box {
         content { action ->
+            state.onAction?.invoke(state.messageForAction!!, action)
             when (action) {
-                MessageAction.react -> Unit
                 MessageAction.copy -> {
                     clipboardManager.setText(annotatedString)
-                    state.messageForAction = null
                 }
-                MessageAction.reply -> {
-                    val message = state.messageForAction!!
-                    state.messageForAction = null
-                    openThread(message)
+
+                MessageAction.reply -> Unit
+                MessageAction.favorite -> {
+                    state.messageForAction?.toggleFavorite()
                 }
-                MessageAction.favorite -> Unit
+                MessageAction.forward -> Unit
+                MessageAction.edit -> Unit
+                MessageAction.delete -> Unit
             }
+            state.messageForAction = null
         }
     }
 }
+
 @Composable
 internal fun MessageActionSheetContent(
+    message: Message?,
     onSelection: (MessageAction) -> Unit
 ) {
     Column(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars)) {
@@ -145,30 +174,8 @@ internal fun MessageActionSheetContent(
 //                        hide()
 //                    }
 //                )
-        if (LocalThreaded.current.not()) {
-            ActionItem(
-                text = "Reply in thread",
-                icon = Res.images.thread_reply_outline,
-            ) {
-                onSelection(MessageAction.reply)
-            }
-
-        }
-//                ActionItem(
-//                    text = if (message?.favorite == true) "Remove from Favorites" else "Save to Favorites",
-//                    icon = Res.drawable.star_fill,
-//                )
-//                {
-//                    message?.toggleFavorite()
-//                    hide()
-//                }
-
-        ActionItem(
-            text = "Copy",
-            icon = Res.images.copy,
-        ) {
-            onSelection(MessageAction.copy)
-        }
+        val items = ActionItemDefaults.messageItems(message, onSelection)
+        items.forEach { it() }
     }
 }
 
@@ -178,10 +185,10 @@ internal val LocalThreaded = staticCompositionLocalOf { false }
 @Composable
 private fun MessageActionSheetPreview() {
     BotStacksThemeEngine {
-        val state = rememberMessageActionSheetState()
+        val state = rememberMessageActionSheetState { _, _ -> }
 
-        MessageActionSheet(state, {}) {
-            Button(onClick = {state.messageForAction = genChatextMessage() }) {
+        MessageActionSheet(state) {
+            Button(onClick = { state.messageForAction = genChatextMessage() }) {
                 Text(text = "Open Sheet", fontStyle = fonts.body2)
             }
         }

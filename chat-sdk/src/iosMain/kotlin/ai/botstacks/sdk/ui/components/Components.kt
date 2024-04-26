@@ -265,12 +265,10 @@ fun _MediaActionSheet(
 
 fun _MessageActionSheet(
     state: MessageActionSheetState,
-    openThread: (Message) -> Unit,
     onMeasured: (Double, Double) -> Unit,
 ): UIViewController = measuredThemedViewController(onMeasured) {
     MessageActionSheet(
         state = state,
-        openThread = openThread
     )
 }
 

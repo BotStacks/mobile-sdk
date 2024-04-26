@@ -177,7 +177,7 @@ internal data object FavoriteMessagesScreen : Screen {
 
         FavoritesMessagesScreen(
             back = { navigator.pop() },
-            openReplies = { },
+            openReplies = { navigator.push(ThreadScreen(it)) },
             openProfile = { navigator.push(UserDetailsScreen(it)) },
         )
     }

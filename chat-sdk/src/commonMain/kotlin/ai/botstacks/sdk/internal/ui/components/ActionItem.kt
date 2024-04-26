@@ -6,6 +6,7 @@ package ai.botstacks.sdk.internal.ui.components
 
 import ai.botstacks.`chat-sdk`.generated.resources.Res
 import ai.botstacks.sdk.BotStacksChat
+import ai.botstacks.sdk.state.Message
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
@@ -16,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ai.botstacks.sdk.ui.BotStacks
+import ai.botstacks.sdk.ui.components.LocalThreaded
 import ai.botstacks.sdk.ui.components.Media
+import ai.botstacks.sdk.ui.components.MessageAction
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import dev.icerock.moko.resources.ImageResource
@@ -69,6 +72,66 @@ internal fun ActionItem(
 }
 
 internal object ActionItemDefaults {
+    @Composable
+    fun messageItems(message: Message?, onItemSelected: (MessageAction) -> Unit): List<@Composable () -> Unit> =
+        MessageAction.supportedActions
+            .filter {
+                if (it == MessageAction.reply && LocalThreaded.current) {
+                    return@filter false
+                }
+
+                return@filter true
+            }
+            .map {
+            val action = { onItemSelected(it) }
+            {
+                when (it) {
+                    MessageAction.favorite -> {
+                        ActionItem(
+                            text = if (message?.favorite == true) "Remove from favorites" else "Favorite",
+                            icon = Res.images.star_outline,
+                            action = action
+                        )
+                    }
+                    MessageAction.forward -> {
+                        ActionItem(
+                            text = "Forward",
+                            icon = Res.images.forward_outline,
+                            action = action
+                        )
+                    }
+                    MessageAction.reply -> {
+                        ActionItem(
+                            text = "Reply in thread",
+                            icon = Res.images.thread_reply_outline,
+                            action = action
+                        )
+                    }
+                    MessageAction.edit -> {
+                        ActionItem(
+                            text = "Edit",
+                            icon = Res.images.edit_outlined,
+                            action = action
+                        )
+                    }
+                    MessageAction.copy -> {
+                        ActionItem(
+                            text = "Copy",
+                            icon = Res.images.copy,
+                            action = action
+                        )
+                    }
+                    MessageAction.delete -> {
+                        ActionItem(
+                            text = "Delete",
+                            icon = Res.images.copy,
+                            iconTint = BotStacks.colorScheme.error,
+                            action = action
+                        )
+                    }
+                }
+            }
+        }
     @Composable
     fun mediaItems(onItemSelected: (Media) -> Unit): List<@Composable () -> Unit> =
         Media.supportedMediaTypes

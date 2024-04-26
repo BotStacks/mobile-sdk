@@ -40,7 +40,7 @@ internal fun ThreadedRepliesScreen(
 
     MediaActionSheet(state = mediaSheetState) {
         CompositionLocalProvider(LocalThreaded provides true) {
-            MessageActionSheet(state = messageActionSheetState, {}) {
+            MessageActionSheet(state = messageActionSheetState) {
                 Column(modifier = modifier.fillMaxSize()) {
                     CompositionLocalProvider(LocalThreaded provides false) {
                         MessageList(

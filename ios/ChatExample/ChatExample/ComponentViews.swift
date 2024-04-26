@@ -152,12 +152,14 @@ internal struct ChatMessages: View {
                 maxHeight: .infinity,
                 alignment: .topLeading
             ).sheet(isPresented: state.isShowing) {
-                MessageActionSheet(state: state) { message in
-                    
-                }
+                MessageActionSheet(state: state)
             }.padding(
                 EdgeInsets(top: 0, leading: 16, bottom: 16, trailing: 0)
-            )
+            ).onAppear(perform: {
+                state.onAction = { m, action in
+                    print("\(action.name)")
+                }
+            })
         }
     }
 }

@@ -4,19 +4,23 @@
 
 package ai.botstacks.sdk.internal.navigation.ui.chats
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import ai.botstacks.sdk.internal.state.BotStacksChatStore
-import ai.botstacks.sdk.state.Message
-import ai.botstacks.sdk.state.User
-import ai.botstacks.sdk.ui.BotStacksThemeEngine
-import ai.botstacks.sdk.ui.components.Header
-import ai.botstacks.sdk.ui.components.ChatMessage
-import ai.botstacks.sdk.internal.ui.components.PagerList
 import ai.botstacks.sdk.internal.utils.IPreviews
 import ai.botstacks.sdk.internal.utils.genM
 import ai.botstacks.sdk.internal.utils.random
+import ai.botstacks.sdk.state.Message
+import ai.botstacks.sdk.state.User
+import ai.botstacks.sdk.ui.BotStacksThemeEngine
+import ai.botstacks.sdk.ui.components.ChatMessage
+import ai.botstacks.sdk.ui.components.Header
+import ai.botstacks.sdk.ui.components.MessageActionSheet
+import ai.botstacks.sdk.ui.components.MessageList
+import ai.botstacks.sdk.ui.components.rememberMessageActionSheetState
+import ai.botstacks.sdk.ui.components.shapeForMessage
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 
 @Composable
 internal fun FavoritesMessagesScreen(
@@ -24,19 +28,39 @@ internal fun FavoritesMessagesScreen(
     openReplies: (Message) -> Unit,
     openProfile: (User) -> Unit,
 ) {
-    LaunchedEffect(key1 = true, block = {
+    LaunchedEffect(Unit) {
         BotStacksChatStore.current.favorites.loadMoreIfEmpty()
-    })
-    Column {
-        Header(title = "Favorite Messages", onBackClicked = back)
-        PagerList(
+    }
+
+    val messageActionSheetState = rememberMessageActionSheetState()
+
+    MessageActionSheet(
+        state = messageActionSheetState,
+    ) {
+        MessageList(
             pager = BotStacksChatStore.current.favorites,
-        ) { message ->
+            header = {
+                Header(title = "Favorite Messages", onBackClicked = back)
+            },
+            onPressUser = openProfile,
+            onLongPress = {},
+            showReplies = false,
+        ) { info, message, onClick ->
+
+            val (isPrevClose, isNextClose, arrangement) = info
             ChatMessage(
+                modifier = Modifier.padding(arrangement),
                 message = message,
                 onPressUser = openProfile,
-                onLongPress = {}
-            ) { openReplies(message) }
+                shape = shapeForMessage(message.userOrNull?.isCurrent == true, isPrevClose, isNextClose),
+                showTimestamp = !isNextClose,
+                showAvatar = !isNextClose,
+                onLongPress = { messageActionSheetState.messageForAction = message },
+                openThread = { openReplies(message) },
+                onClick = {
+                    onClick(it)
+                }
+            )
         }
     }
 }
